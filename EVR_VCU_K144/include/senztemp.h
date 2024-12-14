@@ -15,6 +15,7 @@
 #ifndef SENZTEMP_H
 #define SENZTEMP_H
 
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -70,7 +71,8 @@ extern "C"{
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 
-
+int gettemp(void);
+void senz_temp_init(void);
 
 #ifdef __cplusplus
 }
