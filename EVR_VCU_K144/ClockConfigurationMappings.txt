@@ -1,2 +1,2 @@
 1,,VS_0
-VS_0,PB,BOARD_BootClockRUN
+VS_0,PC,BOARD_BootClockRUN
