@@ -11,6 +11,8 @@ extern "C" {
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
 
+#include "Mcu.h"
+#include "Port.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
