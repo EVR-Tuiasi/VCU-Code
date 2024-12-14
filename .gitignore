@@ -52,3 +52,9 @@ Mkfile.old
 dkms.conf
 
 # Design Studio
+K144/.settings/language.settings.xml
+K144/RTD
+K144/board
+K144/generate
+K144/Debug_FLASH
+K144/Debug_RAM
