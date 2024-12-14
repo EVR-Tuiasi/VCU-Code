@@ -10,8 +10,7 @@ extern "C" {
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
 
-#include "Mcu.h"
-#include "Port.h"
+#include "7-segment-display.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -57,34 +56,6 @@ extern "C" {
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 
-int main(void)
-{
-    /* Initialize the Mcu driver */
-#if (MCU_PRECOMPILE_SUPPORT == STD_ON)
-    Mcu_Init(NULL_PTR);
-#elif (MCU_PRECOMPILE_SUPPORT == STD_OFF)
-    Mcu_Init(&Mcu_Config_VS_0);
-#endif /* (MCU_PRECOMPILE_SUPPORT == STD_ON) */
-
-    /* Initialize the clock tree and apply PLL as system clock */
-    Mcu_InitClock(McuClockSettingConfig_0);
-#if (MCU_NO_PLL == STD_OFF)
-    while ( MCU_PLL_LOCKED != Mcu_GetPllStatus() )
-    {
-        /* Busy wait until the System PLL is locked */
-    }
-
-    Mcu_DistributePllClock();
-#endif
-    Mcu_SetMode(McuModeSettingConf_0);
-
-    /* Initialize all pins using the Port driver */
-    Port_Init(NULL_PTR);
-
-    while(1){
-    	;
-    }
-}
 
 
 #ifdef __cplusplus
@@ -92,3 +63,4 @@ int main(void)
 #endif
 
 /** @} */
+

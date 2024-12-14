@@ -1,5 +1,22 @@
+/*
+*   (c) Copyright 2020 NXP
+*
+*   NXP Confidential. This software is owned or controlled by NXP and may only be used strictly
+*   in accordance with the applicable license terms.  By expressly accepting
+*   such terms or by downloading, installing, activating and/or otherwise using
+*   the software, you are agreeing that you have read, and that you agree to
+*   comply with and are bound by, such license terms.  If you do not agree to
+*   be bound by the applicable license terms, then you may not retain,
+*   install, activate or otherwise use the software.
+*
+*   This file contains sample code only. It is not part of the production code deliverables.
+*/
+
+#ifndef SEVEN_SEGMENT_DISPLAY_H
+#define SEVEN_SEGMENT_DISPLAY_H
+
 #ifdef __cplusplus
-extern "C" {
+extern "C"{
 #endif
 
 
@@ -9,9 +26,6 @@ extern "C" {
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
-#include "Mcu.h"
-#include "Port.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -42,7 +56,6 @@ extern "C" {
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
-
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -57,38 +70,11 @@ extern "C" {
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 
-int main(void)
-{
-    /* Initialize the Mcu driver */
-#if (MCU_PRECOMPILE_SUPPORT == STD_ON)
-    Mcu_Init(NULL_PTR);
-#elif (MCU_PRECOMPILE_SUPPORT == STD_OFF)
-    Mcu_Init(&Mcu_Config_VS_0);
-#endif /* (MCU_PRECOMPILE_SUPPORT == STD_ON) */
-
-    /* Initialize the clock tree and apply PLL as system clock */
-    Mcu_InitClock(McuClockSettingConfig_0);
-#if (MCU_NO_PLL == STD_OFF)
-    while ( MCU_PLL_LOCKED != Mcu_GetPllStatus() )
-    {
-        /* Busy wait until the System PLL is locked */
-    }
-
-    Mcu_DistributePllClock();
-#endif
-    Mcu_SetMode(McuModeSettingConf_0);
-
-    /* Initialize all pins using the Port driver */
-    Port_Init(NULL_PTR);
-
-    while(1){
-    	;
-    }
-}
-
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 /** @} */
