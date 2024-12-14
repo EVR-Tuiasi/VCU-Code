@@ -52,9 +52,9 @@ Mkfile.old
 dkms.conf
 
 # Design Studio
-K144/.settings/language.settings.xml
-K144/RTD
-K144/board
-K144/generate
-K144/Debug_FLASH
-K144/Debug_RAM
+EVR_VCU_K144/.settings/language.settings.xml
+EVR_VCU_K144/RTD
+EVR_VCU_K144/board
+EVR_VCU_K144/generate
+EVR_VCU_K144/Debug_FLASH
+EVR_VCU_K144/Debug_RAM
