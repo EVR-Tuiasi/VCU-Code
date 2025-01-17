@@ -48,14 +48,22 @@ extern "C" {
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
-uint8 data0[2] = {12, 1}; // comanda normal mode
-uint8 data1[2] = {10, 15}; // comanda luminozitate maxima globala
-uint8 data2[2] = {1,8}; // comanda prima cifra pe 8
+uint8 data0[2] = {0x0c, 0x81}; // comanda normal mode
+uint8 data1[2] = {0x0a, 0x80}; // comanda luminozitate maxima globala
+uint8 buffer1[2] = {0x0b, 0x05};
+uint8 buffer2[2] = {0x09, 0xff};
+uint8 data2[2] = {0x01,0x03}; // comanda prima cifra pe 8
+uint8 test_data[2] = {0x0f, 1}; // comanda test optic
+//uint8 shutdown[2] = {0x0c, 0x00}; // shutdown mode off (?)
 
 
+//I2c_RequestType shut = {0, false, false, false, false, 2, I2C_SEND_DATA, shutdown};
+I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, buffer1};
+I2c_RequestType nodecod = {0, false, false, false, false, 2, I2C_SEND_DATA, buffer2};
 I2c_RequestType req0 = {0, false, false, false, false, 2, I2C_SEND_DATA, data0};
 I2c_RequestType req1 = {0, false, false, false, false, 2, I2C_SEND_DATA, data1};
 I2c_RequestType req2 = {0, false, false, false, false, 2, I2C_SEND_DATA, data2};
+I2c_RequestType testOpt = {0, false, false, false, false, 2, I2C_SEND_DATA, test_data};
 
 volatile uint8 ok = 0;
 
@@ -82,10 +90,12 @@ void IntrerupereBTN(void){
 
 void I2c_Callback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(96, 0);
+	Dio_WriteChannel(111, 1);
 }
 
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 0);
+	Dio_WriteChannel(96, 1);
 }
 
 int main(void)
@@ -119,14 +129,19 @@ int main(void)
 
     while(1){
     	volatile int p = 100000;
-    	//if(ok){
-    		while(p != 0)
+    	if(ok){
+    		while(p != 0){
     			p--;
+    		}
+    		//I2c_SyncTransmit(0, &shut);
 			I2c_SyncTransmit(0, &req0);
 			I2c_SyncTransmit(0, &req1);
+			I2c_SyncTransmit(0, &setpins);
+			I2c_SyncTransmit(0, &nodecod);
 			I2c_SyncTransmit(0, &req2);
+			//I2c_SyncTransmit(0, &testOpt);
 			ok = 0;
-    	//}
+    	}
     }
 }
 
