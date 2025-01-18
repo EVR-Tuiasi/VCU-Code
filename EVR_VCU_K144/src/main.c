@@ -16,6 +16,7 @@ extern "C" {
 #include "Mcu.h"
 #include "Platform.h"
 #include "Port.h"
+#include "7-segment-display.h"
 
 
 
@@ -48,22 +49,17 @@ extern "C" {
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
-uint8 data0[2] = {0x0c, 0x81}; // comanda normal mode
-uint8 data1[2] = {0x0a, 0x80}; // comanda luminozitate maxima globala
-uint8 buffer1[2] = {0x0b, 0x05};
-uint8 buffer2[2] = {0x09, 0xff};
-uint8 data2[2] = {0x01,0x03}; // comanda prima cifra pe 8
+uint8 DigitNumar1[2] = {0x01, 0x03};
+uint8 DigitNumar2[2] = {0x02, 0x0a};
+uint8 DigitNumar3[2] = {0x03, 0x02};
+uint8 DigitNumar4[2] = {0x04, 0x08};// numarul care va fi afisat pe digit
 uint8 test_data[2] = {0x0f, 1}; // comanda test optic
-//uint8 shutdown[2] = {0x0c, 0x00}; // shutdown mode off (?)
 
-
-//I2c_RequestType shut = {0, false, false, false, false, 2, I2C_SEND_DATA, shutdown};
-I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, buffer1};
-I2c_RequestType nodecod = {0, false, false, false, false, 2, I2C_SEND_DATA, buffer2};
-I2c_RequestType req0 = {0, false, false, false, false, 2, I2C_SEND_DATA, data0};
-I2c_RequestType req1 = {0, false, false, false, false, 2, I2C_SEND_DATA, data1};
-I2c_RequestType req2 = {0, false, false, false, false, 2, I2C_SEND_DATA, data2};
-I2c_RequestType testOpt = {0, false, false, false, false, 2, I2C_SEND_DATA, test_data};
+I2c_RequestType test = {0, false, false, false, false, 2, I2C_SEND_DATA, test_data};
+I2c_RequestType numarpedigit4 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar4};
+I2c_RequestType numarpedigit3 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar3};
+I2c_RequestType numarpedigit2 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar2};
+I2c_RequestType numarpedigit1 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar1};
 
 volatile uint8 ok = 0;
 
@@ -126,22 +122,19 @@ int main(void)
     Icu_Init(NULL_PTR);
 
     Icu_EnableNotification(0);
+    SevenSegmentInit();
 
     while(1){
-    	volatile int p = 100000;
-    	if(ok){
-    		while(p != 0){
-    			p--;
-    		}
-    		//I2c_SyncTransmit(0, &shut);
-			I2c_SyncTransmit(0, &req0);
-			I2c_SyncTransmit(0, &req1);
-			I2c_SyncTransmit(0, &setpins);
-			I2c_SyncTransmit(0, &nodecod);
-			I2c_SyncTransmit(0, &req2);
-			//I2c_SyncTransmit(0, &testOpt);
-			ok = 0;
-    	}
+    	volatile int p = 1000000;
+
+    	while(p != 0)
+    		p--;
+
+		/*I2c_SyncTransmit(0, &numarpedigit4);
+		I2c_SyncTransmit(0, &numarpedigit3);
+		I2c_SyncTransmit(0, &numarpedigit2);
+		I2c_SyncTransmit(0, &numarpedigit1);
+*/
     }
 }
 
