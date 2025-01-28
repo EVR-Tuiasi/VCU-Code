@@ -32,11 +32,11 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 
-uint8 ref0[2] = {1, 2};
-uint8 ref1[2] = {3, 4};
+uint8 ref0[3] = {1, 2, 3};
+uint8 ref1[2] = {0, 4};
 
 SevenSegmentGroup grupuri[2] = {
-		{ref0, 2},
+		{ref0, 3},
 		{ref1, 2}
 };
 SevenSegmentDriver driver = {0, 0, grupuri, 2};
@@ -95,16 +95,27 @@ void SevenSegmentInit(void){
 }
 
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint8 DecimalValue, uint8 PrecisionFloatPoint){
-	int aux = DecimalValue;
+	int aux;
 	for(int i = 0; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
-		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux % 10};
+		if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0)
+			aux = DecimalValue % 10 + 128;
+		else
+			aux = DecimalValue % 10;
+
+		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux};
 		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
-		if(aux == 0)
+		if(DecimalValue == 0)
 			break;
 		else
-			aux /= 10;
+			DecimalValue /= 10;
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
 	}
+}
+
+void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
+	if(BrightnessPercent > 100) BrightnessPercent = 100;
+	LuminozitateGlobala[1] = (BrightnessPercent * 4) / 25;
+	I2c_SyncTransmit(driver.I2c_used_channel, &luminozitate);
 }
 
 /*==================================================================================================

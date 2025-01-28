@@ -124,16 +124,21 @@ int main(void)
     Icu_EnableNotification(0);
     SevenSegmentInit();
 
+    volatile int i = 1;
+
     while(1){
     	volatile int p = 1000000;
 
     	while(p != 0)
     		p--;
-    	if(ok == 1){
-    		SevenSegmentDisplayDecimalValue(0, 245, 0);
-      		SevenSegmentDisplayDecimalValue(1, 5, 0);
-      		ok = 0;
-    	}
+    	//if(ok == 1){
+    		if(i == 100)
+    	    	i = 1;
+    		SevenSegmentDisplayDecimalValue(0, 245, 2);
+    		SevenSegmentSetGlobalBrightness(i);
+    		i++;
+      		//ok = 0;
+    	//}
     	//I2c_SyncTransmit(0, &test);
 
 		/*I2c_SyncTransmit(0, &numarpedigit4);
