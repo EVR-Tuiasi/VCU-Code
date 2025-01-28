@@ -113,7 +113,9 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint8 Decimal
 }
 
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
-	if(BrightnessPercent > 100) BrightnessPercent = 100;
+	if(BrightnessPercent > 100)
+		BrightnessPercent = 100;
+
 	LuminozitateGlobala[1] = (BrightnessPercent * 4) / 25;
 	I2c_SyncTransmit(driver.I2c_used_channel, &luminozitate);
 }
