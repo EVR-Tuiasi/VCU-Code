@@ -86,6 +86,7 @@ typedef struct {
 ==================================================================================================*/
 
 void SevenSegmentInit(void);
+void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint8 DecimalValue, uint8 PrecisionFloatPoint);
 
 #ifdef __cplusplus
 }

@@ -50,7 +50,7 @@ extern "C" {
 ==================================================================================================*/
 
 uint8 DigitNumar1[2] = {0x01, 0x03};
-uint8 DigitNumar2[2] = {0x02, 0x0a};
+uint8 DigitNumar2[2] = {0x02, 0x0e};
 uint8 DigitNumar3[2] = {0x03, 0x02};
 uint8 DigitNumar4[2] = {0x04, 0x08};// numarul care va fi afisat pe digit
 uint8 test_data[2] = {0x0f, 1}; // comanda test optic
@@ -129,6 +129,12 @@ int main(void)
 
     	while(p != 0)
     		p--;
+    	if(ok == 1){
+    		SevenSegmentDisplayDecimalValue(0, 245, 0);
+      		SevenSegmentDisplayDecimalValue(1, 5, 0);
+      		ok = 0;
+    	}
+    	//I2c_SyncTransmit(0, &test);
 
 		/*I2c_SyncTransmit(0, &numarpedigit4);
 		I2c_SyncTransmit(0, &numarpedigit3);
