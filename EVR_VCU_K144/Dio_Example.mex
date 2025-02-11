@@ -1261,7 +1261,7 @@
                                  <array name="I2cChannelEcucPartitionRef"/>
                                  <struct name="I2cMasterConfiguration">
                                     <setting name="Name" value="I2c_Lpi2cMasterChannel0"/>
-                                    <setting name="I2cPrescaler" value="LPI2C_MASTER_PRESC_DIV_8"/>
+                                    <setting name="I2cPrescaler" value="LPI2C_MASTER_PRESC_DIV_4"/>
                                     <setting name="I2cDataValidDelay" value="1"/>
                                     <setting name="I2cSetupHoldDelay" value="2"/>
                                     <setting name="I2cClockHighPeriod" value="1"/>
@@ -1502,7 +1502,7 @@
                         </struct>
                         <struct name="IcuOptionalApis">
                            <setting name="Name" value="IcuOptionalApis"/>
-                           <setting name="IcuDeInitApi" value="false"/>
+                           <setting name="IcuDeInitApi" value="true"/>
                            <setting name="IcuDisableWakeupApi" value="false"/>
                            <setting name="IcuEdgeCountApi" value="false"/>
                            <setting name="IcuEnableWakeupApi" value="false"/>
