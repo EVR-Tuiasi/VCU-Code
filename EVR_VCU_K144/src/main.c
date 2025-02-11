@@ -92,6 +92,7 @@ void I2c_Callback(uint8 Event, uint8 Channel){
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 0);
 	Dio_WriteChannel(96, 1);
+	ok = 1;
 }
 
 int main(void)
@@ -124,28 +125,32 @@ int main(void)
     Icu_EnableNotification(0);
     SevenSegmentInit();
 
-    volatile int i = 1;
+    uint8 i = 1;
 
     while(1){
     	volatile int p = 1000000;
 
     	while(p != 0)
     		p--;
-    	//if(ok == 1){
-    		if(i == 100)
-    	    	i = 1;
-    		SevenSegmentDisplayDecimalValue(0, 245, 2);
-    		SevenSegmentSetGlobalBrightness(i);
-    		i++;
-      		//ok = 0;
-    	//}
+    	if(ok == 1){
+    		I2c_DeInit();
+    		I2c_Init(NULL_PTR);
+    		SevenSegmentInit();
+      		ok = 0;
+    	}
+    	if(i == 255){
+    		SevenSegmentDisplayDecimalValue(0, 1, 0);
+			i = 1;
+    	}
+		SevenSegmentDisplayDecimalValue(0, i, 0);
+		i++;
     	//I2c_SyncTransmit(0, &test);
 
-		/*I2c_SyncTransmit(0, &numarpedigit4);
-		I2c_SyncTransmit(0, &numarpedigit3);
-		I2c_SyncTransmit(0, &numarpedigit2);
-		I2c_SyncTransmit(0, &numarpedigit1);
-*/
+		//I2c_SyncTransmit(0, &numarpedigit4);
+		//I2c_SyncTransmit(0, &numarpedigit3);
+		//I2c_SyncTransmit(0, &numarpedigit2);
+		//I2c_SyncTransmit(0, &numarpedigit1);
+
     }
 }
 
