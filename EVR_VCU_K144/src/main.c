@@ -49,10 +49,10 @@ extern "C" {
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
-uint8 DigitNumar1[2] = {0x01, 0x03};
-uint8 DigitNumar2[2] = {0x02, 0x0e};
-uint8 DigitNumar3[2] = {0x03, 0x02};
-uint8 DigitNumar4[2] = {0x04, 0x08};// numarul care va fi afisat pe digit
+uint8 DigitNumar1[2] = {0x01, 0x0f};
+uint8 DigitNumar2[2] = {0x02, 0x0f};
+uint8 DigitNumar3[2] = {0x03, 0x0f};
+uint8 DigitNumar4[2] = {0x04, 0x0f};// numarul care va fi afisat pe digit
 uint8 test_data[2] = {0x0f, 1}; // comanda test optic
 
 I2c_RequestType test = {0, false, false, false, false, 2, I2C_SEND_DATA, test_data};
@@ -125,10 +125,10 @@ int main(void)
     Icu_EnableNotification(0);
     SevenSegmentInit();
 
-    uint8 i = 1;
+    uint16 i = 1;
 
     while(1){
-    	volatile int p = 1000000;
+    	volatile int p = 10000;
 
     	while(p != 0)
     		p--;
@@ -138,18 +138,12 @@ int main(void)
     		SevenSegmentInit();
       		ok = 0;
     	}
-    	if(i == 255){
+    	if(i == 10000){
     		SevenSegmentDisplayDecimalValue(0, 1, 0);
-			i = 1;
+			i = 0;
     	}
 		SevenSegmentDisplayDecimalValue(0, i, 0);
 		i++;
-    	//I2c_SyncTransmit(0, &test);
-
-		//I2c_SyncTransmit(0, &numarpedigit4);
-		//I2c_SyncTransmit(0, &numarpedigit3);
-		//I2c_SyncTransmit(0, &numarpedigit2);
-		//I2c_SyncTransmit(0, &numarpedigit1);
 
     }
 }

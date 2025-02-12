@@ -32,11 +32,11 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 
-uint8 ref0[3] = {1, 2, 3, 4};
+uint8 ref0[4] = {1, 2, 3, 4};
 uint8 ref1[2] = {3, 4};
 
 SevenSegmentGroup grupuri[2] = {
-		{ref0, 3},
+		{ref0, 4},
 		{ref1, 2}
 };
 SevenSegmentDriver driver = {0, 0, grupuri, 2};
@@ -81,7 +81,6 @@ I2c_RequestType shutdown = {0, false, false, false, false, 2, I2C_SEND_DATA, Shu
 
 void SevenSegmentInit(void){
 	I2c_SyncTransmit(driver.I2c_used_channel, &shutdown);
-	I2c_SyncTransmit(driver.I2c_used_channel, &normalmode);
 	I2c_SyncTransmit(driver.I2c_used_channel, &luminozitate);
 	I2c_SyncTransmit(driver.I2c_used_channel, &feature);
 
@@ -92,9 +91,10 @@ void SevenSegmentInit(void){
 
 	I2c_SyncTransmit(driver.I2c_used_channel, &setpins);
 	I2c_SyncTransmit(driver.I2c_used_channel, &decodificator);
+	I2c_SyncTransmit(driver.I2c_used_channel, &normalmode);
 }
 
-void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint8 DecimalValue, uint8 PrecisionFloatPoint){
+void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint16 DecimalValue, uint8 PrecisionFloatPoint){
 	int aux;
 	for(int i = 0; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
 		if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0)
@@ -103,11 +103,12 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint8 Decimal
 			aux = DecimalValue % 10;
 
 		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux};
-		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
 		if(DecimalValue == 0)
-			break;
+			AfisareDigit[1] = 15;
 		else
 			DecimalValue /= 10;
+
+		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
 	}
 }

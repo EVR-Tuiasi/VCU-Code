@@ -43,15 +43,15 @@
                   <pin peripheral="LPI2C0" signal="lpi2c0_sda" pin_num="73" pin_signal="PTA2">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
-                        <pin_feature name="PE" value="state_1"/>
-                        <pin_feature name="PS" value="state_1"/>
+                        <pin_feature name="PE" value="state_0"/>
+                        <pin_feature name="PS" value="state_0"/>
                      </pin_features>
                   </pin>
                   <pin peripheral="LPI2C0" signal="lpi2c0_scl" pin_num="72" pin_signal="PTA3">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
-                        <pin_feature name="PE" value="state_1"/>
-                        <pin_feature name="PS" value="state_1"/>
+                        <pin_feature name="PE" value="state_0"/>
+                        <pin_feature name="PS" value="state_0"/>
                      </pin_features>
                   </pin>
                   <pin peripheral="PORTC" signal="port, 12" pin_num="50" pin_signal="PTC12">
