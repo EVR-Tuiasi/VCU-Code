@@ -125,11 +125,10 @@ int main(void)
     Icu_EnableNotification(0);
     SevenSegmentInit();
 
-    uint16 i = 1;
+    sint16 i = -999;
 
     while(1){
-    	volatile int p = 10000;
-
+    	volatile int p = 100000;
     	while(p != 0)
     		p--;
 
@@ -141,11 +140,11 @@ int main(void)
     	}
 
     	if(i == 10000){
-    		SevenSegmentDisplayDecimalValue(0, 1, 0);
-			i = 0;
+    		SevenSegmentDisplayDecimalValue(0, i, 2);
+			i = -999;
     	}
 
-		SevenSegmentDisplayDecimalValue(0, i, 0);
+		SevenSegmentDisplayDecimalValue(0, i, 2);
 		i++;
 
     }

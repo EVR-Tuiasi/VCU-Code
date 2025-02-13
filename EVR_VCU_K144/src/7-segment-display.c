@@ -100,13 +100,22 @@ void SevenSegmentInit(void){
 	I2c_SyncTransmit(driver.I2c_used_channel, &normalmode);
 }
 
-void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint16 DecimalValue, uint8 PrecisionFloatPoint){
-	if(DecimalValue == 0){
+void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint){
+	if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){
 		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[0], DecimalValue};
 		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
 	} else {
 		int aux;
+		bool isNegative = false, isPositive = true;
+		uint8 tempBuf[2] = {0x09, 0x00};
+
+		if(DecimalValue < 0){
+			isNegative = true;
+			isPositive = false;
+			DecimalValue *= -1;
+		}
+
 		for(int i = 0; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
 			if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0)
 				aux = DecimalValue % 10 + 128;
@@ -114,8 +123,30 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint16 Decima
 				aux = DecimalValue % 10;
 
 			uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux};
-			if(DecimalValue == 0)
-				AfisareDigit[1] = 15;
+			if((DecimalValue == 0) && (PrecisionFloatPoint >= i)){
+				if(PrecisionFloatPoint > i)
+					AfisareDigit[1] = 0;
+				else if(PrecisionFloatPoint == i)
+					AfisareDigit[1] = 128;
+			}
+			else if(DecimalValue == 0){
+				if(isNegative){
+					tempBuf[1] = ~(1<<(i));
+					I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, tempBuf};
+					I2c_SyncTransmit(driver.I2c_used_channel, &decodificator);
+
+					AfisareDigit[1] = 1;
+					isNegative = false;
+				} else if(isPositive){
+					tempBuf[1] = 0xff;
+					I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, tempBuf};
+					I2c_SyncTransmit(driver.I2c_used_channel, &decodificator);
+
+					AfisareDigit[1] = 15;
+				}
+				else
+					AfisareDigit[1] = 15;
+			}
 			else
 				DecimalValue /= 10;
 
