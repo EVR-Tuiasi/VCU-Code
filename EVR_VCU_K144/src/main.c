@@ -132,16 +132,19 @@ int main(void)
 
     	while(p != 0)
     		p--;
+
     	if(ok == 1){
     		I2c_DeInit();
     		I2c_Init(NULL_PTR);
     		SevenSegmentInit();
       		ok = 0;
     	}
+
     	if(i == 10000){
     		SevenSegmentDisplayDecimalValue(0, 1, 0);
 			i = 0;
     	}
+
 		SevenSegmentDisplayDecimalValue(0, i, 0);
 		i++;
 

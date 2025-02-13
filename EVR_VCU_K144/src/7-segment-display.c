@@ -42,23 +42,10 @@ SevenSegmentGroup grupuri[2] = {
 SevenSegmentDriver driver = {0, 0, grupuri, 2};
 
 
+uint8 LuminozitateGlobala[2] = {0x0a, 0x0f}; // -- Buffer Luminozitate Globala maxima
 
-uint8 SetareDisplayDefault[2] = {0x01, 0x0f};
-uint8 NormalMode[2] = {0x0c, 0x81}; // comanda normal mode
-uint8 LuminozitateGlobala[2] = {0x0a, 0x0f}; // comanda luminozitate globala
-uint8 NrPiniFolositi[2] = {0x0b, 0x03}; // cati pini de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
-uint8 SchimbareRegistruFeature[2] = {0x0e, 0x00};
-uint8 Decodificator[2] = {0x09, 0xff}; // pana la ce pin folosim decodificare pe digits
-uint8 Shutdown[2] = {0x0c, 0x00};
-
-
-I2c_RequestType afisarenimic = {0, false, false, false, false, 2, I2C_SEND_DATA, SetareDisplayDefault};
-I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, NrPiniFolositi};
-I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, Decodificator};
-I2c_RequestType normalmode = {0, false, false, false, false, 2, I2C_SEND_DATA, NormalMode};
 I2c_RequestType luminozitate = {0, false, false, false, false, 2, I2C_SEND_DATA, LuminozitateGlobala};
-I2c_RequestType feature = {0, false, false, false, false, 2, I2C_SEND_DATA, SchimbareRegistruFeature};
-I2c_RequestType shutdown = {0, false, false, false, false, 2, I2C_SEND_DATA, Shutdown};
+
 
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
@@ -79,37 +66,62 @@ I2c_RequestType shutdown = {0, false, false, false, false, 2, I2C_SEND_DATA, Shu
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
 
+
 void SevenSegmentInit(void){
+	uint8 SevSegInitBuf[2] = {0x00, 0x00}; // -- Buffer-ul din functia "SevenSegmentInit();"
+
+	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x00; // -- Seteaza modul Shutdown cu Reset Feature Register
+	I2c_RequestType shutdown = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(driver.I2c_used_channel, &shutdown);
-	I2c_SyncTransmit(driver.I2c_used_channel, &luminozitate);
+
+	I2c_SyncTransmit(driver.I2c_used_channel, &luminozitate); // -- Seteaza Luminozitatea Globala la 7 Segment Display-uri
+
+	SevSegInitBuf[0] = 0x0e, SevSegInitBuf[1] = 0x00; // -- Schimba Feature Register pentru modul de decodificare al 7 Segment Display
+	I2c_RequestType feature = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(driver.I2c_used_channel, &feature);
 
+	SevSegInitBuf[0] = 0x01, SevSegInitBuf[1] = 0x0f;
+	I2c_RequestType afisarenimic = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	for(int i = 0; i <= 7; i++){
-		I2c_SyncTransmit(driver.I2c_used_channel, &afisarenimic);
-		SetareDisplayDefault[0]++;
+		I2c_SyncTransmit(driver.I2c_used_channel, &afisarenimic); // -- Seteaza ca toate Segmentele de pe display sa fie stinse
+		SevSegInitBuf[0]++;
 	}
 
+	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x03; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
+	I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(driver.I2c_used_channel, &setpins);
+
+	SevSegInitBuf[0] = 0x09, SevSegInitBuf[1] = 0xff; // -- Seteaza pana la ce pin folosim decodificare pe digits [ex: 0x03 - 00000011 - Decodifica pe dig0 si dig1, ne luam dupa pozitia bitilor de la LSB la MSB]
+	I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(driver.I2c_used_channel, &decodificator);
+
+	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x81; // -- Seteaza Normal Mode fara modificari la Feature Register
+	I2c_RequestType normalmode = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(driver.I2c_used_channel, &normalmode);
 }
 
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, uint16 DecimalValue, uint8 PrecisionFloatPoint){
-	int aux;
-	for(int i = 0; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
-		if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0)
-			aux = DecimalValue % 10 + 128;
-		else
-			aux = DecimalValue % 10;
-
-		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux};
-		if(DecimalValue == 0)
-			AfisareDigit[1] = 15;
-		else
-			DecimalValue /= 10;
-
+	if(DecimalValue == 0){
+		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[0], DecimalValue};
 		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
+	} else {
+		int aux;
+		for(int i = 0; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
+			if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0)
+				aux = DecimalValue % 10 + 128;
+			else
+				aux = DecimalValue % 10;
+
+			uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux};
+			if(DecimalValue == 0)
+				AfisareDigit[1] = 15;
+			else
+				DecimalValue /= 10;
+
+			I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
+			I2c_SyncTransmit(driver.I2c_used_channel, &digit);
+		}
 	}
 }
 
