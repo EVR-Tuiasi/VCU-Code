@@ -30,9 +30,25 @@ extern "C"{
 
 #include "Mcu.h"
 
+#define SEVEN_SEG_NO_RESPONSE 0
+#define SEVEN_SEG_NUMBER_TOO_LARGE 1
+#define ACCELERATOR_PEDALS_DIFFERENT_OUTPUT 0
+#define TEMPERATURE_TOO_HIGH 0
+#define BMS_NO_RESPONSE 0
+#define BMS_LOW_VOLTAGE 1
+#define BMS_HIGH_CONSUMPTION 2
+#define PROCESSOR_RESET 0
+
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
+typedef struct{
+	uint8 seven_seg_error;
+	uint8 accelerator_pedals_error;
+	uint8 temperature_error;
+	uint8 bms_error;
+	uint8 processor_error;
+}Errors;
 
 
 /*==================================================================================================
@@ -79,6 +95,9 @@ void USBSendBMSCellVoltage(uint16 CellIndex, uint16 Value, uint8 Precision);
 void USBSendBMSCurrent(uint16 Value, uint8 Precision);
 void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision);
 void USBSendBrakePedal(uint16 Value, uint8 Precision);
+void ErrorsSet(uint8 Module, uint8 Error);
+uint8 ErrorsGet(uint8 Module);
+void ErrorsClear(uint8 Module, uint8 Error);
 
 #ifdef __cplusplus
 }

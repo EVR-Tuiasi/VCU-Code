@@ -17,6 +17,8 @@ extern "C" {
 #define BMS_CURRENT 12
 #define ACCELERATOR_PEDALS 13
 #define BRAKE_PEDAL 14
+#define SEVEN_SEGMENT 15
+#define PROCESSOR 16
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -50,6 +52,7 @@ uint8 buff3[] = " :0.00;discharging  ";
 ==================================================================================================*/
 
 uint8 UART_Channel;
+Errors errors_instance;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -64,6 +67,8 @@ uint8 UART_Channel;
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
+
+
 
 //parametrul volt pres. ca e int*100
 void sendvolt(unsigned int volt)
@@ -154,6 +159,78 @@ void USBSendBrakePedal(uint16 Value, uint8 Precision){
 	buffer[3] = Precision;
 	Uart_SyncSend(UART_Channel, buffer, 4, 10000000);
 }
+
+void ErrorsSet(uint8 Module, uint8 Error)
+{
+	switch (Module) {
+	case TEMP_SENSOR:
+		errors_instance.temperature_error = errors_instance.temperature_error | (1 << Error);
+	break;
+	case BMS_VOLTAGE:
+	case BMS_CURRENT:
+		errors_instance.bms_error = errors_instance.bms_error | (1 << Error);
+	break;
+	case ACCELERATOR_PEDALS:
+		errors_instance.accelerator_pedals_error = errors_instance.accelerator_pedals_error | (1 << Error);
+	break;
+	case SEVEN_SEGMENT:
+		errors_instance.seven_seg_error = errors_instance.seven_seg_error | (1 << Error);
+	break;
+	case PROCESSOR:
+		errors_instance.processor_error = errors_instance.processor_error | (1 << Error);
+	break;
+	default:
+		;
+	}
+}
+uint8 ErrorsGet(uint8 Module)
+{
+	switch (Module) {
+		case TEMP_SENSOR:
+			return errors_instance.temperature_error;
+		break;
+		case BMS_VOLTAGE:
+		case BMS_CURRENT:
+			return errors_instance.bms_error;
+		break;
+		case ACCELERATOR_PEDALS:
+			return errors_instance.accelerator_pedals_error;
+		break;
+		case SEVEN_SEGMENT:
+			return errors_instance.seven_seg_error;
+		break;
+		case PROCESSOR:
+			return errors_instance.processor_error;
+		break;
+		default:
+			return 0;
+		}
+}
+void ErrorsClear(uint8 Module, uint8 Error)
+{
+	switch (Module) {
+		case TEMP_SENSOR:
+			errors_instance.temperature_error = errors_instance.temperature_error & (~(1 << Error));
+		break;
+		case BMS_VOLTAGE:
+		case BMS_CURRENT:
+			errors_instance.bms_error = errors_instance.bms_error & (~(1 << Error));
+		break;
+		case ACCELERATOR_PEDALS:
+			errors_instance.accelerator_pedals_error = errors_instance.accelerator_pedals_error & (~(1 << Error));
+		break;
+		case SEVEN_SEGMENT:
+			errors_instance.seven_seg_error = errors_instance.seven_seg_error & (~(1<< Error));
+		break;
+		case PROCESSOR:
+			errors_instance.processor_error = errors_instance.processor_error & (~(1<<Error));
+		break;
+		default:
+			;
+		}
+}
+
+
 
 #ifdef __cplusplus
 }
