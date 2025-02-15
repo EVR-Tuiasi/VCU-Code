@@ -13,6 +13,8 @@ extern "C" {
 
 #include "Mcu.h"
 #include "Port.h"
+#include "uart_datasend.h"
+#include "CDD_Uart.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -60,6 +62,7 @@ extern "C" {
 
 int main(void)
 {
+
     /* Initialize the Mcu driver */
 #if (MCU_PRECOMPILE_SUPPORT == STD_ON)
     Mcu_Init(NULL_PTR);
@@ -81,9 +84,15 @@ int main(void)
 
     /* Initialize all pins using the Port driver */
     Port_Init(NULL_PTR);
+    Uart_Init(NULL_PTR);
+    USBInit(0);
+
 
     while(1){
-    	;
+    	volatile int i = 100000;
+    	while(i)
+    		i--;
+    	USBSendBrakePedal(6532, 2);
     }
 }
 

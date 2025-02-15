@@ -2,7 +2,6 @@
 extern "C" {
 #endif
 
-
 /*==================================================================================================
 *                                        INCLUDE FILES
 * 1) system and project includes
@@ -13,10 +12,15 @@ extern "C" {
 #include "uart_datasend.h"
 #include "CDD_Uart.h"
 
+#define TEMP_SENSOR 10
+#define BMS_VOLTAGE 11
+#define BMS_CURRENT 12
+#define ACCELERATOR_PEDALS 13
+#define BRAKE_PEDAL 14
+
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
-
 
 /*==================================================================================================
 *                                       LOCAL MACROS
@@ -45,6 +49,7 @@ uint8 buff3[] = " :0.00;discharging  ";
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
+uint8 UART_Channel;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -99,6 +104,55 @@ void sendvolt(unsigned int volt)
 		Uart_SyncSend(0, buff3, 20, 10000000);
 	}
 
+}
+
+void USBInit(uint8 UartChannel){
+	UART_Channel = UartChannel;
+}
+void USBSendCellTemperature(uint8 CellIndex, uint16 Value, uint8 Precision){
+uint8 buffer[5];
+buffer[0] = TEMP_SENSOR;
+buffer[1] = CellIndex;
+buffer[2] = Value >> 8;
+buffer[3] = Value % 256;
+buffer[4] = Precision;
+Uart_SyncSend(UART_Channel, buffer, 5, 10000000);
+}
+void USBSendBMSCellVoltage(uint16 CellIndex, uint16 Value, uint8 Precision){
+	uint8 buffer[6];
+	buffer[0] = BMS_VOLTAGE;
+	buffer[1] = CellIndex >> 8;
+	buffer[2] = CellIndex % 256;
+	buffer[3] = Value >> 8;
+	buffer[4] = Value % 256;
+	buffer[5] = Precision;
+	Uart_SyncSend(UART_Channel, buffer, 6, 10000000);
+}
+void USBSendBMSCurrent(uint16 Value, uint8 Precision){
+	uint8 buffer[4];
+	buffer[0] = BMS_CURRENT;
+	buffer[1] = Value >> 8;
+	buffer[2] = Value % 256;
+	buffer[3] = Precision;
+	Uart_SyncSend(UART_Channel, buffer, 4, 10000000);
+}
+void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision){
+	uint8 buffer[6];
+	buffer[0] = ACCELERATOR_PEDALS;
+	buffer[1] = Value1 >> 8;
+	buffer[2] = Value1 % 256;
+	buffer[3] = Value2 >> 8;
+	buffer[4] = Value2 % 256;
+	buffer[5] = Precision;
+	Uart_SyncSend(UART_Channel, buffer, 6, 10000000);
+}
+void USBSendBrakePedal(uint16 Value, uint8 Precision){
+	uint8 buffer[4];
+	buffer[0] = BRAKE_PEDAL;
+	buffer[1] = Value >> 8;
+	buffer[2] = Value % 256;
+	buffer[3] = Precision;
+	Uart_SyncSend(UART_Channel, buffer, 4, 10000000);
 }
 
 #ifdef __cplusplus

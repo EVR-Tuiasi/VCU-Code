@@ -28,6 +28,7 @@ extern "C"{
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
 
+#include "Mcu.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -72,7 +73,12 @@ extern "C"{
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 void sendvolt(unsigned int volt);
-
+void USBInit(uint8 UartChannel);
+void USBSendCellTemperature(uint8 CellIndex, uint16 Value, uint8 Precision);
+void USBSendBMSCellVoltage(uint16 CellIndex, uint16 Value, uint8 Precision);
+void USBSendBMSCurrent(uint16 Value, uint8 Precision);
+void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision);
+void USBSendBrakePedal(uint16 Value, uint8 Precision);
 
 #ifdef __cplusplus
 }
