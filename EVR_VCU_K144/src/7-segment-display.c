@@ -100,12 +100,76 @@ void SevenSegmentInit(void){
 	I2c_SyncTransmit(driver.I2c_used_channel, &normalmode);
 }
 
+bool SevSegGroupVerification(uint8 SevenSegmentGroupIndex){
+	if(SevenSegmentGroupIndex < driver.SevenSegmentGroup_elements_count)
+		return true;
+	else
+		return false;
+}
+
+void SevSegGrTest(uint8 g){
+	uint8 caz = 0;
+
+	while(1){
+		volatile int n = 8000000;
+		if(caz <= 7){
+			while(n != 0)
+				n--;
+		}
+
+		switch(caz){
+			case 0:
+				SevenSegmentDisplayDecimalValue(g, 0, 0); caz++;
+				break;
+			case 1:
+				SevenSegmentDisplayDecimalValue(g, 3331, 0); caz++;
+				break;
+			case 2:
+				SevenSegmentDisplayDecimalValue(g, 12, 1); caz++;
+				break;
+			case 3:
+				SevenSegmentDisplayDecimalValue(g, 1, 1); caz++;
+				break;
+			case 4:
+				SevenSegmentDisplayDecimalValue(g, -12, 0); caz++;
+				break;
+			case 5:
+				SevenSegmentDisplayDecimalValue(g, -1, 1); caz++;
+				break;
+			case 6:
+				SevenSegmentDisplayDecimalValue(g, -12, 2); caz++;
+				break;
+			case 7:
+				SevenSegmentDisplayDecimalValue(g, -123, 2); caz++;
+				break;
+
+			default:
+				caz = 0;
+				break;
+		}
+	}
+}
+
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint){
-	if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){
+	if(!SevSegGroupVerification(SevenSegmentGroupIndex)){
+		; // TODO de inserat apel la functia de eroare
+	}
+	else if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){
 		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[0], DecimalValue};
 		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
-	} else {
+
+		for(int i = 1; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
+			AfisareDigit[0] = driver.group[SevenSegmentGroupIndex].elemente[i];
+			AfisareDigit[1] = 15;
+			I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
+			I2c_SyncTransmit(driver.I2c_used_channel, &digit);
+		}
+
+		AfisareDigit[0] = 0x09, AfisareDigit[1] = 0xff;
+		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
+	}
+	else {
 		int aux;
 		bool isNegative = false, isPositive = true;
 		uint8 tempBuf[2] = {0x09, 0x00};

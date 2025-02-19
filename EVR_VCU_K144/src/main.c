@@ -128,24 +128,8 @@ int main(void)
     sint16 i = -999;
 
     while(1){
-    	volatile int p = 100000;
-    	while(p != 0)
-    		p--;
 
-    	if(ok == 1){
-    		I2c_DeInit();
-    		I2c_Init(NULL_PTR);
-    		SevenSegmentInit();
-      		ok = 0;
-    	}
-
-    	if(i == 10000){
-    		SevenSegmentDisplayDecimalValue(0, i, 2);
-			i = -999;
-    	}
-
-		SevenSegmentDisplayDecimalValue(0, i, 2);
-		i++;
+    	SevSegGrTest(0);
 
     }
 }
