@@ -28,12 +28,18 @@ extern "C"{
 ==================================================================================================*/
 
 #include "Mcu.h"
+#include "Adc.h"
 
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
 
+typedef struct {
+	Adc_GroupType AccelerationAdcChannel1, AccelerationAdcChannel2, BrakeAdcChannel;
+	Adc_ValueGroupType AccelerationValue1, AccelerationValue2, BreakValue, MaxError;
+
+}Pedals;
 
 
 

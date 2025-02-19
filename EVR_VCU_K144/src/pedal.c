@@ -31,7 +31,11 @@ extern "C" {
 /*==================================================================================================
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
-
+Pedals Pedalsinstance={ //initializari
+		0,1,2,  //channeluri
+		0,0,0,  //valori
+		10   //eroare
+};
 
 
 
@@ -66,12 +70,19 @@ extern "C" {
 
 void PedalsInit(void )
 {
-	;
+	Adc_SetupResultBuffer(Pedalsinstance.AccelerationAdcChannel1, &Pedalsinstance.AccelerationValue1);
 }
 
 uint8 PedalsGetAcceleration(void)
 {
-	;
+	Adc_StartGroupConversion(Pedalsinstance.AccelerationAdcChannel1);
+	while(1){
+	volatile	Adc_StatusType StatusAdc = Adc_GetGroupStatus(Pedalsinstance.AccelerationAdcChannel1);
+		if (StatusAdc== ADC_STREAM_COMPLETED)
+		{ break; }
+	}
+	return Pedalsinstance.AccelerationValue1;
+
 }
 
 uint8 PedalsGetBrake(void)
@@ -83,6 +94,8 @@ void PedalsTest(void){
 
 
 }
+
+
 
 #ifdef __cplusplus
 }

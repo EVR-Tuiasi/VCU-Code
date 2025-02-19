@@ -15,6 +15,7 @@ extern "C" {
 #include "Port.h"
 #include "pedal.h"
 #include "Adc.h"
+#include "Platform.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -83,13 +84,20 @@ int main(void)
 
     /* Initialize all pins using the Port driver */
     Port_Init(NULL_PTR);
+    Platform_Init(NULL_PTR);
+    Adc_Init(NULL_PTR);
+    PedalsInit();
 
     while(1){
-    	;
+    	volatile uint8 test = PedalsGetAcceleration();
+
     }
 }
 
-// test
+
+
+
+
 #ifdef __cplusplus
 }
 #endif
