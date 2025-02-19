@@ -32,18 +32,21 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 
+// -- Definire Grupuri de segmente si ce segmente se afla in ele
+
 uint8 ref0[4] = {1, 2, 3, 4};
 uint8 ref1[2] = {3, 4};
+
+// -- Definite Structura de Grupuri, ce are buffer ul de Segmente si cate elemente se afla in fiecare grup
 
 SevenSegmentGroup grupuri[2] = {
 		{ref0, 4},
 		{ref1, 2}
 };
-SevenSegmentDriver driver = {0, 0, grupuri, 2};
+SevenSegmentDriver driver = {0, 0, grupuri, 2}; // -- {Canal I2C folosit, Adresa Slave, Structura de grupuri de segmente, numarul de grupuri de segmente}
 
 
 uint8 LuminozitateGlobala[2] = {0x0a, 0x0f}; // -- Buffer Luminozitate Globala maxima
-
 I2c_RequestType luminozitate = {0, false, false, false, false, 2, I2C_SEND_DATA, LuminozitateGlobala};
 
 
@@ -101,53 +104,54 @@ void SevenSegmentInit(void){
 }
 
 void SevSegGrTest(uint8 g){
-	uint8 caz = 0;
+	uint8 caz = 0; // -- Aceasta variabila este folosita pentru a face testele, fiind verificata intr un switch
 
 	while(1){
 		volatile int n = 8000000;
-		if(caz <= 7){
-			while(n != 0)
+		if(caz <= 7){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
+			while(n != 0) // -- Acest While face un delay de o secunda [aproimare generoasa]
 				n--;
 		}
 
-		switch(caz){
+		switch(caz){ // -- Aici incep testele in Switch dupa ce trecem de While
 			case 0:
-				SevenSegmentDisplayDecimalValue(g, 0, 0); caz++;
+				SevenSegmentDisplayDecimalValue(g, 0, 0); caz++; // -- Afisam pe grupul g de segmente [ ][ ][ ][0]
 				break;
 			case 1:
-				SevenSegmentDisplayDecimalValue(g, 3331, 0); caz++;
+				SevenSegmentDisplayDecimalValue(g, 3331, 0); caz++; // -- Afisam pe grupul g de segmente [3][3][3][1]
 				break;
 			case 2:
-				SevenSegmentDisplayDecimalValue(g, 12, 1); caz++;
+				SevenSegmentDisplayDecimalValue(g, 12, 1); caz++; // -- Afisam pe grupul g de segmente [ ][ ][1.][2]
 				break;
 			case 3:
-				SevenSegmentDisplayDecimalValue(g, 1, 1); caz++;
+				SevenSegmentDisplayDecimalValue(g, 1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][ ][0.][1]
 				break;
 			case 4:
-				SevenSegmentDisplayDecimalValue(g, -12, 0); caz++;
+				SevenSegmentDisplayDecimalValue(g, -12, 0); caz++; // -- Afisam pe grupul g de segmente [ ][-][1][2]
 				break;
 			case 5:
-				SevenSegmentDisplayDecimalValue(g, -1, 1); caz++;
+				SevenSegmentDisplayDecimalValue(g, -1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
 				break;
 			case 6:
-				SevenSegmentDisplayDecimalValue(g, -12, 2); caz++;
+				SevenSegmentDisplayDecimalValue(g, -12, 2); caz++; // -- Afisam pe grupul g de segmente [-][0.][1][2]
 				break;
 			case 7:
-				SevenSegmentDisplayDecimalValue(g, -123, 2); caz++;
+				SevenSegmentDisplayDecimalValue(g, -123, 2); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
 				break;
 
 			default:
-				caz = 0;
+				caz = 0; // -- Daca trecem de ultimul caz, resetam ordinea si incepem de la cazul 0
 				break;
 		}
 	}
 }
 
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint){
-	if(SevenSegmentGroupIndex > driver.SevenSegmentGroup_elements_count){
+	if(SevenSegmentGroupIndex > driver.SevenSegmentGroup_elements_count){ // -- Daca grupul precizat nu exista, afisam codul de eraore si iesim din functie
 		; // TODO de inserat apel la functia de eroare
 	}
-	else if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){
+	else if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){ // -- Daca valoare pe care o vrem afisata este 0, fara virgula, afisam doar 0 pe primul segment din dreapta apoi restul goale
+
 		uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[0], DecimalValue};
 		I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
@@ -162,62 +166,63 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 		AfisareDigit[0] = 0x09, AfisareDigit[1] = 0xff;
 		I2c_SyncTransmit(driver.I2c_used_channel, &digit);
 	}
-	else {
+	else { // -- Aici prelucram si afisam valoarea dorita
 		int aux;
 		bool isNegative = false, isPositive = true;
 		uint8 tempBuf[2] = {0x09, 0x00};
 
-		if(DecimalValue < 0){
+		if(DecimalValue < 0){ // -- Aici verificam daca numarul este pozitiv sau negativ
 			isNegative = true;
 			isPositive = false;
 			DecimalValue *= -1;
 		}
 
 		for(int i = 0; i < driver.group[SevenSegmentGroupIndex].nr_elemente; i++){
-			if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0)
+			if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0) // -- Aici setam virgula daca numarul este cu virgula si se ajunge la pozitia segmentului unde ar trebui afisata
 				aux = DecimalValue % 10 + 128;
 			else
 				aux = DecimalValue % 10;
 
-			uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux};
-			if((DecimalValue == 0) && (PrecisionFloatPoint >= i)){
-				if(PrecisionFloatPoint > i)
+			uint8 AfisareDigit[2] = {driver.group[SevenSegmentGroupIndex].elemente[i], aux}; // -- Definim buffer ul de afisare la fiecare cifra
+
+			if((DecimalValue == 0) && (PrecisionFloatPoint >= i)){ // -- Aici verificam daca avem numarul de afisat zero dar inca nu am ajuns la virgula
+				if(PrecisionFloatPoint > i) // -- Daca nu ajungem la pozitia virgulei, scriem 0 fara virgula
 					AfisareDigit[1] = 0;
-				else if(PrecisionFloatPoint == i)
+				else if(PrecisionFloatPoint == i) // -- Daca ajungem la pozitia virgulei, scriem 0 cu virgula
 					AfisareDigit[1] = 128;
 			}
-			else if(DecimalValue == 0){
-				if(isNegative){
-					tempBuf[1] = ~(1<<(i));
+			else if(DecimalValue == 0){ // Daca ajungem la capatul numarului, verificam ce facem daca numarul este pozitiv sau negativ
+				if(isNegative){ // -- Daca este negativ setam ca segmentul unde vine "-" sa nu mai aiba decodificare, si setam ca valoare afisata sa fie 0000 0001 [informatii mai detaliate la afisarea segmentelor in datasheet]
+					tempBuf[1] = ~(1<<(i)); // -- Selectam ca pozitia unde vine "-" sa nu aiba decodificare [ex: daca vrem digit 2 sa aiba minus vom face 1<<(1), pentru a avea 0000 0010, iar apoi inversam prin operatorul "~" pentru a seta decodificare pe toate segmentele inafara de acel unde afisam "-"]
 					I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, tempBuf};
 					I2c_SyncTransmit(driver.I2c_used_channel, &decodificator);
 
-					AfisareDigit[1] = 1;
+					AfisareDigit[1] = 1; // -- Setam ca doar segmentul G sa fie aprins, ca sa avem afisat "-"
 					isNegative = false;
-				} else if(isPositive){
+				} else if(isPositive){ // -- Daca este pozitiv, setam decodificarea sa fie pe toate segmentele, asigurandu ne ca nu ramanem cu segmente fara decodificare, in caz ca anterior am afisat un numar negativ
 					tempBuf[1] = 0xff;
 					I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, tempBuf};
 					I2c_SyncTransmit(driver.I2c_used_channel, &decodificator);
 
-					AfisareDigit[1] = 15;
+					AfisareDigit[1] = 15; // -- Setam ca segmentul sa nu afiseze nimic [mai multe informatii la ce afiseaza in datasheet]
 				}
 				else
-					AfisareDigit[1] = 15;
+					AfisareDigit[1] = 15; // -- Setam ca segmentul sa nu afiseze nimic [mai multe informatii la ce afiseaza in datasheet]
 			}
 			else
-				DecimalValue /= 10;
+				DecimalValue /= 10; // -- Dupa ce terminam de setat ce afisam, divizam cu 10 ca sa ajungem la urmatoarea cifra afisata [ex: numar de afisat 123, divizam cu 10 ca sa ajungem la valoare 12]
 
 			I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, AfisareDigit};
-			I2c_SyncTransmit(driver.I2c_used_channel, &digit);
+			I2c_SyncTransmit(driver.I2c_used_channel, &digit);  // -- Trimitem la Driver valoarea pe care vrem sa o afisam ["-" sau o cifra, cu sau fara virgula]
 		}
 	}
 }
 
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
-	if(BrightnessPercent > 100)
+	if(BrightnessPercent > 100) // -- limitam ca procentul de luminozitate sa nu fie peste 100%
 		BrightnessPercent = 100;
 
-	LuminozitateGlobala[1] = (BrightnessPercent * 4) / 25;
+	LuminozitateGlobala[1] = (BrightnessPercent * 4) / 25; // -- transformam procentul intr o valoare din int. 0 - 16
 	I2c_SyncTransmit(driver.I2c_used_channel, &luminozitate);
 }
 
