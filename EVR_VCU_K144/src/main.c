@@ -14,6 +14,7 @@ extern "C" {
 #include "Mcu.h"
 #include "Port.h"
 #include "uart_datasend.h"
+#include "uart_error_handling.h"
 #include "CDD_Uart.h"
 
 /*==================================================================================================

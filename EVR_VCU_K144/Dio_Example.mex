@@ -54,6 +54,16 @@
                         <pin_feature name="direction" value="INPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="LPUART1" signal="lpuart1_tx" pin_num="80" pin_signal="PTC7">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="LPUART1" signal="lpuart1_rx" pin_num="81" pin_signal="PTC6">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -518,7 +528,7 @@
                                        <setting name="PortPinDirectionChangeable" value="true"/>
                                        <setting name="PortPinModeChangeable" value="true"/>
                                        <setting name="PortPinId" value="1"/>
-                                       <setting name="PortPinPcr" value="102"/>
+                                       <setting name="PortPinPcr" value="70"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
@@ -530,7 +540,7 @@
                                        <setting name="PortPinDirectionChangeable" value="true"/>
                                        <setting name="PortPinModeChangeable" value="true"/>
                                        <setting name="PortPinId" value="2"/>
-                                       <setting name="PortPinPcr" value="103"/>
+                                       <setting name="PortPinPcr" value="71"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
@@ -1057,7 +1067,7 @@
                                     </struct>
                                     <struct name="1">
                                        <setting name="Name" value="uart_clk"/>
-                                       <setting name="McuClockFrequencySelect" value="LPUART2_CLK"/>
+                                       <setting name="McuClockFrequencySelect" value="LPUART1_CLK"/>
                                     </struct>
                                  </array>
                               </struct>
@@ -1210,7 +1220,7 @@
                                  <array name="UartChannelEcucPartitionRef"/>
                                  <struct name="DetailModuleConfiguration">
                                     <setting name="Name" value="DetailModuleConfiguration"/>
-                                    <setting name="UartHwChannel" value="LPUART_2"/>
+                                    <setting name="UartHwChannel" value="LPUART_1"/>
                                     <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_9600"/>
                                     <setting name="CustomBaudrateMantissa" value="1"/>
                                     <setting name="CustomBaudrateDivisor" value="4"/>
@@ -1310,10 +1320,10 @@
                               <array name="PlatformIsrConfig">
                                  <struct name="0">
                                     <setting name="Name" value="uart"/>
-                                    <setting name="IsrName" value="LPUART2_RxTx_IRQn"/>
+                                    <setting name="IsrName" value="LPUART1_RxTx_IRQn"/>
                                     <setting name="IsrEnabled" value="true"/>
                                     <setting name="IsrPriority" value="0"/>
-                                    <setting name="IsrHandler" value="LPUART_UART_IP_2_IRQHandler"/>
+                                    <setting name="IsrHandler" value="LPUART_UART_IP_1_IRQHandler"/>
                                  </struct>
                                  <struct name="1">
                                     <setting name="Name" value="intrerupere_buton"/>
@@ -1353,9 +1363,7 @@
                                  <array name="IcuSignalEdgeDetection">
                                     <struct name="0">
                                        <setting name="Name" value="IcuSignalEdgeDetection"/>
-                                       <array name="IcuSignalNotification">
-                                          <setting name="0" value="intrerupere_buton"/>
-                                       </array>
+                                       <array name="IcuSignalNotification"/>
                                     </struct>
                                  </array>
                                  <array name="IcuSignalMeasurement"/>

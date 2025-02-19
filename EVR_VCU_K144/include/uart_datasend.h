@@ -42,13 +42,6 @@ extern "C"{
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
-typedef struct{
-	uint8 seven_seg_error;
-	uint8 accelerator_pedals_error;
-	uint8 temperature_error;
-	uint8 bms_error;
-	uint8 processor_error;
-}Errors;
 
 
 /*==================================================================================================
