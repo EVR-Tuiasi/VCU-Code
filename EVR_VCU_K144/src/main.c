@@ -125,11 +125,9 @@ int main(void)
     Icu_EnableNotification(0);
     SevenSegmentInit();
 
-    sint16 i = -999;
-
     while(1){
 
-    	SevSegGrTest(3);
+    	SevSegGrTest(0);
 
     }
 }
