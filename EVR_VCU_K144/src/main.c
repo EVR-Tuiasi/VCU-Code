@@ -14,6 +14,7 @@ extern "C" {
 #include "Mcu.h"
 #include "Port.h"
 #include "pedal.h"
+#include "Adc.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
