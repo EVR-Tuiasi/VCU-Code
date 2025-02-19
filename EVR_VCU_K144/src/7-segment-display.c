@@ -100,13 +100,6 @@ void SevenSegmentInit(void){
 	I2c_SyncTransmit(driver.I2c_used_channel, &normalmode);
 }
 
-bool SevSegGroupVerification(uint8 SevenSegmentGroupIndex){
-	if(SevenSegmentGroupIndex < driver.SevenSegmentGroup_elements_count)
-		return true;
-	else
-		return false;
-}
-
 void SevSegGrTest(uint8 g){
 	uint8 caz = 0;
 
@@ -151,7 +144,7 @@ void SevSegGrTest(uint8 g){
 }
 
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint){
-	if(!SevSegGroupVerification(SevenSegmentGroupIndex)){
+	if(SevenSegmentGroupIndex > driver.SevenSegmentGroup_elements_count){
 		; // TODO de inserat apel la functia de eroare
 	}
 	else if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){
