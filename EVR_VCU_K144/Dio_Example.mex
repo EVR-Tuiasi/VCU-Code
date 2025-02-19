@@ -47,7 +47,9 @@
          <generated_project_files>
             <file path="generate/include/Clock_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Clock_Ip_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/src/Clock_Ip_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/Clock_Ip_VS_0_PBcfg.c" update_enabled="true"/>
          </generated_project_files>
          <clocks_profile>
             <processor_version>0.0.0</processor_version>
