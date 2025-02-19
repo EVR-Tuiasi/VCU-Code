@@ -37,7 +37,7 @@ extern "C"{
 
 typedef struct {
 	Adc_GroupType AccelerationAdcChannel1, AccelerationAdcChannel2, BrakeAdcChannel;
-	Adc_ValueGroupType AccelerationValue1, AccelerationValue2, BreakValue, MaxError;
+	Adc_ValueGroupType AccelerationValue1, AccelerationValue2, BrakeValue, MaxError;
 
 }Pedals;
 
