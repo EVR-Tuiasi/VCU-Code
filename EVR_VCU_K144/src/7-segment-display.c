@@ -106,8 +106,10 @@ void SevenSegmentInit(void){
 void SevSegGrTest(uint8 GroupIndex){
 	uint8 caz = 0; // -- Aceasta variabila este folosita pentru a face testele, fiind verificata intr un switch
 
+
 	while(1){
 		volatile int delay = 8000000;
+		uint8 luminozitateTemp = 0;
 		if(caz <= 7){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
 			while(delay != 0) // -- Acest While face un delay de o secunda [aproimare generoasa]
 				delay--;
@@ -130,14 +132,26 @@ void SevSegGrTest(uint8 GroupIndex){
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 0); caz++; // -- Afisam pe grupul g de segmente [ ][-][1][2]
 				break;
 			case 5:
-				SevenSegmentDisplayDecimalValue(GroupIndex, -1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
+				SevenSegmentDisplayDecimalValue(GroupIndex, -123, 2); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
 				break;
 			case 6:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 2); caz++; // -- Afisam pe grupul g de segmente [-][0.][1][2]
 				break;
 			case 7:
-				SevenSegmentDisplayDecimalValue(GroupIndex, -123, 2); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
+				SevenSegmentDisplayDecimalValue(GroupIndex, -1, 1); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
 				break;
+			case 8:
+				while(1){
+					volatile int delaytemp = 100000;
+					while(delaytemp != 0)
+						delaytemp--;
+
+					SevenSegmentSetGlobalBrightness(luminozitateTemp);
+					if(luminozitateTemp == 100)
+						break;
+					luminozitateTemp++;
+				}
+
 
 			default:
 				caz = 0; // -- Daca trecem de ultimul caz, resetam ordinea si incepem de la cazul 0
@@ -222,7 +236,7 @@ void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
 	if(BrightnessPercent > 100) // -- limitam ca procentul de luminozitate sa nu fie peste 100%
 		BrightnessPercent = 100;
 
-	LuminozitateGlobala[1] = (uint8)(((uint16)BrightnessPercent * (uint16)4) / (uint16)25); // -- transformam procentul intr o valoare din int. 0 - 16
+	LuminozitateGlobala[1] = (uint8)(((uint16)BrightnessPercent * (uint16)3) / (uint16)20); // -- transformam procentul intr o valoare din int. 0 - 16
 	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate);
 }
 
