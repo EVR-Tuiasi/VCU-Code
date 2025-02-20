@@ -128,6 +128,7 @@ int main(void)
     while(1){
 
     	SevSegGrTest(0);
+    	SevSegGrTest(0);
 
     }
 }
