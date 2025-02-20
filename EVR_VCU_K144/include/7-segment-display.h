@@ -88,7 +88,7 @@ typedef struct {
 void SevenSegmentInit(void);
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint);
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent);
-void SevSegGrTest(uint8 g);
+void SevSegGrTest(uint8 GroupIndex);
 
 #ifdef __cplusplus
 }
