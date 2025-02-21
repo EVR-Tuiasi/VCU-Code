@@ -110,7 +110,7 @@ void SevSegGrTest(uint8 GroupIndex){
 	while(1){
 		volatile int delay = 8000000;
 		uint8 luminozitateTemp = 0;
-		if(caz <= 7){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
+		if(caz <= 8){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
 			while(delay != 0) // -- Acest While face un delay de o secunda [aproimare generoasa]
 				delay--;
 		}
@@ -132,13 +132,13 @@ void SevSegGrTest(uint8 GroupIndex){
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 0); caz++; // -- Afisam pe grupul g de segmente [ ][-][1][2]
 				break;
 			case 5:
-				SevenSegmentDisplayDecimalValue(GroupIndex, -123, 2); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
+				SevenSegmentDisplayDecimalValue(GroupIndex, -1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
 				break;
 			case 6:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 2); caz++; // -- Afisam pe grupul g de segmente [-][0.][1][2]
 				break;
 			case 7:
-				SevenSegmentDisplayDecimalValue(GroupIndex, -1, 1); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
+				SevenSegmentDisplayDecimalValue(GroupIndex, -123, 2); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
 				break;
 			case 8:
 				while(1){
