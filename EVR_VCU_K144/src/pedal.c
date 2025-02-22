@@ -84,12 +84,12 @@ uint8 PedalsGetAcceleration(void)
 	volatile	Adc_StatusType StatusAdc = Adc_GetGroupStatus(Pedalsinstance.AccelerationAdcChannel1);
 		if (StatusAdc== ADC_STREAM_COMPLETED)
 		{ break; }
-	}
 
-	volatile uint8_t adcValue = Adc_ReadGroup(Pedalsinstance.AccelerationAdcChannel1,&Pedalsinstance.AccelerationValue1);  // citeste valoarea ADC
+       //Std_ReturnType in loc de unit8????
+	volatile unit8 adcValue = Adc_ReadGroup(Pedalsinstance.AccelerationAdcChannel1,&Pedalsinstance.AccelerationValue1);  // citeste valoarea ADC
 	volatile float percentage = (adcValue * 100.0f) / 255.0f;  // convert in procentaj
 	Pedalsinstance.AccelerationValue1 = percentage;
-
+	}
 	return Pedalsinstance.AccelerationValue1;
 
 }
@@ -109,7 +109,7 @@ return  Pedalsinstance.BrakeAdcChannel;
 
 void PedalsTest(void){
 
-
+;
 }
 
 
