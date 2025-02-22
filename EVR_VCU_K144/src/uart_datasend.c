@@ -11,7 +11,10 @@ extern "C" {
 
 #include "uart_datasend.h"
 #include "CDD_Uart.h"
+#include "uart_error_handling.h"
 
+#define ERROR 9
+#define MODULE_START 10
 #define TEMP_SENSOR 10
 #define BMS_VOLTAGE 11
 #define BMS_CURRENT 12
@@ -19,6 +22,7 @@ extern "C" {
 #define BRAKE_PEDAL 14
 #define SEVEN_SEGMENT 15
 #define PROCESSOR 16
+#define MODULE_END 16
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -159,6 +163,18 @@ void USBSendBrakePedal(uint16 Value, uint8 Precision){
 	Uart_SyncSend(UART_Channel, buffer, 4, 10000000);
 }
 
+void USBSendErrors(void)
+{
+	for(int i = MODULE_START; i <= MODULE_END; i++)
+	{
+		uint8 aux = ErrorsGet(i);
+		uint8 buffer[3];
+		buffer[0] = ERROR;
+		buffer[1] = i;
+		buffer[2] = aux;
+		Uart_SyncSend(UART_Channel, buffer, 3, 10000000);
+	}
+}
 
 
 

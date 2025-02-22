@@ -88,9 +88,8 @@ void USBSendBMSCellVoltage(uint16 CellIndex, uint16 Value, uint8 Precision);
 void USBSendBMSCurrent(uint16 Value, uint8 Precision);
 void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision);
 void USBSendBrakePedal(uint16 Value, uint8 Precision);
-void ErrorsSet(uint8 Module, uint8 Error);
-uint8 ErrorsGet(uint8 Module);
-void ErrorsClear(uint8 Module, uint8 Error);
+void USBSendErrors(void);
+
 
 #ifdef __cplusplus
 }

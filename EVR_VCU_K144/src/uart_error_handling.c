@@ -5,13 +5,8 @@ extern "C" {
 #include "uart_error_handling.h"
 #include "CDD_Uart.h"
 
-#define TEMP_SENSOR 10
-#define BMS_VOLTAGE 11
-#define BMS_CURRENT 12
-#define ACCELERATOR_PEDALS 13
-#define BRAKE_PEDAL 14
-#define SEVEN_SEGMENT 15
-#define PROCESSOR 16
+
+
 
 Errors errors_instance;
 
@@ -83,4 +78,6 @@ void ErrorsClear(uint8 Module, uint8 Error)
 		default:
 			;
 		}
+
+
 }

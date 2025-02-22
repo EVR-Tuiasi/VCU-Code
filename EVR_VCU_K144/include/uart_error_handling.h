@@ -7,6 +7,16 @@ extern "C"{
 
 #include "Mcu.h"
 
+
+#define ERROR 9
+#define TEMP_SENSOR 10
+#define BMS_VOLTAGE 11
+#define BMS_CURRENT 12
+#define ACCELERATOR_PEDALS 13
+#define BRAKE_PEDAL 14
+#define SEVEN_SEGMENT 15
+#define PROCESSOR 16
+
 #define SEVEN_SEG_NO_RESPONSE 0
 #define SEVEN_SEG_NUMBER_TOO_LARGE 1
 #define ACCELERATOR_PEDALS_DIFFERENT_OUTPUT 0

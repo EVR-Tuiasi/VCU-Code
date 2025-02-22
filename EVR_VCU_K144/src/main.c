@@ -88,12 +88,17 @@ int main(void)
     Uart_Init(NULL_PTR);
     USBInit(0);
 
+    ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
+    ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NO_RESPONSE);
+    ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NUMBER_TOO_LARGE);
+    ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
+    ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
 
     while(1){
     	volatile int i = 100000;
     	while(i)
     		i--;
-    	USBSendBrakePedal(6532, 2);
+    	USBSendErrors();
     }
 }
 
