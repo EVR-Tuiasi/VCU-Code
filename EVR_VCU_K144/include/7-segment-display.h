@@ -43,6 +43,14 @@ typedef struct {
 	int I2c_Slave_Address;
 	SevenSegmentGroup *group;
 	uint8 SevenSegmentGroup_elements_count;
+
+	uint8 ValoriDigits[8];
+	bool DecodeDigits[8];
+	uint8 ValoareBrightness;
+	bool Schimbare_ValoriDigits[8];
+	bool Schimbare_DecodeDigits[8];
+	bool Schimbare_ValoareBrightness;
+	bool Bus_state;
 } SevenSegmentDriver;
 
 
@@ -89,6 +97,7 @@ void SevenSegmentInit(void);
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint);
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent);
 void SevSegGrTest(uint8 GroupIndex);
+void SevSegInteruptFunc(void);
 
 #ifdef __cplusplus
 }

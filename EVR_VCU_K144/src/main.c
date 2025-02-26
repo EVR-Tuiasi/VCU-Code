@@ -81,18 +81,18 @@ void IntrerupereBTN(void){
 	ok = 1;
 	Dio_WriteChannel(96, 1);
 	Dio_WriteChannel(111, 1);
-
 }
 
 void I2c_Callback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(96, 0);
 	Dio_WriteChannel(111, 1);
+
+	SevSegInteruptFunc();
 }
 
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 0);
 	Dio_WriteChannel(96, 1);
-	ok = 1;
 }
 
 int main(void)
@@ -128,7 +128,9 @@ int main(void)
     while(1){
 
     	SevSegGrTest(0);
-    	SevSegGrTest(0);
+    	while(1){
+    		;
+    	}
 
     }
 }
