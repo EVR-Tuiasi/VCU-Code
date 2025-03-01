@@ -135,13 +135,13 @@ int main(void)
 
     	//SevSegGrTest(0);
     	volatile int i = 9999;
-    	while(i != -999){
-    		SevenSegmentDisplayDecimalValue(0, i, 2);
+    	while(i != -9999){
+    		SevenSegmentDisplayDecimalValue(0, i, 0);
     		i--;
-    		//volatile int p = 1000;
-    		//while(p != 0){
-    		//	p--;
-    		//}
+    		volatile int p = 100;
+    		while(p != 0){
+    			p--;
+    		}
     	}
 
     }

@@ -243,6 +243,8 @@ void SevSegGrTest(uint8 GroupIndex){
 
 void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint){
 	uint8 Index = 0;
+	uint16 InitValue = 0;
+	bool isNegative = false, isPositive = true;
 	if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 		I2c_DeInit();
 		Port_SetPinMode(4, PORT_MUX_AS_GPIO); // port este mux gpio
@@ -278,12 +280,12 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 	}
 	else { // -- Aici afisam valoarea daca aceasta este diferita de 0 [pozitiva/negativa]
 		int aux;
-		bool isNegative = false, isPositive = true;
 
 		if(DecimalValue < 0){ // -- Aici verificam daca numarul este pozitiv sau negativ
 			isNegative = true;
 			isPositive = false;
 			DecimalValue *= -1;
+			InitValue = DecimalValue;
 		}
 
 		for(int i = 0; i < SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].nr_elemente; i++){
@@ -325,6 +327,10 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 				DecimalValue /= 10; // -- Dupa ce terminam de setat ce afisam, divizam cu 10 ca sa ajungem la urmatoarea cifra afisata [ex: numar de afisat 123, divizam cu 10 ca sa ajungem la valoare 12]
 			}
 		}
+	}
+	if((isPositive) || ((isNegative) && (InitValue > 1000))){ // -- Daca este pozitiv si nu ocupam toate segmentele cu un numar, setam decodificarea sa fie pe toate segmentele, asigurandu ne ca nu ramanem cu segmente fara decodificare, in caz ca anterior am afisat un numar negativ
+		SevenSegmentDriverInstance.DecodeDigit = 0xff;
+		SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
 	}
 	SevenSegmentDataTransmit();
 }
