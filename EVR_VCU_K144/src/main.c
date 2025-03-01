@@ -12,6 +12,7 @@ extern "C" {
 
 #include "CDD_I2c.h"
 #include "Dio.h"
+#include "Gpt.h"
 #include "Icu.h"
 #include "Mcu.h"
 #include "Platform.h"
@@ -93,6 +94,8 @@ void I2c_Callback(uint8 Event, uint8 Channel){
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 0);
 	Dio_WriteChannel(96, 1);
+
+	SevSegInteruptFunc();
 }
 
 int main(void)
@@ -121,15 +124,24 @@ int main(void)
     Platform_Init(NULL_PTR);
     I2c_Init(NULL_PTR);
     Icu_Init(NULL_PTR);
+    Gpt_Init(NULL_PTR);
+
+    Gpt_EnableNotification(0);
 
     Icu_EnableNotification(0);
     SevenSegmentInit();
 
     while(1){
 
-    	SevSegGrTest(0);
-    	while(1){
-    		;
+    	//SevSegGrTest(0);
+    	volatile int i = 9999;
+    	while(i != -999){
+    		SevenSegmentDisplayDecimalValue(0, i, 2);
+    		i--;
+    		//volatile int p = 1000;
+    		//while(p != 0){
+    		//	p--;
+    		//}
     	}
 
     }

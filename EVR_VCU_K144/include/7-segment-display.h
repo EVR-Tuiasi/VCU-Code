@@ -33,6 +33,13 @@ extern "C"{
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
 
+typedef enum {
+	Bus_IsUnInit,
+	Bus_Idle,
+	Bus_Busy,
+	Bus_Broken
+} Bus_State;
+
 typedef struct {
 	uint8 *elemente;
 	uint8 nr_elemente;
@@ -45,12 +52,12 @@ typedef struct {
 	uint8 SevenSegmentGroup_elements_count;
 
 	uint8 ValoriDigits[8];
-	bool DecodeDigits[8];
+	uint8 DecodeDigit;
 	uint8 ValoareBrightness;
 	bool Schimbare_ValoriDigits[8];
-	bool Schimbare_DecodeDigits[8];
+	bool Schimbare_DecodeDigit;
 	bool Schimbare_ValoareBrightness;
-	bool Bus_state;
+	Bus_State Bus_state;
 } SevenSegmentDriver;
 
 
