@@ -128,8 +128,8 @@ int main(void)
     Icu_EnableNotification(0);
 
     USBInit(0);
-    //SevenSegmentInit();
-    //SevSegGrTest(0);
+   /*SevenSegmentInit();
+   SevSegGrTest(0);*/
     ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
     ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NO_RESPONSE);
     ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NUMBER_TOO_LARGE);
@@ -137,10 +137,14 @@ int main(void)
     ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
 
     while(1){
-    	volatile int i = 100000;
+    	USBSendBrakePedal(1562, 2);
+    	volatile int k = 1000000;
+    	while(k)
+    		k--;
+    	USBSendAcceleratorPedals(584, 584, 1);
+    	volatile int i = 1000000;
     	while(i)
     		i--;
-    	USBSendErrors();
     }
 }
 // test

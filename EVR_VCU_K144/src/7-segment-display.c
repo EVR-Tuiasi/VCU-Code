@@ -104,7 +104,7 @@ void SevenSegmentInit(void){
 }
 
 void SevSegGrTest(uint8 GroupIndex){
-	uint8 caz = 0; // -- Aceasta variabila este folosita pentru a face testele, fiind verificata intr un switch
+	uint8 caz = 0; // -- Aceasta variabila este folosita pentru a face testele, fiind verificata intr un switch*/
 
 
 	while(1){
