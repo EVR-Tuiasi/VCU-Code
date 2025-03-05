@@ -127,22 +127,17 @@ int main(void)
     Gpt_Init(NULL_PTR);
 
     Gpt_EnableNotification(0);
-
     Icu_EnableNotification(0);
-    SevenSegmentInit();
 
+
+    SevenSegmentInit();
     while(1){
 
-    	//SevSegGrTest(0);
-    	volatile int i = 9999;
-    	while(i != -9999){
-    		SevenSegmentDisplayDecimalValue(0, i, 0);
-    		i--;
-    		volatile int p = 100;
-    		while(p != 0){
-    			p--;
-    		}
-    	}
+    	SevenSegmentDisplayDecimalValue(0, -123, 2);
+
+    	SevenSegmentSetGlobalBrightness(75);
+
+    	SevSegGrTest(0);
 
     }
 }

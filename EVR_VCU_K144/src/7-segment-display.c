@@ -58,6 +58,9 @@ I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitD
 I2c_RequestType digitdecod = {0, false, false, false, false, 2, I2C_SEND_DATA, DecodifData};
 I2c_RequestType luminozitate = {0, false, false, false, false, 2, I2C_SEND_DATA, LuminData};
 
+volatile bool ShouldRun = true;
+volatile bool IsSendingData;
+
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
 ==================================================================================================*/
@@ -81,6 +84,7 @@ void Functie_GPT(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(96, 1);
 	Dio_WriteChannel(111, 1);
 
+	ShouldRun = false;
 	SevenSegmentDriverInstance.Bus_state = Bus_Broken;
 }
 
@@ -133,9 +137,13 @@ void SevSegInteruptFunc(void){
 		SevenSegmentDriverInstance.Bus_state = Bus_Idle;
 		SevenSegmentDataTransmit();
 	}
+	else {
+		IsSendingData = false;
+	}
 }
 
 void SevenSegmentInit(void){
+
 	// -- Initializare Buffere din structura SevenSegmentDriver
 	for(int i = 0; i < 8; i++){
 		SevenSegmentDriverInstance.ValoriDigits[i] = 0x0f;
@@ -147,40 +155,98 @@ void SevenSegmentInit(void){
 	SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
 	SevenSegmentDriverInstance.Schimbare_DecodeDigit = false;
 	SevenSegmentDriverInstance.Schimbare_ValoareBrightness = false;
+	ShouldRun = true;
 
 	uint8 SevSegInitBuf[2] = {0x00, 0x00}; // -- Buffer-ul din functia "SevenSegmentInit();"
 
 	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x00; // -- Seteaza modul Shutdown cu Reset Feature Register
 	I2c_RequestType shutdown = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &shutdown);
+	IsSendingData = true;
+	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &shutdown);
+
+	while(IsSendingData){
+		if(!ShouldRun){
+			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+			return;
+		}
+	}
 
 	SevSegInitBuf[0] = 0x0a, SevSegInitBuf[1] = SevenSegmentDriverInstance.ValoareBrightness;
 	I2c_RequestType luminozitate = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate); // -- Sets Luminozitatea Globala la 7 Segment Display-uri
+	IsSendingData = true;
+	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate); // -- Sets Luminozitatea Globala la 7 Segment Display-uri
+
+	while(IsSendingData){
+		if(!ShouldRun){
+			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+			return;
+		}
+	}
 
 	SevSegInitBuf[0] = 0x0e, SevSegInitBuf[1] = 0x00; // -- Schimba Feature Register pentru modul de decodificare al 7 Segment Display
 	I2c_RequestType feature = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &feature);
+	IsSendingData = true;
+	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &feature);
+
+	while(IsSendingData){
+		if(!ShouldRun){
+			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+			return;
+		}
+	}
 
 	SevSegInitBuf[0] = 0x01, SevSegInitBuf[1] = 0x0f;
 	I2c_RequestType afisarenimic = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 
 	for(int i = 0; i <= 7; i++){
-		I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &afisarenimic); // -- Seteaza ca toate Segmentele de pe display sa fie stinse
+		IsSendingData = true;
+		I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &afisarenimic); // -- Seteaza ca toate Segmentele de pe display sa fie stinse
+
+		while(IsSendingData){
+			if(!ShouldRun){
+				SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+				return;
+			}
+		}
+
 		SevSegInitBuf[0]++;
 	}
 
 	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x03; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
 	I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &setpins);
+	IsSendingData = true;
+	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &setpins);
+
+	while(IsSendingData){
+		if(!ShouldRun){
+			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+			return;
+		}
+	}
 
 	SevSegInitBuf[0] = 0x09, SevSegInitBuf[1] = 0xff; // -- Seteaza pana la ce pin folosim decodificare pe digits [ex: 0x03 - 00000011 - Decodifica pe dig0 si dig1, ne luam dupa pozitia bitilor de la LSB la MSB]
 	I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &decodificator);
+	IsSendingData = true;
+	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &decodificator);
+
+	while(IsSendingData){
+		if(!ShouldRun){
+			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+			return;
+		}
+	}
 
 	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x81; // -- Seteaza Normal Mode fara modificari la Feature Register
 	I2c_RequestType normalmode = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &normalmode);
+	IsSendingData = true;
+	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &normalmode);
+
+	while(IsSendingData){
+		if(!ShouldRun){
+			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+			return;
+		}
+	}
 
 	SevenSegmentDriverInstance.Bus_state = Bus_Idle;
 }
@@ -189,7 +255,7 @@ void SevSegGrTest(uint8 GroupIndex){
 	uint8 caz = 0; // -- Aceasta variabila este folosita pentru a face testele, fiind verificata intr un switch
 
 	while(1){
-		volatile int delay = 8000000;
+		volatile int delay = 2000000;
 		uint8 luminozitateTemp = 0;
 		if(caz <= 8){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
 			while(delay != 0) // -- Acest While face un delay de o secunda [aproimare generoasa]
@@ -245,6 +311,10 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 	uint8 Index = 0;
 	uint16 InitValue = 0;
 	bool isNegative = false, isPositive = true;
+
+	if(SevenSegmentDriverInstance.Bus_state == Bus_IsUnInit)
+		SevenSegmentInit();
+
 	if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 		I2c_DeInit();
 		Port_SetPinMode(4, PORT_MUX_AS_GPIO); // port este mux gpio
