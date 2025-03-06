@@ -10,6 +10,7 @@ extern "C" {
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
 
+#include "7-segment-display.h"
 #include "CDD_I2c.h"
 #include "Dio.h"
 #include "Gpt.h"
@@ -17,7 +18,6 @@ extern "C" {
 #include "Mcu.h"
 #include "Platform.h"
 #include "Port.h"
-#include "7-segment-display.h"
 
 
 
@@ -50,20 +50,6 @@ extern "C" {
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
 
-uint8 DigitNumar1[2] = {0x01, 0x0f};
-uint8 DigitNumar2[2] = {0x02, 0x0f};
-uint8 DigitNumar3[2] = {0x03, 0x0f};
-uint8 DigitNumar4[2] = {0x04, 0x0f};// numarul care va fi afisat pe digit
-uint8 test_data[2] = {0x0f, 1}; // comanda test optic
-
-I2c_RequestType test = {0, false, false, false, false, 2, I2C_SEND_DATA, test_data};
-I2c_RequestType numarpedigit4 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar4};
-I2c_RequestType numarpedigit3 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar3};
-I2c_RequestType numarpedigit2 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar2};
-I2c_RequestType numarpedigit1 = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitNumar1};
-
-volatile uint8 ok = 0;
-
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -79,7 +65,6 @@ volatile uint8 ok = 0;
 ==================================================================================================*/
 
 void IntrerupereBTN(void){
-	ok = 1;
 	Dio_WriteChannel(96, 1);
 	Dio_WriteChannel(111, 1);
 }
@@ -120,24 +105,29 @@ int main(void)
     Mcu_SetMode(McuModeSettingConf_0);
 
     /* Initialize all pins using the Port driver */
-    Port_Init(NULL_PTR);
-    Platform_Init(NULL_PTR);
+    Gpt_Init(NULL_PTR);
     I2c_Init(NULL_PTR);
     Icu_Init(NULL_PTR);
-    Gpt_Init(NULL_PTR);
+    Port_Init(NULL_PTR);
+    Platform_Init(NULL_PTR);
 
     Gpt_EnableNotification(0);
     Icu_EnableNotification(0);
 
-
     SevenSegmentInit();
+
     while(1){
+    	volatile int i = 9999;
 
-    	SevenSegmentDisplayDecimalValue(0, -123, 2);
+    	//SevSegGrTest(0);
 
-    	SevenSegmentSetGlobalBrightness(75);
+		//SevenSegmentDisplayDecimalValue(0, 9999, 0);
+    	while(1){
+    		SevenSegmentDisplayDecimalValue(0, 9999, 0);
+    		UpdateState();
+    	}
 
-    	SevSegGrTest(0);
+
 
     }
 }

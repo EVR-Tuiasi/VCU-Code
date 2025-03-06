@@ -34,7 +34,8 @@ extern "C"{
 ==================================================================================================*/
 
 typedef enum {
-	Bus_IsUnInit,
+	Bus_UnInit_Idle,
+	Bus_UnInit_Busy,
 	Bus_Idle,
 	Bus_Busy,
 	Bus_Broken
@@ -105,6 +106,7 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent);
 void SevSegGrTest(uint8 GroupIndex);
 void SevSegInteruptFunc(void);
+void UpdateState(void);
 
 #ifdef __cplusplus
 }

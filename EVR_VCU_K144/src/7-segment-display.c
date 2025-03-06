@@ -48,7 +48,7 @@ SevenSegmentGroup grupuri[3] = {
 		{ref1, 3},
 		{ref2, 3}
 };
-SevenSegmentDriver SevenSegmentDriverInstance = {0, 0, grupuri, 3, {0}, 0, 0, {0}, 0, 0, Bus_IsUnInit}; // -- {Canal I2C folosit, Adresa Slave, Structura de grupuri de segmente, numarul de grupuri de segmente}
+volatile SevenSegmentDriver SevenSegmentDriverInstance = {0, 0, grupuri, 3, {0}, 0, 0, {0}, 0, 0, Bus_UnInit_Idle}; // -- {Canal I2C folosit, Adresa Slave, Structura de grupuri de segmente, numarul de grupuri de segmente}
 
 uint8 DigitData[2] = {0x00, 0x00};
 uint8 DecodifData[2] = {0x09, 0xff};
@@ -57,9 +57,6 @@ uint8 LuminData[2] = {0x0a, 0x00};
 I2c_RequestType digit = {0, false, false, false, false, 2, I2C_SEND_DATA, DigitData};
 I2c_RequestType digitdecod = {0, false, false, false, false, 2, I2C_SEND_DATA, DecodifData};
 I2c_RequestType luminozitate = {0, false, false, false, false, 2, I2C_SEND_DATA, LuminData};
-
-volatile bool ShouldRun = true;
-volatile bool IsSendingData;
 
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
@@ -75,55 +72,102 @@ volatile bool IsSendingData;
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
 
+static void SevenSegmentDataTransmit(void);
 
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
 
-void Functie_GPT(uint8 Event, uint8 Channel){
+void Functie_GPT(void){
 	Dio_WriteChannel(96, 1);
 	Dio_WriteChannel(111, 1);
 
-	ShouldRun = false;
 	SevenSegmentDriverInstance.Bus_state = Bus_Broken;
 }
 
 static void SevenSegmentDataTransmit(void){
 	static int i = 0;
-	if(SevenSegmentDriverInstance.Bus_state == Bus_Idle){
-		while(i < 8){
-			if(SevenSegmentDriverInstance.Schimbare_ValoriDigits[i]){
-				DigitData[0] = i + 1, DigitData[1] = SevenSegmentDriverInstance.ValoriDigits[i];
-				SevenSegmentDriverInstance.Schimbare_ValoriDigits[i] = false;
-				SevenSegmentDriverInstance.Bus_state = Bus_Busy;
-				i++;
+	while(i < 8){
+		if(SevenSegmentDriverInstance.Schimbare_ValoriDigits[i]){
+			DigitData[0] = i + 1, DigitData[1] = SevenSegmentDriverInstance.ValoriDigits[i];
 
-				Gpt_StartTimer(0, 20000);
-				I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &digit);
-				return;
-			}
+			SevenSegmentDriverInstance.Schimbare_ValoriDigits[i] = false;
+
 			i++;
-		}
-		if(i == 8)
-			i = 0;
-		if(SevenSegmentDriverInstance.Schimbare_DecodeDigit){
-			DecodifData[1] = SevenSegmentDriverInstance.DecodeDigit;
-			SevenSegmentDriverInstance.Schimbare_DecodeDigit = false;
-			SevenSegmentDriverInstance.Bus_state = Bus_Busy;
 
 			Gpt_StartTimer(0, 20000);
-			I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &digitdecod);
-			return;
-		}
-		if(SevenSegmentDriverInstance.Schimbare_ValoareBrightness){
-			LuminData[1] = SevenSegmentDriverInstance.ValoareBrightness;
-			SevenSegmentDriverInstance.Schimbare_ValoareBrightness = false;
-			SevenSegmentDriverInstance.Bus_state = Bus_Busy;
 
-			Gpt_StartTimer(0, 20000);
-			I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate);
+			I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &digit);
 			return;
 		}
+		i++;
+	}
+
+	if(i == 8)
+		i = 0;
+
+	if(SevenSegmentDriverInstance.Schimbare_DecodeDigit){
+		DecodifData[1] = SevenSegmentDriverInstance.DecodeDigit;
+
+		SevenSegmentDriverInstance.Schimbare_DecodeDigit = false;
+
+		Gpt_StartTimer(0, 20000);
+
+		I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &digitdecod);
+		return;
+	}
+	if(SevenSegmentDriverInstance.Schimbare_ValoareBrightness){
+		LuminData[1] = SevenSegmentDriverInstance.ValoareBrightness;
+
+		SevenSegmentDriverInstance.Schimbare_ValoareBrightness = false;
+
+		Gpt_StartTimer(0, 20000);
+
+		I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate);
+		return;
+	}
+}
+
+void UpdateState(void){
+	switch(SevenSegmentDriverInstance.Bus_state){
+		case Bus_UnInit_Idle:
+			SevenSegmentInit();
+			break;
+
+		case Bus_UnInit_Busy:
+			break;
+
+		case Bus_Idle:
+			SevenSegmentDriverInstance.Bus_state = Bus_Busy;
+			SevenSegmentDataTransmit();
+			break;
+
+		case Bus_Busy:
+			break;
+
+		case Bus_Broken:
+			I2c_DeInit();
+			Port_SetPinMode(4, PORT_MUX_AS_GPIO); // port este mux gpio
+
+			volatile int i = 0;
+			while(i != 11){
+				Dio_WriteChannel(3, 0);
+				Dio_WriteChannel(3, 0);
+				Dio_WriteChannel(3, 0);
+				Dio_WriteChannel(3, 0);
+				Dio_WriteChannel(3, 1);
+
+				i++;
+			}
+			Port_SetPinMode(4, PORT_MUX_ALT3); // I2c este mux alt 3
+
+			I2c_Init(NULL_PTR);
+			SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Idle;
+
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -132,14 +176,25 @@ static void SevenSegmentDataTransmit(void){
 ==================================================================================================*/
 
 void SevSegInteruptFunc(void){
-	if(SevenSegmentDriverInstance.Bus_state != Bus_IsUnInit){
-		Gpt_StopTimer(0);
-		SevenSegmentDriverInstance.Bus_state = Bus_Idle;
-		SevenSegmentDataTransmit();
+	switch(SevenSegmentDriverInstance.Bus_state){
+		case Bus_UnInit_Busy:
+			SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Idle;
+			break;
+
+		case Bus_UnInit_Idle:
+			break;
+
+		case Bus_Idle:
+			break;
+
+		case Bus_Busy:
+			SevenSegmentDriverInstance.Bus_state = Bus_Idle;
+			break;
+
+		case Bus_Broken:
+			break;
 	}
-	else {
-		IsSendingData = false;
-	}
+	Gpt_StopTimer(0);
 }
 
 void SevenSegmentInit(void){
@@ -152,98 +207,108 @@ void SevenSegmentInit(void){
 
 	SevenSegmentDriverInstance.DecodeDigit = 0xff;
 	SevenSegmentDriverInstance.ValoareBrightness = 15;
-	SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
 	SevenSegmentDriverInstance.Schimbare_DecodeDigit = false;
 	SevenSegmentDriverInstance.Schimbare_ValoareBrightness = false;
-	ShouldRun = true;
 
 	uint8 SevSegInitBuf[2] = {0x00, 0x00}; // -- Buffer-ul din functia "SevenSegmentInit();"
 
 	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x00; // -- Seteaza modul Shutdown cu Reset Feature Register
+
 	I2c_RequestType shutdown = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	IsSendingData = true;
+	Gpt_StartTimer(0, 20000);
+	SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &shutdown);
 
-	while(IsSendingData){
-		if(!ShouldRun){
-			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+
+	while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+		if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 			return;
 		}
 	}
 
 	SevSegInitBuf[0] = 0x0a, SevSegInitBuf[1] = SevenSegmentDriverInstance.ValoareBrightness;
+
 	I2c_RequestType luminozitate = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	IsSendingData = true;
+	Gpt_StartTimer(0, 20000);
+	SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate); // -- Sets Luminozitatea Globala la 7 Segment Display-uri
 
-	while(IsSendingData){
-		if(!ShouldRun){
-			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+	while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+		if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 			return;
 		}
 	}
 
 	SevSegInitBuf[0] = 0x0e, SevSegInitBuf[1] = 0x00; // -- Schimba Feature Register pentru modul de decodificare al 7 Segment Display
+
 	I2c_RequestType feature = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	IsSendingData = true;
+	Gpt_StartTimer(0, 20000);
+	SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &feature);
 
-	while(IsSendingData){
-		if(!ShouldRun){
-			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+
+	while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+		if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 			return;
 		}
 	}
 
 	SevSegInitBuf[0] = 0x01, SevSegInitBuf[1] = 0x0f;
+
 	I2c_RequestType afisarenimic = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 
 	for(int i = 0; i <= 7; i++){
-		IsSendingData = true;
+		Gpt_StartTimer(0, 20000);
+		SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 		I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &afisarenimic); // -- Seteaza ca toate Segmentele de pe display sa fie stinse
 
-		while(IsSendingData){
-			if(!ShouldRun){
-				SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+
+		while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+			if(SevenSegmentDriverInstance.Bus_state == Bus_Broken)
 				return;
-			}
 		}
 
 		SevSegInitBuf[0]++;
 	}
 
 	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x03; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
+
 	I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	IsSendingData = true;
+	Gpt_StartTimer(0, 20000);
+	SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &setpins);
 
-	while(IsSendingData){
-		if(!ShouldRun){
-			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+
+	while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+		if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 			return;
 		}
 	}
 
 	SevSegInitBuf[0] = 0x09, SevSegInitBuf[1] = 0xff; // -- Seteaza pana la ce pin folosim decodificare pe digits [ex: 0x03 - 00000011 - Decodifica pe dig0 si dig1, ne luam dupa pozitia bitilor de la LSB la MSB]
+
 	I2c_RequestType decodificator = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	IsSendingData = true;
+	Gpt_StartTimer(0, 20000);
+	SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &decodificator);
 
-	while(IsSendingData){
-		if(!ShouldRun){
-			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+
+	while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+		if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 			return;
 		}
 	}
 
 	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x81; // -- Seteaza Normal Mode fara modificari la Feature Register
+
 	I2c_RequestType normalmode = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
-	IsSendingData = true;
+	Gpt_StartTimer(0, 20000);
+	SevenSegmentDriverInstance.Bus_state = Bus_UnInit_Busy;
 	I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &normalmode);
 
-	while(IsSendingData){
-		if(!ShouldRun){
-			SevenSegmentDriverInstance.Bus_state = Bus_IsUnInit;
+
+	while(SevenSegmentDriverInstance.Bus_state != Bus_UnInit_Idle){
+		if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
 			return;
 		}
 	}
@@ -256,7 +321,8 @@ void SevSegGrTest(uint8 GroupIndex){
 
 	while(1){
 		volatile int delay = 2000000;
-		uint8 luminozitateTemp = 0;
+		volatile uint8 luminozitateTemp = 0;
+
 		if(caz <= 8){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
 			while(delay != 0) // -- Acest While face un delay de o secunda [aproimare generoasa]
 				delay--;
@@ -265,40 +331,62 @@ void SevSegGrTest(uint8 GroupIndex){
 		switch(caz){ // -- Aici incep testele in Switch dupa ce trecem de While
 			case 0:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 0, 0); caz++; // -- Afisam pe grupul g de segmente [ ][ ][ ][0]
+				UpdateState();
 				break;
+
 			case 1:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 3331, 0); caz++; // -- Afisam pe grupul g de segmente [3][3][3][1]
+				UpdateState();
 				break;
+
 			case 2:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 12, 1); caz++; // -- Afisam pe grupul g de segmente [ ][ ][1.][2]
+				UpdateState();
 				break;
+
 			case 3:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][ ][0.][1]
+				UpdateState();
 				break;
+
 			case 4:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 0); caz++; // -- Afisam pe grupul g de segmente [ ][-][1][2]
+				UpdateState();
 				break;
+
 			case 5:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
+				UpdateState();
 				break;
+
 			case 6:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 2); caz++; // -- Afisam pe grupul g de segmente [-][0.][1][2]
+				UpdateState();
 				break;
+
 			case 7:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -123, 2); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
+				UpdateState();
 				break;
+
 			case 8:
 				while(1){
 					volatile int delaytemp = 100000;
+
 					while(delaytemp != 0)
 						delaytemp--;
 
 					SevenSegmentSetGlobalBrightness(luminozitateTemp);
+
 					if(luminozitateTemp == 100)
 						break;
+
+					UpdateState();
+
 					luminozitateTemp++;
 				}
-
+				caz++;
+				break;
 
 			default:
 				caz = 0; // -- Daca trecem de ultimul caz, resetam ordinea si incepem de la cazul 0
@@ -312,26 +400,7 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 	uint16 InitValue = 0;
 	bool isNegative = false, isPositive = true;
 
-	if(SevenSegmentDriverInstance.Bus_state == Bus_IsUnInit)
-		SevenSegmentInit();
-
-	if(SevenSegmentDriverInstance.Bus_state == Bus_Broken){
-		I2c_DeInit();
-		Port_SetPinMode(4, PORT_MUX_AS_GPIO); // port este mux gpio
-		volatile int i = 0;
-		while(i != 11){
-			Dio_WriteChannel(3, 0);
-			Dio_WriteChannel(3, 0);
-			Dio_WriteChannel(3, 0);
-			Dio_WriteChannel(3, 0);
-			Dio_WriteChannel(3, 1);
-			i++;
-		}
-		Port_SetPinMode(4, PORT_MUX_ALT3);
-		I2c_Init(NULL_PTR); // I2c este mux alt 3
-		SevenSegmentInit();
-	}
-	else if(SevenSegmentGroupIndex > SevenSegmentDriverInstance.SevenSegmentGroup_elements_count){ // -- Daca grupul precizat nu exista, afisam codul de eraore si iesim din functie
+	if(SevenSegmentGroupIndex > SevenSegmentDriverInstance.SevenSegmentGroup_elements_count){ // -- Daca grupul precizat nu exista, afisam codul de eraore si iesim din functie
 		; // TODO de inserat apel la functia de eroare
 	}
 	else if((DecimalValue == 0) && (PrecisionFloatPoint == 0)){ // -- Daca valoare pe care o vrem afisata este 0, fara virgula, afisam doar 0 pe primul segment din dreapta apoi restul goale
@@ -343,6 +412,7 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 
 		for(int i = 1; i < SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].nr_elemente; i++){
 			Index = SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].elemente[i] - 1;
+
 			SevenSegmentDriverInstance.ValoriDigits[Index] = 15;
 			SevenSegmentDriverInstance.Schimbare_ValoriDigits[Index] = true;
 		}
@@ -354,12 +424,14 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 		if(DecimalValue < 0){ // -- Aici verificam daca numarul este pozitiv sau negativ
 			isNegative = true;
 			isPositive = false;
+
 			DecimalValue *= -1;
 			InitValue = DecimalValue;
 		}
 
 		for(int i = 0; i < SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].nr_elemente; i++){
 			Index = SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].elemente[i] - 1;
+
 			if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0) // -- Aici setam virgula daca numarul este cu virgula si se ajunge la pozitia segmentului unde ar trebui afisata
 				aux = DecimalValue % 10 + 128;
 			else
@@ -378,7 +450,6 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 				if(isNegative){ // -- Daca este negativ setam ca segmentul unde vine "-" sa nu mai aiba decodificare, si setam ca valoare afisata sa fie 0000 0001 [informatii mai detaliate la afisarea segmentelor in datasheet]
 					SevenSegmentDriverInstance.DecodeDigit = ~(1<<(i));
 					SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
-
 					SevenSegmentDriverInstance.ValoriDigits[Index] = 1;
 
 					isNegative = false;
@@ -386,7 +457,6 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 				else if(isPositive){ // -- Daca este pozitiv, setam decodificarea sa fie pe toate segmentele, asigurandu ne ca nu ramanem cu segmente fara decodificare, in caz ca anterior am afisat un numar negativ
 					SevenSegmentDriverInstance.DecodeDigit = 0xff;
 					SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
-
 					SevenSegmentDriverInstance.ValoriDigits[Index] = 15;
 				}
 				else {
@@ -402,7 +472,7 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 		SevenSegmentDriverInstance.DecodeDigit = 0xff;
 		SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
 	}
-	SevenSegmentDataTransmit();
+
 }
 
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
@@ -411,7 +481,7 @@ void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
 
 	SevenSegmentDriverInstance.ValoareBrightness = (uint8)(((uint16)BrightnessPercent * (uint16)3) / (uint16)20); // -- transformam procentul intr o valoare din int. 0 - 16
 	SevenSegmentDriverInstance.Schimbare_ValoareBrightness = true;
-	SevenSegmentDataTransmit();
+
 }
 
 
