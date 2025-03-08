@@ -105,11 +105,11 @@ int main(void)
     Mcu_SetMode(McuModeSettingConf_0);
 
     /* Initialize all pins using the Port driver */
+    Port_Init(NULL_PTR);
+    Platform_Init(NULL_PTR);
     Gpt_Init(NULL_PTR);
     I2c_Init(NULL_PTR);
     Icu_Init(NULL_PTR);
-    Port_Init(NULL_PTR);
-    Platform_Init(NULL_PTR);
 
     Gpt_EnableNotification(0);
     Icu_EnableNotification(0);
@@ -117,17 +117,17 @@ int main(void)
     SevenSegmentInit();
 
     while(1){
-    	volatile int i = 9999;
+    	//volatile int i = 9999;
 
-    	//SevSegGrTest(0);
+    	/*while(1){
+    		SevenSegmentDisplayDecimalValue(0, i, 2);
 
-		//SevenSegmentDisplayDecimalValue(0, 9999, 0);
-    	while(1){
-    		SevenSegmentDisplayDecimalValue(0, 9999, 0);
+    		i--;
+
     		UpdateState();
-    	}
+    	}*/
 
-
+    	SevSegGrTest(0);
 
     }
 }

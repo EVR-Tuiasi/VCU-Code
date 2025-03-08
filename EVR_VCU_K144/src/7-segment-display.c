@@ -97,6 +97,7 @@ static void SevenSegmentDataTransmit(void){
 
 			Gpt_StartTimer(0, 20000);
 
+			SevenSegmentDriverInstance.Bus_state = Bus_Busy;
 			I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &digit);
 			return;
 		}
@@ -113,6 +114,7 @@ static void SevenSegmentDataTransmit(void){
 
 		Gpt_StartTimer(0, 20000);
 
+		SevenSegmentDriverInstance.Bus_state = Bus_Busy;
 		I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &digitdecod);
 		return;
 	}
@@ -123,6 +125,7 @@ static void SevenSegmentDataTransmit(void){
 
 		Gpt_StartTimer(0, 20000);
 
+		SevenSegmentDriverInstance.Bus_state = Bus_Busy;
 		I2c_AsyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &luminozitate);
 		return;
 	}
@@ -138,7 +141,6 @@ void UpdateState(void){
 			break;
 
 		case Bus_Idle:
-			SevenSegmentDriverInstance.Bus_state = Bus_Busy;
 			SevenSegmentDataTransmit();
 			break;
 
@@ -320,53 +322,50 @@ void SevSegGrTest(uint8 GroupIndex){
 	uint8 caz = 0; // -- Aceasta variabila este folosita pentru a face testele, fiind verificata intr un switch
 
 	while(1){
-		volatile int delay = 2000000;
+		volatile int delay = 100000;
 		volatile uint8 luminozitateTemp = 0;
 
 		if(caz <= 8){ // -- Acest If verifica daca suntem in range ul de cazuri pentru test
-			while(delay != 0) // -- Acest While face un delay de o secunda [aproimare generoasa]
+			while(delay != 0){ // -- Acest While face un delay de o secunda [aproimare generoasa]
+				UpdateState();
+
 				delay--;
+			}
 		}
+
+		//SevSegInteruptFunc();
 
 		switch(caz){ // -- Aici incep testele in Switch dupa ce trecem de While
 			case 0:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 0, 0); caz++; // -- Afisam pe grupul g de segmente [ ][ ][ ][0]
-				UpdateState();
 				break;
 
 			case 1:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 3331, 0); caz++; // -- Afisam pe grupul g de segmente [3][3][3][1]
-				UpdateState();
 				break;
 
 			case 2:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 12, 1); caz++; // -- Afisam pe grupul g de segmente [ ][ ][1.][2]
-				UpdateState();
 				break;
 
 			case 3:
 				SevenSegmentDisplayDecimalValue(GroupIndex, 1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][ ][0.][1]
-				UpdateState();
 				break;
 
 			case 4:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 0); caz++; // -- Afisam pe grupul g de segmente [ ][-][1][2]
-				UpdateState();
 				break;
 
 			case 5:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -1, 1); caz++; // -- Afisam pe grupul g de segmente [ ][-][0.][1]
-				UpdateState();
 				break;
 
 			case 6:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -12, 2); caz++; // -- Afisam pe grupul g de segmente [-][0.][1][2]
-				UpdateState();
 				break;
 
 			case 7:
 				SevenSegmentDisplayDecimalValue(GroupIndex, -123, 2); caz++; // -- Afisam pe grupul g de segmente [-][1][2][3]
-				UpdateState();
 				break;
 
 			case 8:
@@ -378,10 +377,10 @@ void SevSegGrTest(uint8 GroupIndex){
 
 					SevenSegmentSetGlobalBrightness(luminozitateTemp);
 
+					UpdateState();
+
 					if(luminozitateTemp == 100)
 						break;
-
-					UpdateState();
 
 					luminozitateTemp++;
 				}
@@ -472,7 +471,6 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 		SevenSegmentDriverInstance.DecodeDigit = 0xff;
 		SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
 	}
-
 }
 
 void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
@@ -481,7 +479,6 @@ void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent){
 
 	SevenSegmentDriverInstance.ValoareBrightness = (uint8)(((uint16)BrightnessPercent * (uint16)3) / (uint16)20); // -- transformam procentul intr o valoare din int. 0 - 16
 	SevenSegmentDriverInstance.Schimbare_ValoareBrightness = true;
-
 }
 
 
