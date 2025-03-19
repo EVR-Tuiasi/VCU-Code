@@ -22,7 +22,9 @@ extern "C" {
 #define BRAKE_PEDAL 14
 #define SEVEN_SEGMENT 15
 #define PROCESSOR 16
-#define MODULE_END 16
+#define TIME 17
+#define TEMP_ALL 18
+#define MODULE_END 19
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -58,7 +60,7 @@ uint8 buff3[] = " :0.00;discharging  ";
 
 uint8 UART_Channel;
 volatile BUS_STATE state = BUS_IDLE;
-uint8 buffer[6];
+uint8 buffer[258];
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -127,12 +129,16 @@ void USBInit(uint8 UartChannel){
 	UART_Channel = UartChannel;
 }
 void USBSendCellTemperature(uint8 CellIndex, uint16 Value, uint8 Precision){
-buffer[0] = TEMP_SENSOR;
-buffer[1] = CellIndex;
-buffer[2] = Value >> 8;
-buffer[3] = Value % 256;
-buffer[4] = Precision;
-Uart_AsyncSend(UART_Channel, buffer, 5);
+	if(state == BUS_IDLE)
+	{
+		buffer[0] = TEMP_SENSOR;
+		buffer[1] = CellIndex;
+		buffer[2] = Value >> 8;
+		buffer[3] = Value % 256;
+		buffer[4] = Precision;
+		state = BUS_BUSY;
+		Uart_AsyncSend(UART_Channel, buffer, 5);
+	}
 }
 void USBSendBMSCellVoltage(uint16 CellIndex, uint16 Value, uint8 Precision){
 	buffer[0] = BMS_VOLTAGE;
@@ -183,7 +189,23 @@ void USBSendErrors(void)
 	}
 }
 
+void USBTempTotal(uint8 Precision, uint16* Value)
+{
+	int i;
+	buffer[0] = 254;
+	buffer[1] = Precision;
 
+	for(i=0; i<256; i+=2)
+	{
+		uint16 temp_value = Value[i/2];
+		buffer[i+2] = temp_value >> 8;
+		buffer[i+3] = temp_value % 256;
+	}
+
+	Uart_AsyncSend(UART_Channel, buffer, 258);
+}
+
+//se opreste la buffer[229] -> 210 .. buffer[230] -> 11 ..
 
 
 #ifdef __cplusplus

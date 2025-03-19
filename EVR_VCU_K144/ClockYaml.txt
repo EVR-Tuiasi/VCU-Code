@@ -40,7 +40,7 @@ outputs:
 - {id: LPSPI2_CLK.outFreq, value: 8 MHz}
 - {id: LPTMR0_CLK.outFreq, value: 8 MHz}
 - {id: LPUART0_CLK.outFreq, value: 8 MHz}
-- {id: LPUART1_CLK.outFreq, value: 8 MHz}
+- {id: LPUART1_CLK.outFreq, value: 48 MHz}
 - {id: LPUART2_CLK.outFreq, value: 8 MHz}
 - {id: MPU0_CLK.outFreq, value: 48 MHz}
 - {id: MSCM0_CLK.outFreq, value: 48 MHz}
@@ -72,6 +72,7 @@ settings:
 - {id: 'HSRUN:DIVBUS.scale', value: '1', locked: true}
 - {id: 'HSRUN:DIVCORE.scale', value: '1', locked: true}
 - {id: 'HSRUN:DIVSLOW.scale', value: '4', locked: true}
+- {id: MODULE_CLOCKS.PCC_LPUART1_MUX.sel, value: FIRCDIV2}
 - {id: MODULE_CLOCKS.SIM_CLKOUT_DIV.scale, value: '5'}
 - {id: MODULE_CLOCKS.SIM_CLKOUT_MUX.sel, value: MODULE_CLOCKS.PCC_RTC_CLK_DIV}
 - {id: PREDIV.scale, value: '1', locked: true}

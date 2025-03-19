@@ -136,7 +136,7 @@ int main(void)
     ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
     ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
 
-    while(1){
+    /*while(1){
     	USBSendBrakePedal(1562, 2);
     	volatile int k = 1000000;
     	while(k)
@@ -144,9 +144,22 @@ int main(void)
     	USBSendAcceleratorPedals(584, 584, 1);
     	volatile int i = 1000000;
     	while(i)
-    		i--;
-    }
+    		i--;*/
+    volatile int i;
+    uint16 valori[128];
+    for(i=0; i < 128; i++)
+    valori[i] = 3252 - i*2;
+
+
+	while(1){
+		USBTempTotal(255, valori);
+		volatile int k = 10000000;
+			while(k)
+				k--;
+	}
 }
+
+
 // test
 
 #ifdef __cplusplus

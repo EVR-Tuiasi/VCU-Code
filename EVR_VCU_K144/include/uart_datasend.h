@@ -93,6 +93,7 @@ void USBSendBMSCurrent(uint16 Value, uint8 Precision);
 void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision);
 void USBSendBrakePedal(uint16 Value, uint8 Precision);
 void USBSendErrors(void);
+void USBTempTotal(uint8 Precision, uint16* Value);
 
 
 #ifdef __cplusplus
