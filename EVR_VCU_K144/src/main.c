@@ -16,6 +16,8 @@ extern "C" {
 #include "Mcu.h"
 #include "Platform.h"
 #include "Port.h"
+#include "Spi.h"
+#include "bms.h"
 #include "uart_datasend.h"
 #include "uart_error_handling.h"
 #include "CDD_Uart.h"
@@ -122,11 +124,51 @@ int main(void)
     /* Initialize all pins using the Port driver */
     Port_Init(NULL_PTR);
     Platform_Init(NULL_PTR);
-    Uart_Init(NULL_PTR);
-    I2c_Init(NULL_PTR);
-    Icu_Init(NULL_PTR);
-    Icu_EnableNotification(0);
+    //Uart_Init(NULL_PTR);
+    //I2c_Init(NULL_PTR);
+    //Icu_Init(NULL_PTR);
+    Spi_Init(NULL_PTR);
+    //Icu_EnableNotification(0);
 
+	uint8 buffTrimitere[12] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	uint8 buffPrimire[12] = {0};
+	volatile int delei;
+    while(1){
+#if 1
+    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+    	Dio_WriteChannel(37, 0);
+    	delei = 30;
+    	while(delei){
+    		delei--;
+    	}
+    	Dio_WriteChannel(37, 1);
+    	Port_ResetPinMode(9);
+    	delei = 3000;
+    	while(delei){
+    		delei--;
+    	}
+#endif
+    	//comanda fara pec
+        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+        //comanda cu pec
+    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+    	buffTrimitere[2] = pec >> 8;
+    	buffTrimitere[3] = pec % 256;
+        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
+#if 0
+    	Dio_WriteChannel(37, 0);
+#endif
+
+        Spi_SyncTransmit(0);
+#if 0
+    	Dio_WriteChannel(37, 1);
+#endif
+    	delei = 300000;
+    	while(delei){
+    		delei--;
+    	}
+    }
+#if 0
     USBInit(0);
     //SevenSegmentInit();
     //SevSegGrTest(0);
@@ -142,6 +184,8 @@ int main(void)
     		i--;
     	USBSendErrors();
     }
+#endif
+
 }
 // test
 
