@@ -67,6 +67,11 @@ I2c_RequestType numarpedigit1 = {0, false, false, false, false, 2, I2C_SEND_DATA
 
 volatile uint8 ok = 0;
 
+
+uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint8 buffPrimire[24] = {0};
+volatile int delei;
+
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -99,6 +104,218 @@ void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	ok = 1;
 }
 
+void transmisie()
+{
+	#if 1
+	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+	    	Dio_WriteChannel(37, 0);
+	    	delei = 30;
+	    	while(delei){
+	    		delei--;
+	    	}
+	    	Dio_WriteChannel(37, 1);
+	    	Port_ResetPinMode(9);
+	    	delei = 3000;
+	    	while(delei){
+	    		delei--;
+	    	}
+	#endif
+	    	//comanda fara pec
+	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+	        //comanda cu pec
+
+
+	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	    	buffTrimitere[2] = pec >> 8;
+	    	buffTrimitere[3] = pec % 256;
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 24U);
+	#if 0
+	    	Dio_WriteChannel(37, 0);
+	#endif
+
+	        Spi_SyncTransmit(0);
+	#if 0
+	    	Dio_WriteChannel(37, 1);
+	#endif
+	    	delei = 300000;
+	    	while(delei){
+	    		delei--;
+	    	}
+
+	    	//////
+}
+
+
+
+void transmisieCMD()
+{
+	#if 1
+	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+	    	Dio_WriteChannel(37, 0);
+	    	delei = 30;
+	    	while(delei){
+	    		delei--;
+	    	}
+	    	Dio_WriteChannel(37, 1);
+	    	Port_ResetPinMode(9);
+	    	delei = 3000;
+	    	while(delei){
+	    		delei--;
+	    	}
+	#endif
+	    	//comanda fara pec
+	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+	        //comanda cu pec
+
+
+	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	    	buffTrimitere[2] = pec >> 8;
+	    	buffTrimitere[3] = pec % 256;
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 4U);
+	#if 0
+	    	Dio_WriteChannel(37, 0);
+	#endif
+
+	        Spi_SyncTransmit(0);
+	#if 0
+	    	Dio_WriteChannel(37, 1);
+	#endif
+	    	delei = 300000;
+	    	while(delei){
+	    		delei--;
+	    	}
+
+	    	//////
+}
+
+void transmisieRD48()
+{
+	#if 1
+	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+	    	Dio_WriteChannel(37, 0);
+	    	delei = 30;
+	    	while(delei){
+	    		delei--;
+	    	}
+	    	Dio_WriteChannel(37, 1);
+	    	Port_ResetPinMode(9);
+	    	delei = 3000;
+	    	while(delei){
+	    		delei--;
+	    	}
+	#endif
+	    	//comanda fara pec
+	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+	        //comanda cu pec
+
+
+	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	    	buffTrimitere[2] = pec >> 8;
+	    	buffTrimitere[3] = pec % 256;
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
+	#if 0
+	    	Dio_WriteChannel(37, 0);
+	#endif
+
+	        Spi_SyncTransmit(0);
+	#if 0
+	    	Dio_WriteChannel(37, 1);
+	#endif
+	    	delei = 300000;
+	    	while(delei){
+	    		delei--;
+	    	}
+
+	    	//////
+}
+
+void transmisieWR48()
+{
+	#if 1
+	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+	    	Dio_WriteChannel(37, 0);
+	    	delei = 30;
+	    	while(delei){
+	    		delei--;
+	    	}
+	    	Dio_WriteChannel(37, 1);
+	    	Port_ResetPinMode(9);
+	    	delei = 3000;
+	    	while(delei){
+	    		delei--;
+	    	}
+	#endif
+	    	//comanda fara pec
+	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+	        //comanda cu pec
+
+
+	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	    	buffTrimitere[2] = pec >> 8;
+	    	buffTrimitere[3] = pec % 256;
+	    	uint16 dpec = pec10_calc(false,6U, buffTrimitere+4);
+	    	buffTrimitere[10] = dpec >> 8;
+	    	buffTrimitere[11] = dpec % 256;
+
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
+	#if 0
+	    	Dio_WriteChannel(37, 0);
+	#endif
+
+	        Spi_SyncTransmit(0);
+	#if 0
+	    	Dio_WriteChannel(37, 1);
+	#endif
+	    	delei = 300000;
+	    	while(delei){
+	    		delei--;
+	    	}
+
+	    	//////
+}
+
+void transmisieRD160()
+{
+	#if 1
+	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+	    	Dio_WriteChannel(37, 0);
+	    	delei = 30;
+	    	while(delei){
+	    		delei--;
+	    	}
+	    	Dio_WriteChannel(37, 1);
+	    	Port_ResetPinMode(9);
+	    	delei = 3000;
+	    	while(delei){
+	    		delei--;
+	    	}
+	#endif
+	    	//comanda fara pec
+	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+	        //comanda cu pec
+
+
+	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	    	buffTrimitere[2] = pec >> 8;
+	    	buffTrimitere[3] = pec % 256;
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 24U);
+	#if 0
+	    	Dio_WriteChannel(37, 0);
+	#endif
+
+	        Spi_SyncTransmit(0);
+	#if 0
+	    	Dio_WriteChannel(37, 1);
+	#endif
+	    	delei = 300000;
+	    	while(delei){
+	    		delei--;
+	    	}
+
+	    	//////
+}
+
+
 int main(void)
 {
 
@@ -129,45 +346,74 @@ int main(void)
     //Icu_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
     //Icu_EnableNotification(0);
+    //002C RDSID
+    //
 
-	uint8 buffTrimitere[12] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	uint8 buffPrimire[12] = {0};
-	volatile int delei;
-    while(1){
-#if 1
-    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-    	Dio_WriteChannel(37, 0);
-    	delei = 30;
-    	while(delei){
-    		delei--;
-    	}
-    	Dio_WriteChannel(37, 1);
-    	Port_ResetPinMode(9);
-    	delei = 3000;
-    	while(delei){
-    		delei--;
-    	}
-#endif
-    	//comanda fara pec
-        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-        //comanda cu pec
-    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-    	buffTrimitere[2] = pec >> 8;
-    	buffTrimitere[3] = pec % 256;
-        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
-#if 0
-    	Dio_WriteChannel(37, 0);
-#endif
+    /*
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x2C;
+    transmisie(); //read RDSID
 
-        Spi_SyncTransmit(0);
-#if 0
-    	Dio_WriteChannel(37, 1);
-#endif
-    	delei = 300000;
-    	while(delei){
-    		delei--;
-    	}
-    }
+	buffTrimitere[0]=7;
+	buffTrimitere[1]=0x22;
+	transmisie(); //read COMM reg
+
+	buffTrimitere[0]=0;
+	buffTrimitere[1]=0x2C;
+	transmisie(); //read SSID
+
+	buffTrimitere[0]=0;
+	buffTrimitere[1]=0x10;
+	transmisie(); //read all
+	*/
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x27;
+    transmisieCMD(); //SRST
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x2;
+    transmisieRD48();     //RDCFGA
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x1;
+
+    buffTrimitere[4]=0;
+    buffTrimitere[5]=0;
+    buffTrimitere[6]=0;
+    buffTrimitere[7]=0x21;
+    buffTrimitere[8]=0;
+    buffTrimitere[9]=0x10;
+    transmisieWR48(); //WRCFGA
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x2;
+    transmisieRD48();     //RDCFGA
+
+    buffTrimitere[0]=0x08;
+    buffTrimitere[1]=0x60;
+    transmisieCMD(); //ADV
+
+    int i=100000;
+    while (i--);
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x0A;
+    transmisieRD48();     //RDV1A
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x2;
+    transmisieRD48();     //RDCFGA
+
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x2C;
+    transmisie(); //read SSID
+
+
+	while(1);
+
+
 #if 0
     USBInit(0);
     //SevenSegmentInit();
