@@ -74,6 +74,7 @@ void I2c_Callback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 1);
 
 	SevSegInteruptFunc();
+	(void)Event, (void)Channel;
 }
 
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
@@ -81,6 +82,7 @@ void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(96, 1);
 
 	SevSegInteruptFunc();
+	(void)Event, (void)Channel;
 }
 
 int main(void)
@@ -117,15 +119,6 @@ int main(void)
     SevenSegmentInit();
 
     while(1){
-    	//volatile int i = 9999;
-
-    	/*while(1){
-    		SevenSegmentDisplayDecimalValue(0, i, 2);
-
-    		i--;
-
-    		UpdateState();
-    	}*/
 
     	SevSegGrTest(0);
 
