@@ -72,6 +72,7 @@ uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8 buffPrimire[32] = {0};
 volatile int delei;
 int curent1,curent2;
+uint16 i1,i2;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -342,10 +343,12 @@ int main(void)
     /* Initialize all pins using the Port driver */
     Port_Init(NULL_PTR);
     Platform_Init(NULL_PTR);
-    //Uart_Init(NULL_PTR);
+    Uart_Init(NULL_PTR);
     //I2c_Init(NULL_PTR);
     //Icu_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
+    USBInit(0);
+
     //Icu_EnableNotification(0);
     //002C RDSID
     //
@@ -425,19 +428,32 @@ int main(void)
 
 
 
+    volatile int delayul=1000000;
+    //USBSendBMSCurrent(54,3);
+    while (1)
+    {
+    	delayul=1000000;
+    	while(delayul--);
+    	buffTrimitere[0]=0;
+    	buffTrimitere[1]=0x0C;
+    	transmisieRD160();     //RDALLI
+    	curent1=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
+    	i1=curent1*20;
+    	USBSendBMSCurrent(i1,3);
 
 
+    	delayul=1000000;
+    	    while(delayul--);
+    	buffTrimitere[0]=0;
+    	buffTrimitere[1]=0x4C;
+    	transmisieRD160();     //RDALLA
+    	curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
+    	i2=20*curent2;
+    	//USBSendBMSCurrent(i2,3); //pentru reverse
+    	USBSendBMSCellVoltage(1, i2, 3);
+    }
 
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x0C;
-    transmisieRD160();     //RDALLI
-    curent1=buffPrimire[6]<<16+buffPrimire[5]<<8+buffPrimire[4];
 
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x4C;
-    transmisieRD160();     //RDALLA
-    curent2=buffPrimire[6]<<16+buffPrimire[5]<<8+buffPrimire[4];
 
 
 
