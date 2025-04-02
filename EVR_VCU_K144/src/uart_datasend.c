@@ -61,6 +61,7 @@ uint8 buff3[] = " :0.00;discharging  ";
 uint8 UART_Channel;
 volatile BUS_STATE state = BUS_IDLE;
 uint8 buffer[258];
+uint8 buffer_end[2];
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -163,7 +164,8 @@ void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision){
 	buffer[3] = Value2 >> 8;
 	buffer[4] = Value2 % 256;
 	buffer[5] = Precision;
-	Uart_AsyncSend(UART_Channel, buffer, 6);
+	buffer[6] = CRC_calculate(7);
+	Uart_AsyncSend(UART_Channel, buffer, 7);
 }
 void USBSendBrakePedal(uint16 Value, uint8 Precision){
 	if(state == BUS_IDLE)
@@ -172,37 +174,92 @@ void USBSendBrakePedal(uint16 Value, uint8 Precision){
 		buffer[1] = Value >> 8;
 		buffer[2] = Value % 256;
 		buffer[3] = Precision;
+		buffer[4] = CRC_calculate(5);
 		state = BUS_BUSY;
-		Uart_AsyncSend(UART_Channel, buffer, 4);
+		Uart_AsyncSend(UART_Channel, buffer, 5);
 	}
 }
 
 void USBSendErrors(void)
 {
+	buffer[0] = 0;
 	for(int i = MODULE_START; i <= MODULE_END; i++)
 	{
 		uint8 aux = ErrorsGet(i);
-		buffer[0] = ERROR;
-		buffer[1] = i;
-		buffer[2] = aux;
-		Uart_AsyncSend(UART_Channel, buffer, 3);
+		buffer[1] = ERROR;
+		buffer[2] = i;
+		buffer[3] = aux;
+		Uart_SyncSend(UART_Channel, buffer, 4, 1000000);
 	}
 }
 
 void USBTempTotal(uint8 Precision, uint16* Value)
 {
 	int i;
-	buffer[0] = 254;
+	buffer[0] = 0;
 	buffer[1] = Precision;
 
 	for(i=0; i<256; i+=2)
 	{
+		/*
+		 *  codul pentru CRC de la sender
+		 *
+		 * uint16 aux = Value[i/2] << 3;
+		 div =<< 12;
+
+		 for(j=15; j>=3; j--)
+		 	 {
+		 	 	 if(aux & (1 << i))
+		 	 	 	 aux ^= div;
+
+		 	 	 	 div >>= 1;
+		 	 }
+		 	 crc = aux % 256;
+
+		 	 buffer[258] --> buffer[384] maybe?
+		  */
+
 		uint16 temp_value = Value[i/2];
 		buffer[i+2] = temp_value >> 8;
 		buffer[i+3] = temp_value % 256;
 	}
 
 	Uart_AsyncSend(UART_Channel, buffer, 258);
+}
+
+uint8 CRC_calculate(uint8 length){
+	uint8 crc=0, message[length];
+	uint16 divisor = 0x8D, dividend;
+	int i, j;
+
+	for(i=0; i<length-1; i++)
+	{
+		message[i] = buffer[i];
+	}
+
+	message[length-1]=0;
+
+
+	dividend = (message[0] << 8) | message[1];
+	for(j=15; j>=8; j--)
+		if(dividend & (1 << j))
+			dividend ^= divisor << (j-8);
+
+	for(i=2; i<length; i++)
+		{
+			dividend = (dividend << 8) | message[i];
+
+			for(j=15; j>=8; j--)
+				if(dividend & (1 << j))
+					dividend ^= divisor << (j-8);
+		}
+
+	crc = (dividend % 256);
+
+	/*for(i=0; i<length; i++)
+		message[i] = 0;*/
+
+	return crc;
 }
 
 //se opreste la buffer[229] -> 210 .. buffer[230] -> 11 ..
