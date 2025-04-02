@@ -69,8 +69,9 @@ volatile uint8 ok = 0;
 
 
 uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint8 buffPrimire[24] = {0};
+uint8 buffPrimire[32] = {0};
 volatile int delei;
+int curent1,curent2;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -298,7 +299,7 @@ void transmisieRD160()
 	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
 	    	buffTrimitere[2] = pec >> 8;
 	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 24U);
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 32U);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
@@ -365,6 +366,31 @@ int main(void)
 	buffTrimitere[0]=0;
 	buffTrimitere[1]=0x10;
 	transmisie(); //read all
+
+	buffTrimitere[0]=0;
+    buffTrimitere[1]=0x51;
+    transmisieRD160();     //RDALLX
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x35;
+    transmisieRD160();     //RDVALL
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x11;
+    transmisieRD160();     //RDALLR
+
+    buffTrimitere[0]=0x08;
+    buffTrimitere[1]=0x60;
+    transmisieCMD(); //ADV
+
+    buffTrimitere[0]=0x05;
+    buffTrimitere[1]=0x30;
+    transmisieCMD(); //ADX
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x0A;
+    transmisieRD48();     //RDV1A
+
 	*/
 
     buffTrimitere[0]=0;
@@ -381,7 +407,7 @@ int main(void)
     buffTrimitere[4]=0;
     buffTrimitere[5]=0;
     buffTrimitere[6]=0;
-    buffTrimitere[7]=0x21;
+    buffTrimitere[7]=0x5F;
     buffTrimitere[8]=0;
     buffTrimitere[9]=0x10;
     transmisieWR48(); //WRCFGA
@@ -390,25 +416,29 @@ int main(void)
     buffTrimitere[1]=0x2;
     transmisieRD48();     //RDCFGA
 
-    buffTrimitere[0]=0x08;
-    buffTrimitere[1]=0x60;
-    transmisieCMD(); //ADV
 
-    int i=100000;
-    while (i--);
 
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x0A;
-    transmisieRD48();     //RDV1A
+    buffTrimitere[0]=0x02;
+    buffTrimitere[1]=0xE0;
+    transmisieCMD(); //ADI1
 
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x2;
-    transmisieRD48();     //RDCFGA
+
+
+
+
 
 
     buffTrimitere[0]=0;
-    buffTrimitere[1]=0x2C;
-    transmisie(); //read SSID
+    buffTrimitere[1]=0x0C;
+    transmisieRD160();     //RDALLI
+    curent1=buffPrimire[6]<<16+buffPrimire[5]<<8+buffPrimire[4];
+
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x4C;
+    transmisieRD160();     //RDALLA
+    curent2=buffPrimire[6]<<16+buffPrimire[5]<<8+buffPrimire[4];
+
 
 
 	while(1);
