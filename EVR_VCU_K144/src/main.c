@@ -347,7 +347,7 @@ int main(void)
     //I2c_Init(NULL_PTR);
     //Icu_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
-    USBInit(0);
+    //USBInit(0);
 
     //Icu_EnableNotification(0);
     //002C RDSID
@@ -424,33 +424,42 @@ int main(void)
     buffTrimitere[0]=0x02;
     buffTrimitere[1]=0xE0;
     transmisieCMD(); //ADI1
-
-
+    uint8 buffer[5];
+    buffer[0]=12;
 
 
     volatile int delayul=1000000;
     //USBSendBMSCurrent(54,3);
     while (1)
     {
-    	delayul=1000000;
-    	while(delayul--);
+    	delayul=1000;
+    		while(delayul--);
     	buffTrimitere[0]=0;
     	buffTrimitere[1]=0x0C;
     	transmisieRD160();     //RDALLI
     	curent1=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
     	i1=curent1*20;
-    	USBSendBMSCurrent(i1,3);
+    	////USBSendBMSCurrent(i1,0);
 
 
-    	delayul=1000000;
+    	delayul=100;
     	    while(delayul--);
     	buffTrimitere[0]=0;
     	buffTrimitere[1]=0x4C;
     	transmisieRD160();     //RDALLA
     	curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
-    	i2=20*curent2;
-    	//USBSendBMSCurrent(i2,3); //pentru reverse
-    	USBSendBMSCellVoltage(1, i2, 3);
+    	i2=5*curent2;//teoretic s-ar imparti la 4
+    	////USBSendBMSCurrent(i2,0); //pentru reverse
+    	//USBSendBMSCellVoltage(1, i2, 3);
+
+    	/**/
+    	buffer[1]=i1>>8;
+    	buffer[2]=i1%256;
+    	buffer[3]=i2>>8;
+    	buffer[4]=i2%256;
+    	Uart_SyncSend(0, buffer, 5, 10000000);
+    	/**/
+
     }
 
 
