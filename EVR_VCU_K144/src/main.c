@@ -73,6 +73,7 @@ uint8 buffPrimire[32] = {0};
 volatile int delei;
 int curent1,curent2;
 uint16 i1,i2;
+uint16 v1,v2;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -432,31 +433,48 @@ int main(void)
     //USBSendBMSCurrent(54,3);
     while (1)
     {
-    	delayul=1000;
+    	delayul=300000;
     		while(delayul--);
     	buffTrimitere[0]=0;
     	buffTrimitere[1]=0x0C;
     	transmisieRD160();     //RDALLI
     	curent1=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
     	i1=curent1*20;
+    	v1=((buffPrimire[11]<<8)+(buffPrimire[10]))*40;
     	////USBSendBMSCurrent(i1,0);
 
 
-    	delayul=100;
+    	delayul=30000;
     	    while(delayul--);
     	buffTrimitere[0]=0;
     	buffTrimitere[1]=0x4C;
     	transmisieRD160();     //RDALLA
     	curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
     	i2=5*curent2;//teoretic s-ar imparti la 4
+    	v2=((buffPrimire[11]<<8)+(buffPrimire[10]))*10;
     	////USBSendBMSCurrent(i2,0); //pentru reverse
     	//USBSendBMSCellVoltage(1, i2, 3);
 
     	/**/
+    	/* curent
     	buffer[1]=i1>>8;
     	buffer[2]=i1%256;
     	buffer[3]=i2>>8;
     	buffer[4]=i2%256;
+    	*/
+
+    	buffer[1]=v1>>8;
+    	buffer[2]=v1%256;
+    	buffer[3]=v2>>8;
+    	buffer[4]=v2%256;
+
+    	/*
+    	buffer[1]=v1>>8;
+    	buffer[2]=v1%256;
+    	buffer[3]=i1>>8;
+    	buffer[4]=i1%256;
+    	*/
+
     	Uart_SyncSend(0, buffer, 5, 10000000);
     	/**/
 
