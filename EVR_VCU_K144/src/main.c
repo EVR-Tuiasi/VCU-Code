@@ -72,8 +72,8 @@ uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8 buffPrimire[32] = {0};
 volatile int delei;
 int curent1,curent2;
-uint16 i1,i2;
-uint16 v1,v2;
+int16 i1,i2;
+int16 v1,v2;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
