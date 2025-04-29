@@ -1,0 +1,28 @@
+	buffTrimitere[0]=7;
+	buffTrimitere[1]=0x22;
+	transmisie(); //read COMM reg
+
+
+	buffTrimitere[0]=0;
+    buffTrimitere[1]=0x51;
+    transmisieRD160();     //RDALLX
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x35;
+    transmisieRD160();     //RDVALL
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x11;
+    transmisieRD160();     //RDALLR
+
+    buffTrimitere[0]=0x08;
+    buffTrimitere[1]=0x60;
+    transmisieCMD(); //ADV
+
+    buffTrimitere[0]=0x05;
+    buffTrimitere[1]=0x30;
+    transmisieCMD(); //ADX
+
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x0A;
+    transmisieRD48();     //RDV1A

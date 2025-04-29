@@ -22,6 +22,7 @@ extern "C" {
 #include "uart_error_handling.h"
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
+#include "bms_cosa.h"
 
 
 /*==================================================================================================
@@ -49,6 +50,7 @@ extern "C" {
 ==================================================================================================*/
 
 
+
 /*==================================================================================================
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
@@ -72,8 +74,10 @@ uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8 buffPrimire[32] = {0};
 volatile int delei;
 int curent1,curent2;
-int16_t i1,i2;
-int16_t v1,v2;
+int i1,i2;
+int v1,v2;
+
+struct biemese icBaterie;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -83,12 +87,6 @@ int16_t v1,v2;
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
-
-
-/*==================================================================================================
-*                                       GLOBAL FUNCTIONS
-==================================================================================================*/
-
 void IntrerupereBTN(void){
 	ok = 1;
 	Dio_WriteChannel(96, 1);
@@ -107,216 +105,9 @@ void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	ok = 1;
 }
 
-void transmisie()
-{
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 24U);
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
-
-
-
-void transmisieCMD()
-{
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 4U);
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
-
-void transmisieRD48()
-{
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
-
-void transmisieWR48()
-{
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	    	uint16 dpec = pec10_calc(false,6U, buffTrimitere+4);
-	    	buffTrimitere[10] = dpec >> 8;
-	    	buffTrimitere[11] = dpec % 256;
-
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
-
-void transmisieRD160()
-{
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 32U);
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
+/*==================================================================================================
+*                                       GLOBAL FUNCTIONS
+==================================================================================================*/
 
 
 int main(void)
@@ -345,101 +136,34 @@ int main(void)
     Port_Init(NULL_PTR);
     Platform_Init(NULL_PTR);
     Uart_Init(NULL_PTR);
-    //I2c_Init(NULL_PTR);
-    //Icu_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
-    //USBInit(0);
 
+    BmsInit();
+    parametriiADC();
+
+
+    //USBInit(0);
     //Icu_EnableNotification(0);
-    //002C RDSID
-    //
+
 
     /*
     buffTrimitere[0]=0;
-    buffTrimitere[1]=0x2C;
-    transmisie(); //read RDSID
-
-	buffTrimitere[0]=7;
-	buffTrimitere[1]=0x22;
-	transmisie(); //read COMM reg
-
-	buffTrimitere[0]=0;
-	buffTrimitere[1]=0x2C;
-	transmisie(); //read SSID
-
-	buffTrimitere[0]=0;
-	buffTrimitere[1]=0x10;
-	transmisie(); //read all
-
-	buffTrimitere[0]=0;
-    buffTrimitere[1]=0x51;
-    transmisieRD160();     //RDALLX
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x35;
-    transmisieRD160();     //RDVALL
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x11;
-    transmisieRD160();     //RDALLR
-
-    buffTrimitere[0]=0x08;
-    buffTrimitere[1]=0x60;
-    transmisieCMD(); //ADV
-
-    buffTrimitere[0]=0x05;
-    buffTrimitere[1]=0x30;
-    transmisieCMD(); //ADX
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x0A;
-    transmisieRD48();     //RDV1A
-
-	*/
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x27;
-    transmisieCMD(); //SRST
-
-    buffTrimitere[0]=0;
     buffTrimitere[1]=0x2;
     transmisieRD48();     //RDCFGA
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x1;
-
-    buffTrimitere[4]=0;
-    buffTrimitere[5]=0;
-    buffTrimitere[6]=0;
-    buffTrimitere[7]=0x5F;
-    buffTrimitere[8]=0;
-    buffTrimitere[9]=0x10;
-    transmisieWR48(); //WRCFGA
-
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x2;
-    transmisieRD48();     //RDCFGA
+    */
 
 
-
-    buffTrimitere[0]=0x02;
-    buffTrimitere[1]=0xE0;
-    transmisieCMD(); //ADI1
-    uint8 buffer[5];
+    uint8 buffer[7];
     buffer[0]=12;
 
 
     volatile int delayul=1000000;
-    //USBSendBMSCurrent(54,3);
     while (1)
     {
     	delayul=300000;
     		while(delayul--);
-    	buffTrimitere[0]=0;
-    	buffTrimitere[1]=0x0C;
-    	transmisieRD160();     //RDALLI
-    	curent1=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
-    	i1=curent1*20;
+
+    	i1=getPackCurrent();
     	v1=((buffPrimire[11]<<8)+(buffPrimire[10]))*40;
     	////USBSendBMSCurrent(i1,0);
 
@@ -452,58 +176,20 @@ int main(void)
     	curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
     	i2=5*curent2;//teoretic s-ar imparti la 4
     	v2=((buffPrimire[11]<<8)+(buffPrimire[10]))*10;
-    	////USBSendBMSCurrent(i2,0); //pentru reverse
-    	//USBSendBMSCellVoltage(1, i2, 3);
 
-    	/**/
-    	/* curent
-    	buffer[1]=i1>>8;
-    	buffer[2]=i1%256;
-    	buffer[3]=i2>>8;
-    	buffer[4]=i2%256;
-    	*/
 
-    	buffer[1]=v1>>8;
-    	buffer[2]=v1%256;
-    	buffer[3]=i1>>8;
-    	buffer[4]=i1%256;
 
-    	/*
-    	buffer[1]=v1>>8;
-    	buffer[2]=v1%256;
-    	buffer[3]=i1>>8;
-    	buffer[4]=i1%256;
-    	*/
+    	buffer[1]=v1>>16;
+    	buffer[2]=v1>>8;
+    	buffer[3]=v1%256;
+    	buffer[4]=i1>>16;
+    	buffer[5]=i1>>8;
+    	buffer[6]=i1%256;
 
-    	Uart_SyncSend(0, buffer, 5, 10000000);
-    	/**/
-
+    	Uart_SyncSend(0, buffer, 7, 10000000);
     }
-
-
-
-
-
 	while(1);
 
-
-#if 0
-    USBInit(0);
-    //SevenSegmentInit();
-    //SevSegGrTest(0);
-    ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
-    ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NO_RESPONSE);
-    ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NUMBER_TOO_LARGE);
-    ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
-    ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
-
-    while(1){
-    	volatile int i = 100000;
-    	while(i)
-    		i--;
-    	USBSendErrors();
-    }
-#endif
 
 }
 // test
