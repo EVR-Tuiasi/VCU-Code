@@ -28,4 +28,4 @@
     transmisieRD48();     //RDV1A
     
     
-        	v1=((buffPrimire[11]<<8)+(buffPrimire[10]))*40;
+v1=((buffPrimire[11]<<8)+(buffPrimire[10]))*40;

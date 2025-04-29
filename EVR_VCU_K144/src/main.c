@@ -97,12 +97,16 @@ void IntrerupereBTN(void){
 void I2c_Callback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(96, 0);
 	Dio_WriteChannel(111, 1);
+	(void) Event;
+	(void) Channel;
 }
 
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 0);
 	Dio_WriteChannel(96, 1);
 	ok = 1;
+	(void) Event;
+	(void) Channel;
 }
 
 /*==================================================================================================
@@ -163,6 +167,7 @@ int main(void)
     	delayul=300000;
     		while(delayul--);
     	i1=BmsGetPackCurrent();
+    	//i1*=100;
 
     	////USBSendBMSCurrent(i1,0);
 
@@ -170,6 +175,7 @@ int main(void)
     	delayul=30000;
    	    	while(delayul--);
        	v1=BmsGetPackVoltage();
+       	//v1*=10;
 
 
 

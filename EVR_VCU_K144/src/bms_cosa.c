@@ -24,14 +24,14 @@ extern uint8 buffPrimire[32];
 extern volatile int delei;
 extern struct biemese icBaterie;
 
-void BmsInit()
+void BmsInit(void)
 {
 	buffTrimitere[0]=0;
 	buffTrimitere[1]=0x27;
 	transmisieCMD(); //SRST
 }
 
-void BmsTest()
+void BmsTest(void)
 {
     do
     {
@@ -44,7 +44,7 @@ void BmsTest()
 
 }
 
-void parametriiADC()
+void parametriiADC(void)
 {
     buffTrimitere[0]=0;
     buffTrimitere[1]=0x1;
@@ -64,18 +64,18 @@ void parametriiADC()
     transmisieCMD(); //ADI1
 }
 
-int BmsGetPackCurrent()
+int BmsGetPackCurrent(void)
 {
 	buffTrimitere[0]=0;
 	buffTrimitere[1]=0x0C;
 	transmisieRD160();     //RDALLI
 
-	icBaterie.packCurrent=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
+	icBaterie.packCurrent=((buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]))*20;
 
 	return icBaterie.packCurrent;
 }
 
-int BmsGetPackVoltage()
+int BmsGetPackVoltage(void)
 {
 	buffTrimitere[0]=0;
 	buffTrimitere[1]=0x4C;
@@ -89,7 +89,7 @@ int BmsGetPackVoltage()
 
 
 
-void transmisie()
+void transmisie(void)
 {
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
@@ -132,7 +132,7 @@ void transmisie()
 
 
 
-void transmisieCMD()
+void transmisieCMD(void)
 {
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
@@ -173,7 +173,7 @@ void transmisieCMD()
 	    	//////
 }
 
-void transmisieRD48()
+void transmisieRD48(void)
 {
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
@@ -214,7 +214,7 @@ void transmisieRD48()
 	    	//////
 }
 
-void transmisieWR48()
+void transmisieWR48(void)
 {
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
@@ -259,7 +259,7 @@ void transmisieWR48()
 	    	//////
 }
 
-void transmisieRD160()
+void transmisieRD160(void)
 {
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);

@@ -18,20 +18,20 @@ struct biemese
 	//Spi_ChannelType bmsSpiChannel;
 };
 
-void BmsInit();
-void BmsTest();
-void parametriiADC();
-int BmsGetPackCurrent();
-int BmsGetPackVoltage();
+void BmsInit(void);
+void BmsTest(void);
+void parametriiADC(void);
+int BmsGetPackCurrent(void);
+int BmsGetPackVoltage(void);
 
-void transmisie();
+void transmisie(void);
 
-void transmisieCMD();
-void transmisieRD48();
+void transmisieCMD(void);
+void transmisieRD48(void);
 
-void transmisieWR48();
+void transmisieWR48(void);
 
-void transmisieRD160();
+void transmisieRD160(void);
 
 
 

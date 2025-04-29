@@ -1,6 +1,6 @@
 import serial
 
-ser = serial.Serial('COM22', 9600, timeout=1)
+ser = serial.Serial('COM11', 9600, timeout=1)
 print("Listening on COM22...")
 
 def parse_signed_24bit(b):
