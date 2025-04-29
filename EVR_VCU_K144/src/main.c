@@ -146,6 +146,10 @@ int main(void)
 
 
     BmsInit();
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x2C;
+    transmisie(); //read RDSID
+
     parametriiADC();
 
 
