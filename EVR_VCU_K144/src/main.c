@@ -142,6 +142,9 @@ int main(void)
     Uart_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
 
+    //alt branch
+
+
     BmsInit();
     parametriiADC();
 
