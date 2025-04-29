@@ -70,10 +70,21 @@ int BmsGetPackCurrent()
 	buffTrimitere[1]=0x0C;
 	transmisieRD160();     //RDALLI
 
-	int i1=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
-	i1=i*20;
+	icBaterie.packCurrent=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
 
-	return i1;
+	return icBaterie.packCurrent;
+}
+
+int BmsGetPackVoltage()
+{
+	buffTrimitere[0]=0;
+	buffTrimitere[1]=0x4C;
+	transmisieRD160();     //RDALLA
+	//curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
+	//i2=5*curent2;//teoretic s-ar imparti la 4
+	icBaterie.packVoltage=((buffPrimire[12]<<16)+(buffPrimire[11]<<8)+(buffPrimire[10]))*10;
+
+	return icBaterie.packVoltage;
 }
 
 

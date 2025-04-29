@@ -22,6 +22,7 @@ void BmsInit();
 void BmsTest();
 void parametriiADC();
 int BmsGetPackCurrent();
+int BmsGetPackVoltage();
 
 void transmisie();
 

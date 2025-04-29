@@ -26,3 +26,6 @@
     buffTrimitere[0]=0;
     buffTrimitere[1]=0x0A;
     transmisieRD48();     //RDV1A
+    
+    
+        	v1=((buffPrimire[11]<<8)+(buffPrimire[10]))*40;

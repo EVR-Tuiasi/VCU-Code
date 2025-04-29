@@ -162,20 +162,14 @@ int main(void)
     {
     	delayul=300000;
     		while(delayul--);
+    	i1=BmsGetPackCurrent();
 
-    	i1=getPackCurrent();
-    	v1=((buffPrimire[11]<<8)+(buffPrimire[10]))*40;
     	////USBSendBMSCurrent(i1,0);
 
 
     	delayul=30000;
-    	    while(delayul--);
-    	buffTrimitere[0]=0;
-    	buffTrimitere[1]=0x4C;
-    	transmisieRD160();     //RDALLA
-    	curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
-    	i2=5*curent2;//teoretic s-ar imparti la 4
-    	v2=((buffPrimire[11]<<8)+(buffPrimire[10]))*10;
+   	    	while(delayul--);
+       	v1=BmsGetPackVoltage();
 
 
 
@@ -185,7 +179,6 @@ int main(void)
     	buffer[4]=i1>>16;
     	buffer[5]=i1>>8;
     	buffer[6]=i1%256;
-
     	Uart_SyncSend(0, buffer, 7, 10000000);
     }
 	while(1);
