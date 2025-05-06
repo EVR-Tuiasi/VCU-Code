@@ -119,8 +119,68 @@ int main(void)
     SevenSegmentInit();
 
     while(1){
+    	SevenSegmentDisplayDecimalValue(0, -1, 0);
 
-    	SevSegGrTest(0);
+    	volatile int p = 100000;
+
+    	while(p != 0){
+			UpdateState();
+    		p--;
+    	}
+
+    	SevenSegmentDisplayDecimalValue(1, -1, 0);
+
+    	p = 100000;
+
+    	while(p != 0){
+			UpdateState();
+    		p--;
+    	}
+
+    	SevenSegmentDisplayDecimalValue(2, -10, 0);
+
+    	p = 100000;
+
+    	while(p != 0){
+			UpdateState();
+    		p--;
+    	}
+
+    	SevenSegmentDisplayDecimalValue(0, 10, 0);
+
+    	p = 100000;
+
+    	while(p != 0){
+			UpdateState();
+    		p--;
+    	}
+
+    	SevenSegmentDisplayDecimalValue(1, 100, 0);
+
+    	p = 100000;
+
+    	while(p != 0){
+			UpdateState();
+    		p--;
+    	}
+
+    	SevenSegmentDisplayDecimalValue(2, 1, 1);
+
+    	p = 100000;
+
+    	while(p != 0){
+			UpdateState();
+    		p--;
+    	}
+
+    	/*SevenSegmentDisplayDecimalValue(1, 10, 0);
+
+		p = 100000;
+
+		while(p != 0){
+			UpdateState();
+			p--;
+		}*/
 
     }
 }

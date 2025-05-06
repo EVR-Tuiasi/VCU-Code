@@ -37,14 +37,14 @@ extern "C" {
 
 // -- Definire Grupuri de segmente si ce segmente se afla in ele
 
-uint8 ref0[4] = {1, 2, 3, 4};
+uint8 ref0[2] = {1, 2};
 uint8 ref1[3] = {3, 4, 5};
 uint8 ref2[3] = {6, 7, 8};
 
 // -- Definite Structura de Grupuri, ce are buffer ul de Segmente si cate elemente se afla in fiecare grup
 
 SevenSegmentGroup grupuri[3] = {
-		{ref0, 4},
+		{ref0, 2},
 		{ref1, 3},
 		{ref2, 3}
 };
@@ -273,7 +273,7 @@ void SevenSegmentInit(void){
 		SevSegInitBuf[0]++;
 	}
 
-	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x03; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
+	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x07; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
 
 	I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	Gpt_StartTimer(0, 20000);
@@ -399,6 +399,8 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 	uint16 InitValue = 0;
 	bool isNegative = false, isPositive = true;
 
+	//int p = SevenSegmentGroupIndex == 1 ? 2 : SevenSegmentGroupIndex == 2 ? 5 : 0;
+
 	if(SevenSegmentGroupIndex > SevenSegmentDriverInstance.SevenSegmentGroup_elements_count){ // -- Daca grupul precizat nu exista, afisam codul de eraore si iesim din functie
 		; // TODO de inserat apel la functia de eroare
 	}
@@ -429,6 +431,7 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 		}
 
 		for(int i = 0; i < SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].nr_elemente; i++){
+
 			Index = SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].elemente[i] - 1;
 
 			if(i == PrecisionFloatPoint && PrecisionFloatPoint != 0) // -- Aici setam virgula daca numarul este cu virgula si se ajunge la pozitia segmentului unde ar trebui afisata
@@ -447,14 +450,20 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 			}
 			else if(DecimalValue == 0){ // Daca ajungem la capatul numarului, verificam ce facem daca numarul este pozitiv sau negativ
 				if(isNegative){ // -- Daca este negativ setam ca segmentul unde vine "-" sa nu mai aiba decodificare, si setam ca valoare afisata sa fie 0000 0001 [informatii mai detaliate la afisarea segmentelor in datasheet]
-					SevenSegmentDriverInstance.DecodeDigit = ~(1<<(i));
+					SevenSegmentDriverInstance.DecodeDigit &= ~(1<<(SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].elemente[i] - 1));
 					SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
 					SevenSegmentDriverInstance.ValoriDigits[Index] = 1;
 
 					isNegative = false;
 				}
 				else if(isPositive){ // -- Daca este pozitiv, setam decodificarea sa fie pe toate segmentele, asigurandu ne ca nu ramanem cu segmente fara decodificare, in caz ca anterior am afisat un numar negativ
-					SevenSegmentDriverInstance.DecodeDigit = 0xff;
+					uint8 auxx = 0;
+
+					for(int j = 0; j < SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].nr_elemente; j++){
+						auxx += 1<<(SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].elemente[j] - 1);
+					}
+
+					SevenSegmentDriverInstance.DecodeDigit |= auxx;
 					SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
 					SevenSegmentDriverInstance.ValoriDigits[Index] = 15;
 				}
@@ -468,7 +477,13 @@ void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 Decima
 		}
 	}
 	if((isPositive) || ((isNegative) && (InitValue > 1000))){ // -- Daca este pozitiv si nu ocupam toate segmentele cu un numar, setam decodificarea sa fie pe toate segmentele, asigurandu ne ca nu ramanem cu segmente fara decodificare, in caz ca anterior am afisat un numar negativ
-		SevenSegmentDriverInstance.DecodeDigit = 0xff;
+		uint8 auxx = 0;
+
+		for(int j = 0; j < SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].nr_elemente; j++){
+			auxx += 1<<(SevenSegmentDriverInstance.group[SevenSegmentGroupIndex].elemente[j] - 1);
+		}
+
+		SevenSegmentDriverInstance.DecodeDigit |= auxx;
 		SevenSegmentDriverInstance.Schimbare_DecodeDigit = true;
 	}
 }
