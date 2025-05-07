@@ -58,3 +58,14 @@ EVR_VCU_K144/board
 EVR_VCU_K144/generate
 EVR_VCU_K144/Debug_FLASH
 EVR_VCU_K144/Debug_RAM
+
+EVR_VCU_K344_bord/.settings/language.settings.xml
+EVR_VCU_K344_bord/RTD
+EVR_VCU_K344_bord/board
+EVR_VCU_K344_bord/generate
+EVR_VCU_K344_bord/Debug_FLASH
+EVR_VCU_K344_bord/Debug_RAM
+
+RemoteSystemsTempFiles
+
+/.metadata/
