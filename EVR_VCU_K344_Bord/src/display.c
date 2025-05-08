@@ -88,10 +88,10 @@ void DisplayInit(void){
 		delei--;
 	}*/
 	host_command(ACTIVE, 0);//send host command "ACTIVE" to wake up
-	delei = 30000000;
+	/*delei = 30000000;
 	while(delei){
 		delei--;
-	}
+	}*/
 	while (0x7C != rd8(REG_ID)); //Wait till clock is on
 	while (0x0 != rd8(REG_CPURESET)); //Check if EVE is in working status.
 	/* Configure display registers - demonstration for WQVGA resolution, modified for 800x480*/
@@ -149,6 +149,112 @@ void SoundTest(void){
 		while(rd8(REG_PLAY)){
 			;
 		}
+	}
+}
+
+void DashboardTest(void){
+	uint32 delay, battery_percent = 0, speed = 0;
+	while(1){
+		delay = 1000000;
+		while(delay--);
+		DashboardUpdate(speed, 0, 0, battery_percent, 0, 0);
+		battery_percent++;
+		speed++;
+		battery_percent %= 101;
+		speed %= 200;
+	}
+}
+
+
+void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp){
+	uint32 index = 0;
+	uint8 color_red, color_green, battery_text_offset = 0, speed_text_offset = 0;
+	uint16 height_offset;
+	//input value tests
+	if(battery_percent > 100U){
+		battery_percent = 100U;
+	}
+	//battery color calculation
+	if(battery_percent >= 50U){
+		color_red = (100U - battery_percent) * 255U / 50U;
+		color_green = 255U;
+	}
+	else{
+		color_red = 255U;
+		color_green = battery_percent * 255U / 50U;
+	}
+	if(speed > 999U){
+		speed = 999U;
+	}
+
+	if(rd8(REG_DLSWAP) == 0){
+		wr32(RAM_DL + (index+=4), clear(1, 1, 1)); // clear screen
+		wr32(RAM_DL + (index+=4), vertex_format(0)); // make vertex2f use 1/1 precision
+
+		//BATTERY INDICATOR
+		wr32(RAM_DL + (index+=4), color_rgb(50U, 50U, 50U)); // change colour to grey
+		wr32(RAM_DL + (index+=4), begin(RECTS));
+		//upper battery indicator limit
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y));
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_THICKNESS));
+		//lower battery indicator limit
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_HEIGHT));
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT + BATTERY_THICKNESS));
+		//moving colored battery indicator
+		wr32(RAM_DL + (index+=4), color_rgb(color_red, color_green, 0)); // change colour dependent on battery percentage
+		height_offset = ((uint32) BATTERY_HEIGHT - BATTERY_THICKNESS) * (100U - battery_percent) / ((uint32)100U);
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_THICKNESS + height_offset));
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT));//change height depending on battery percentage
+		//battery percentage text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
+		if(battery_percent >= 100U){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, (battery_percent / 100U) + '0')); // print hundreds
+			battery_text_offset++;
+		}
+		if(battery_percent >= 10U){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X + BATTERY_FONT_SIZE * battery_text_offset, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, (battery_percent / 10U % 10U) + '0')); // print tens
+			battery_text_offset++;
+		}
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X + BATTERY_FONT_SIZE * battery_text_offset, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, (battery_percent % 10U) + '0')); // print units
+		battery_text_offset++;
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X + BATTERY_FONT_SIZE * battery_text_offset, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, '%')); // print percent symbol
+
+		//SPPEDOMETER
+		//outer circle
+		wr32(RAM_DL + (index+=4), color_rgb(230, 230, 0)); // change color to yellow
+		wr32(RAM_DL + (index+=4), point_size(SPEEDOMETER_RADIUS * 16));
+		wr32(RAM_DL + (index+=4), begin(POINTS)); //begin drawing circles
+		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS));
+		wr32(RAM_DL + (index+=4), color_rgb(0, 0, 0)); // change color to black
+		wr32(RAM_DL + (index+=4), point_size(SPEEDOMETER_RADIUS * 16 - SPEEDOMETER_THICKNESS * 16 * 2));
+		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS));
+		//inner circle
+		wr32(RAM_DL + (index+=4), color_rgb(230U, 230U, 0U)); // change color to yellow
+		wr32(RAM_DL + (index+=4), point_size(SPEEDOMETER_INNER_RADIUS * 16));
+		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS));
+		//lower rectangle
+		wr32(RAM_DL + (index+=4), begin(RECTS));
+		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_LOWER_THICKNESS/2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS));
+		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS + SPEEDOMETER_LOWER_THICKNESS/2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 2 - SPEEDOMETER_THICKNESS));
+		//inner text
+		wr32(RAM_DL + (index+=4), color_rgb(0U, 0U, 0U)); // change color to black
+		wr32(RAM_DL + (index+=4), bitmap_handle(31));
+		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, 128, 128));
+		wr32(RAM_DL + (index+=4), bitmap_transform_a(256/SPEEDOMETER_FONT_SCALE));
+		wr32(RAM_DL + (index+=4), bitmap_transform_e(256/SPEEDOMETER_FONT_SCALE));
+		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text
+		if(speed >= 100U){
+			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE*3/2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT_SIZE, (speed / 100U) + '0')); // print hundreds
+			speed_text_offset++;
+		}
+		if(speed >= 10U){
+			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE + SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE * speed_text_offset / 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT_SIZE, (speed / 10U % 10U) + '0')); // print tens
+			speed_text_offset++;
+		}
+		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE/2 + SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE * speed_text_offset / 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_SIZE*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT_SIZE, (speed % 10U) + '0')); // print units
+
+		wr32(RAM_DL + (index+=4), display()); // display the image
+		wr8(REG_DLSWAP,DLSWAP_FRAME); //display list swap
 	}
 }
 

@@ -111,13 +111,19 @@ typedef enum{
 ==================================================================================================*/
 /*Setting graphics state*/
 uint32 alpha_func(AlphaFunc_type func, uint8 ref);
-//uint32 bitmap_handle();
+uint32 bitmap_handle(uint8 handle);
 uint32 bitmap_layout(BitmapLayout_type format, uint16 linestride, uint16 height);
 //uint32 bitmap_layout_h();
 uint32 bitmap_size(boolean filter, boolean wrapX, boolean wrapY, uint16 width, uint16 height);
 //uint32 bitmap_size_h();
 uint32 bitmap_source(uint32 addr);
-//uint32 bitmap_transform_a_f();
+uint32 bitmap_transform_a(uint32 coefficient);
+uint32 bitmap_transform_b(uint32 coefficient);
+uint32 bitmap_transform_c(uint32 coefficient);
+uint32 bitmap_transform_d(uint32 coefficient);
+uint32 bitmap_transform_e(uint32 coefficient);
+uint32 bitmap_transform_f(uint32 coefficient);
+
 //uint32 blend_func();
 //uint32 cell();
 uint32 clear(boolean clear_color, boolean clear_stencil, boolean clear_tag);
@@ -139,14 +145,14 @@ uint32 point_size(uint16 size);
 //uint32 stencil_op();
 //uint32 tag();
 //uint32 tag_mask();
-//uint32 vertex_format();
+uint32 vertex_format(uint8 frac);
 uint32 vertex_translate_x(uint32 x);
 uint32 vertex_translate_y(uint32 y);
 //uint32 palette_source();
 /*Drawing actions*/
 uint32 begin(Begin_type prim);
 uint32 end_d(void);
-//uint32 vertex2f();
+uint32 vertex2f(uint16 x, uint16 y);
 uint32 vertex2ii(uint16 x, uint16 y, uint8 handle, uint8 cell);
 /*Execution control*/
 //uint32 nop();

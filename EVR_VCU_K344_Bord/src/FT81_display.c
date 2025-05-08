@@ -80,8 +80,12 @@ uint32 display(void){
 	return 0;
 }
 
+uint32 vertex2f(uint16 x, uint16 y){
+	return (((uint32)0x1) << 30U) | (((uint32)x & 0x7FFF) << 15U) | ((uint32)y & 0x7FFF);
+}
+
 uint32 vertex2ii(uint16 x, uint16 y, uint8 handle, uint8 cell){
-	return (((uint32)0x2) << 30U) | (((uint32)(0x1FF & x)) << 21U) | (((uint32)(0x1FF & y)) << 12U) | (((uint32)(0x1FF & handle)) << 7U) | (uint32)(0x7F & cell);
+	return (((uint32)0x2) << 30U) | (((uint32)(0x1FF & x)) << 21U) | (((uint32)(0x1FF & y)) << 12U) | (((uint32)(0x1F & handle)) << 7U) | (uint32)(0x7F & cell);
 }
 
 uint32 end_d(void){
@@ -94,6 +98,13 @@ uint32 color_rgb(uint8 red, uint8 green, uint8 blue){
 
 uint32 point_size(uint16 size){
 	return (((uint32)0x0D) << 24U) | (uint32)(size & 0x1FFF);
+}
+
+uint32 vertex_format(uint8 frac){
+	if (frac > 4){
+		frac = 4;
+	}
+	return (((uint32)0x27) << 24U) | (frac & 0x07);
 }
 
 uint32 vertex_translate_x(uint32 x){
@@ -116,6 +127,33 @@ uint32 bitmap_size(boolean filter, boolean wrapX, boolean wrapY, uint16 width, u
 	return (0x08 << 24) | ((filter & 0x1) << 20) | ((wrapX & 0x1) << 19) | ((wrapY & 0x1) << 18) | ((width & 0x1FF) << 9) | (height & 0x1FF);
 }
 
+uint32 bitmap_transform_a(uint32 coefficient){
+	return (0x15 << 24) | (coefficient & 0x1FFFF);
+}
+
+uint32 bitmap_transform_b(uint32 coefficient){
+	return (0x16 << 24) | (coefficient & 0x1FFFF);
+}
+
+uint32 bitmap_transform_c(uint32 coefficient){
+	return (0x17 << 24) | (coefficient & 0x1FFFF);
+}
+
+uint32 bitmap_transform_d(uint32 coefficient){
+	return (0x18 << 24) | (coefficient & 0x1FFFF);
+}
+
+uint32 bitmap_transform_e(uint32 coefficient){
+	return (0x19 << 24) | (coefficient & 0x1FFFF);
+}
+
+uint32 bitmap_transform_f(uint32 coefficient){
+	return (0x20 << 24) | (coefficient & 0x1FFFF);
+}
+
+uint32 bitmap_handle(uint8 handle){
+	return (0x05 << 24) | (handle & 0x1F);
+}
 
 #ifdef __cplusplus
 }

@@ -65,7 +65,8 @@ EVR_VCU_K344_bord/board
 EVR_VCU_K344_bord/generate
 EVR_VCU_K344_bord/Debug_FLASH
 EVR_VCU_K344_bord/Debug_RAM
-
+ZephyrRTOS_TAD_logs
 RemoteSystemsTempFiles
-
+FreeRTOS_TAD_logs
+.s32ds_packages_support
 /.metadata/

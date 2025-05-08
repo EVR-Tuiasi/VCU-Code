@@ -142,7 +142,8 @@ int main(void)
 #if 1
 	DisplayInit();
 	//DisplayTest();
-	VladTest();
+	DashboardTest();
+	//VladTest();
 	//SoundTest();
 	while(1){
 		//wr16(0x0C0008, 0x45);

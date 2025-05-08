@@ -27,7 +27,26 @@ extern "C"{
 /*==================================================================================================
 *                                      DEFINES AND MACROS
 ==================================================================================================*/
-
+//Battery indicator graphical properties
+#define BATTERY_HEIGHT 300
+#define BATTERY_WIDTH 200
+#define BATTERY_THICKNESS 10
+#define BATTERY_X 0
+#define BATTERY_Y 150
+#define BATTERY_TEXT_X 10
+#define BATTERY_TEXT_Y 100
+#define BATTERY_FONT_SIZE 31
+//Speedometer graphical properties
+#define SPEEDOMETER_RADIUS 180
+#define SPEEDOMETER_INNER_RADIUS 120
+#define SPEEDOMETER_X 50
+#define SPEEDOMETER_Y 100
+#define SPEEDOMETER_THICKNESS 5
+#define SPEEDOMETER_LOWER_THICKNESS 60
+#define SPEEDOMETER_FONT_SIZE 31
+#define SPEEDOMETER_FONT_SCALE 2
+#define SPEEDOMETER_NUM_REFERENCES 10
+#define SPEEDOMETER_MAX_VALUE 140
 /*==================================================================================================
 *                                             ENUMS
 ==================================================================================================*/
@@ -50,6 +69,8 @@ void DisplayInit(void);
 void DisplayTest(void);
 void VladTest(void);
 void SoundTest(void);
+void DashboardTest(void);
+void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp);
 
 #ifdef __cplusplus
 }
