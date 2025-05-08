@@ -148,7 +148,7 @@ int main(void)
     //ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
     //ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
 
-    uint16 rezultat_buffer[ADC_COUNT][PIN_BUF_SIZE];
+    uint16 rezultat_buffer[PIN_BUF_SIZE][ADC_COUNT];
 	uint16 grounds[PIN_BUF_SIZE * 2] = {6, 7, 8, 67, 2, 3};
 
 	for(int i = 0; i < PIN_BUF_SIZE; i++)
@@ -159,14 +159,14 @@ int main(void)
 			Port_SetPinDirection(grounds[k], PORT_PIN_OUT);
 			Dio_WriteChannel(grounds[k + PIN_BUF_SIZE], STD_LOW);
 
-			Adc_SetupResultBuffer(i, &rezultat_buffer[i][k]);
+			Adc_SetupResultBuffer(i, &rezultat_buffer[k][i]);
 			Adc_StartGroupConversion(i);
 
 			while(Adc_GetGroupStatus(i) != ADC_STREAM_COMPLETED);
 
-			Adc_ReadGroup(i, &rezultat_buffer[i][k]);
+			Adc_ReadGroup(i, &rezultat_buffer[k][i]);
 
-			rezultat_buffer[i][k] = (rezultat_buffer[i][k] * 500) / 4095;
+			rezultat_buffer[k][i] = (rezultat_buffer[k][i] * 500) / 4095;
 			Port_SetPinDirection(grounds[k], PORT_PIN_HIGH_Z);
 		}
 	}
