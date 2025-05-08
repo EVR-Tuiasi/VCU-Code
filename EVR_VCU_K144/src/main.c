@@ -9,7 +9,8 @@ extern "C" {
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
+#include "Adc.h"
+#include "Mcl.h"
 #include "CDD_I2c.h"
 #include "Dio.h"
 #include "Icu.h"
@@ -89,13 +90,22 @@ void IntrerupereBTN(void){
 void I2c_Callback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(96, 0);
 	Dio_WriteChannel(111, 1);
+
+	(void)Event;
+	(void)Channel;
 }
 
 void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	Dio_WriteChannel(111, 0);
 	Dio_WriteChannel(96, 1);
 	ok = 1;
+
+	(void)Event;
+	(void)Channel;
 }
+
+#define PIN_BUF_SIZE 3
+#define ADC_COUNT 2
 
 int main(void)
 {
@@ -120,28 +130,58 @@ int main(void)
     Mcu_SetMode(McuModeSettingConf_0);
 
     /* Initialize all pins using the Port driver */
+    Mcl_Init(NULL_PTR);
     Port_Init(NULL_PTR);
     Platform_Init(NULL_PTR);
+    Adc_Init(NULL_PTR);
     Uart_Init(NULL_PTR);
     I2c_Init(NULL_PTR);
     Icu_Init(NULL_PTR);
     Icu_EnableNotification(0);
 
-    USBInit(0);
+    //USBInit(0);
     //SevenSegmentInit();
     //SevSegGrTest(0);
-    ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
-    ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NO_RESPONSE);
-    ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NUMBER_TOO_LARGE);
-    ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
-    ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
+    //ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
+    //ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NO_RESPONSE);
+    //ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NUMBER_TOO_LARGE);
+    //ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
+    //ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
 
-    while(1){
-    	volatile int i = 100000;
-    	while(i)
-    		i--;
-    	USBSendErrors();
-    }
+    uint16 rezultat_buffer[ADC_COUNT][PIN_BUF_SIZE];
+	uint16 grounds[PIN_BUF_SIZE * 2] = {6, 7, 8, 67, 2, 3};
+
+	for(int i = 0; i < PIN_BUF_SIZE; i++)
+		Port_SetPinDirection(grounds[i], PORT_PIN_HIGH_Z);
+
+	for(int i = 0; i < ADC_COUNT; i++){
+		for(int k = 0; k < PIN_BUF_SIZE; k++){
+			Port_SetPinDirection(grounds[k], PORT_PIN_OUT);
+			Dio_WriteChannel(grounds[k + PIN_BUF_SIZE], STD_LOW);
+
+			Adc_SetupResultBuffer(i, &rezultat_buffer[i][k]);
+			Adc_StartGroupConversion(i);
+
+			while(Adc_GetGroupStatus(i) != ADC_STREAM_COMPLETED);
+
+			Adc_ReadGroup(i, &rezultat_buffer[i][k]);
+
+			rezultat_buffer[i][k] = (rezultat_buffer[i][k] * 500) / 4095;
+			Port_SetPinDirection(grounds[k], PORT_PIN_HIGH_Z);
+		}
+	}
+
+	while(1){
+		;
+	}
+
+
+//    while(1){
+//    	volatile int i = 100000;
+//    	while(i)
+//    		i--;
+//    	USBSendErrors();
+//    }
 }
 // test
 
