@@ -155,6 +155,11 @@ uint32 bitmap_handle(uint8 handle){
 	return (0x05 << 24) | (handle & 0x1F);
 }
 
+uint32 line_width(uint16 width){
+return (0x0E << 24) | (width & 0x7FF);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

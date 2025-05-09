@@ -35,18 +35,27 @@ extern "C"{
 #define BATTERY_Y 150
 #define BATTERY_TEXT_X 10
 #define BATTERY_TEXT_Y 100
-#define BATTERY_FONT_SIZE 31
+#define BATTERY_FONT_SIZE 31 //TODO change name from font size to just font
 //Speedometer graphical properties
 #define SPEEDOMETER_RADIUS 180
 #define SPEEDOMETER_INNER_RADIUS 120
 #define SPEEDOMETER_X 50
 #define SPEEDOMETER_Y 100
-#define SPEEDOMETER_THICKNESS 5
+#define SPEEDOMETER_THICKNESS 4
 #define SPEEDOMETER_LOWER_THICKNESS 60
-#define SPEEDOMETER_FONT_SIZE 31
-#define SPEEDOMETER_FONT_SCALE 2
-#define SPEEDOMETER_NUM_REFERENCES 10
+#define SPEEDOMETER_FONT 18
+#define SPEEDOMETER_FONT_WIDTH 8
+#define SPEEDOMETER_FONT_HEIGHT 16
+#define SPEEDOMETER_FONT_SCALE 8
 #define SPEEDOMETER_MAX_VALUE 140
+#define SPEEDOMETER_SMALL_FONT 18
+#define SPEEDOMETER_SMALL_FONT_WIDTH 8
+#define SPEEDOMETER_SMALL_FONT_HEIGHT 16
+#define SPEEDOMETER_SMALL_FONT_VERTICAL_OFFSET 10
+#define SPEEDOMETER_INDICES_FONT 31
+#define SPEEDOMETER_INDICES_NUM 14
+#define SPEEDOMETER_START_ANGLE 20
+#define SPEEDOMETER_END_ANGLE 340
 /*==================================================================================================
 *                                             ENUMS
 ==================================================================================================*/

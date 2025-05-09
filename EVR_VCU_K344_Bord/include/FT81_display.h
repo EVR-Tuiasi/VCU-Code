@@ -134,7 +134,7 @@ uint32 clear_color_rgb(uint8 Red, uint8 Green,  uint8 Blue);
 //uint32 color_a();
 //uint32 color_mask();
 uint32 color_rgb(uint8 red, uint8 green, uint8 blue);
-//uint32 line_width();
+uint32 line_width(uint16 width);
 uint32 point_size(uint16 size);
 //uint32 restore_context();
 //uint32 save_context();
