@@ -54,6 +54,13 @@ extern "C" {
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
 
+static void ActivateThermistorBank(uint16 ThermistorBankIndex){
+	(void)ThermistorBankIndex;
+}
+
+static void DeactivateThermistorBank(uint16 ThermistorBankIndex){
+	(void)ThermistorBankIndex;
+}
 
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
@@ -64,8 +71,11 @@ void TempSensorInit(){
 }
 
 sint32 GetTemp(uint16 TempSensorIndex){
-	(void)TempSensorIndex;
+	ActivateThermistorBank(TempSensorIndex);
 
+	// Logica Functie
+
+	DeactivateThermistorBank(TempSensorIndex);
 	return 0;
 }
 
