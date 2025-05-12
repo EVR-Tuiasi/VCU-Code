@@ -9,8 +9,8 @@ extern "C"{
 #include "Dio.h"
 #include "Adc.h"
 
-#define THERMISTOR_BANKS 16
-#define THERMISTORS_PER_BANK 8
+#define THERMISTOR_BANKS 3
+#define THERMISTORS_PER_BANK 2
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -19,6 +19,7 @@ extern "C"{
 typedef struct Thermistors{
 	uint32 ThermistorValues[THERMISTOR_BANKS][THERMISTORS_PER_BANK];
 	Dio_ChannelType BankSelectPins[THERMISTOR_BANKS];
+	uint16 BankSelectPinsID[THERMISTOR_BANKS];
 	Adc_GroupType BankReadChannels[THERMISTORS_PER_BANK];
 }Thermistors;
 
