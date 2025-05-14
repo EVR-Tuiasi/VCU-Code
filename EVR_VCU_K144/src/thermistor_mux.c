@@ -34,12 +34,7 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 
-Thermistors thermistor = {
-		{{0},{0}},
-		{0},
-		{0},
-		{0}
-};
+Thermistors Thermistors_Data;
 
 // Nume temporare pt buffere
 
@@ -68,11 +63,12 @@ uint16 bankselpins[THERMISTOR_BANKS] = {67, 2, 3},
 ==================================================================================================*/
 
 static void ActivateThermistorBank(uint16 ThermistorBankIndex){
-	(void)ThermistorBankIndex;
+	Port_SetPinDirection(Thermistors_Data.BankSelectPinsID[ThermistorBankIndex], PORT_PIN_OUT);
+	Dio_WriteChannel(Thermistors_Data.BankSelectPins[ThermistorBankIndex], STD_LOW);
 }
 
 static void DeactivateThermistorBank(uint16 ThermistorBankIndex){
-	(void)ThermistorBankIndex;
+	Port_SetPinDirection(Thermistors_Data.BankSelectPinsID[ThermistorBankIndex], PORT_PIN_HIGH_Z);
 }
 
 /*==================================================================================================
@@ -82,15 +78,15 @@ static void DeactivateThermistorBank(uint16 ThermistorBankIndex){
 void TempSensorInit(){
 	for(int i = 0; i < THERMISTOR_BANKS; i++){
 		for(int j = 0; j < THERMISTORS_PER_BANK; j++){
-			thermistor.ThermistorValues[i][j] = 0;
-			thermistor.BankReadChannels[j] = adcreadchannels[j];
+			Thermistors_Data.ThermistorValues[i][j] = 0;
+			Thermistors_Data.BankReadChannels[j] = adcreadchannels[j];
 		}
-		thermistor.BankSelectPins[i] = bankselpins[i];
-		thermistor.BankSelectPinsID[i] = bankselpinsid[i];
+		Thermistors_Data.BankSelectPins[i] = bankselpins[i];
+		Thermistors_Data.BankSelectPinsID[i] = bankselpinsid[i];
 	}
 
 	for(int i = 0; i < THERMISTORS_PER_BANK; i++){
-		Port_SetPinDirection(thermistor.BankSelectPinsID[i], PORT_PIN_HIGH_Z);
+		Port_SetPinDirection(Thermistors_Data.BankSelectPinsID[i], PORT_PIN_HIGH_Z);
 	}
 }
 
@@ -98,6 +94,15 @@ sint32 GetTemp(uint16 TempSensorIndex){
 	ActivateThermistorBank(TempSensorIndex);
 
 	// Logica Functie
+
+	for(int i = 0; i < THERMISTORS_PER_BANK; i++){
+		Adc_SetupResultBuffer(Thermistors_Data.BankReadChannels[i], &Thermistors_Data.ThermistorValues[TempSensorIndex][i]);
+		Adc_StartGroupConversion(Thermistors_Data.BankReadChannels[i]);
+
+		while(Adc_GetGroupStatus(Thermistors_Data.BankReadChannels[i]) != ADC_STREAM_COMPLETED);
+
+		Adc_ReadGroup(Thermistors_Data.BankReadChannels[i], &Thermistors_Data.ThermistorValues[TempSensorIndex][i]);
+	}
 
 	DeactivateThermistorBank(TempSensorIndex);
 	return 0;
