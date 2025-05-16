@@ -86,14 +86,12 @@ void TempSensorInit(){
 	}
 
 	for(int i = 0; i < THERMISTORS_PER_BANK; i++){
-		Port_SetPinDirection(Thermistors_Data.BankSelectPinsID[i], PORT_PIN_HIGH_Z);
+		DeactivateThermistorBank(i);
 	}
 }
 
 sint32 GetTemp(uint16 TempSensorIndex){
 	ActivateThermistorBank(TempSensorIndex);
-
-	// Logica Functie
 
 	for(int i = 0; i < THERMISTORS_PER_BANK; i++){
 		Adc_SetupResultBuffer(Thermistors_Data.BankReadChannels[i], &Thermistors_Data.ThermistorValues[TempSensorIndex][i]);
@@ -105,6 +103,9 @@ sint32 GetTemp(uint16 TempSensorIndex){
 	}
 
 	DeactivateThermistorBank(TempSensorIndex);
+
+	// Probabil calcul matematic pentru temperatura
+
 	return 0;
 }
 

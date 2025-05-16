@@ -21,6 +21,7 @@ extern "C" {
 #include "uart_error_handling.h"
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
+#include "thermistor_mux.h"
 
 
 /*==================================================================================================
@@ -148,10 +149,10 @@ int main(void)
     //ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
     //ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
 
-    uint16 rezultat_buffer[PIN_BUF_SIZE][ADC_COUNT];
-	uint16 grounds[PIN_BUF_SIZE * 2] = {6, 7, 8, 67, 2, 3};
-
-	for(int i = 0; i < PIN_BUF_SIZE; i++)
+   // uint16 rezultat_buffer[PIN_BUF_SIZE][ADC_COUNT];
+	//uint16 grounds[PIN_BUF_SIZE * 2] = {6, 7, 8, 67, 2, 3};
+//
+	/*for(int i = 0; i < PIN_BUF_SIZE; i++)
 		Port_SetPinDirection(grounds[i], PORT_PIN_HIGH_Z);
 
 	for(int i = 0; i < ADC_COUNT; i++){
@@ -174,7 +175,15 @@ int main(void)
 	while(1){
 		;
 	}
+*/
 
+    TempSensorInit();
+
+    for(int i = 0; i < THERMISTOR_BANKS; i++){
+    	GetTemp((uint16)i);
+    }
+
+    while(1);
 
 //    while(1){
 //    	volatile int i = 100000;
