@@ -49,25 +49,25 @@ void parametriiADC(void)
     buffTrimitere[0]=0;
     buffTrimitere[1]=0x1;
 
-    buffTrimitere[4]=0;
-    buffTrimitere[5]=0;
-    buffTrimitere[6]=0;
-    buffTrimitere[7]=0x5F;
-    buffTrimitere[8]=0;
-    buffTrimitere[9]=0x10;
+    buffTrimitere[4]=0x81; //default
+    buffTrimitere[5]=0; //CFGAR1
+    buffTrimitere[6]=0; //CFGAR2
+    buffTrimitere[7]=0xFF; //porneste GPIO
+    buffTrimitere[8]=0x03;
+    buffTrimitere[9]=0x00;
     transmisieWR48(); //WRCFGA
 
 
 
-    buffTrimitere[0]=0x02;
+    buffTrimitere[0]=0x03;
     buffTrimitere[1]=0xE0;
-    transmisieCMD(); //ADI1
+    transmisieCMD(); //ADCV
 }
 
 int BmsGetPackCurrent(void)
 {
 	buffTrimitere[0]=0;
-	buffTrimitere[1]=0x0C;
+	buffTrimitere[1]=0x04; //0x0C
 	transmisieRD160();     //RDALLI
 
 	icBaterie.packCurrent=((buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]))*20;

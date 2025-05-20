@@ -161,7 +161,7 @@ int main(void)
     buffTrimitere[0]=0;
     buffTrimitere[1]=0x2;
     transmisieRD48();     //RDCFGA
-    */
+	*/
 
 
     uint8 buffer[7];
