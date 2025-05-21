@@ -117,6 +117,14 @@ void DisplayInit(void){
 	wr8(REG_DLSWAP,DLSWAP_FRAME);//display list swap
 	wr8(REG_GPIO_DIR,0x80);//| rd8(REG_GPIO_DIR));
 	wr8(REG_GPIO,0x80);// | rd8(REG_GPIO));//enable display bit
+	wr16(REG_PWM_HZ, 1000);
+	for(int i = 0; i< 128; i++){
+		wr8(REG_PWM_DUTY, i);
+		delei = 100000;
+		while(delei){
+			delei--;
+		}
+	}
 	wr8(REG_PCLK,2);//after this display is visible on the LCD
 }
 
