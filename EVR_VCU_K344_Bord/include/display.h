@@ -56,6 +56,26 @@ extern "C"{
 #define SPEEDOMETER_INDICES_NUM 14
 #define SPEEDOMETER_START_ANGLE 20
 #define SPEEDOMETER_END_ANGLE 340
+//Power meter graphical properties
+#define POWERMETER_RADIUS 180
+#define POWERMETER_INNER_RADIUS 120
+#define POWERMETER_X 50
+#define POWERMETER_Y 100
+#define POWERMETER_THICKNESS 4
+#define POWERMETER_LOWER_THICKNESS 60
+#define POWERMETER_FONT 18
+#define POWERMETER_FONT_WIDTH 8
+#define POWERMETER_FONT_HEIGHT 16
+#define POWERMETER_FONT_SCALE 8
+#define POWERMETER_MAX_VALUE 80
+#define POWERMETER_SMALL_FONT 18
+#define POWERMETER_SMALL_FONT_WIDTH 8
+#define POWERMETER_SMALL_FONT_HEIGHT 16
+#define POWERMETER_SMALL_FONT_VERTICAL_OFFSET 10
+#define POWERMETER_INDICES_FONT 31
+#define POWERMETER_INDICES_NUM 8
+#define POWERMETER_START_ANGLE 20
+#define POWERMETER_END_ANGLE 340
 /*==================================================================================================
 *                                             ENUMS
 ==================================================================================================*/

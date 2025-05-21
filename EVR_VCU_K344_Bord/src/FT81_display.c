@@ -159,6 +159,14 @@ uint32 line_width(uint16 width){
 return (0x0E << 24) | (width & 0x7FF);
 }
 
+uint32 save_context(void){
+	return 0x22 << 24;
+}
+
+uint32 restore_context(void){
+	return 0x23 << 24;
+}
+
 
 #ifdef __cplusplus
 }
