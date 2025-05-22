@@ -200,17 +200,17 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 	if(rd8(REG_DLSWAP) == 0){
 		wr32(RAM_DL + (index+=4), clear(1, 1, 1)); // clear screen
 		wr32(RAM_DL + (index+=4), vertex_format(0)); // make vertex2f use 1/1 precision
-
-		//BATTERY INDICATOR
+		//INDICATOR LIMITS
 		wr32(RAM_DL + (index+=4), save_context());
-		wr32(RAM_DL + (index+=4), color_rgb(50U, 50U, 50U)); // change colour to grey
+		wr32(RAM_DL + (index+=4), color_rgb(50U, 50U, 50U)); // change color to grey
 		wr32(RAM_DL + (index+=4), begin(RECTS));
-		//upper battery indicator limit
-		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y));
-		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_THICKNESS));
-		//lower battery indicator limit
-		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_HEIGHT));
-		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT + BATTERY_THICKNESS));
+		//upper indicator
+		wr32(RAM_DL + (index+=4), vertex2f(0, BATTERY_Y));
+		wr32(RAM_DL + (index+=4), vertex2f(800, BATTERY_Y + BATTERY_THICKNESS));
+		//lower indicator
+		wr32(RAM_DL + (index+=4), vertex2f(0, BATTERY_Y + BATTERY_HEIGHT));
+		wr32(RAM_DL + (index+=4), vertex2f(800, BATTERY_Y + BATTERY_HEIGHT + BATTERY_THICKNESS));
+		//BATTERY INDICATOR
 		//moving colored battery indicator
 		wr32(RAM_DL + (index+=4), color_rgb(color_red, color_green, 0)); // change colour dependent on battery percentage
 		height_offset = ((uint32) BATTERY_HEIGHT - BATTERY_THICKNESS) * (100U - battery_percent) / ((uint32)100U);
@@ -218,17 +218,18 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT));//change height depending on battery percentage
 		//battery percentage text
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
+		battery_text_offset = 0;
 		if(battery_percent >= 100U){
-			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, (battery_percent / 100U) + '0')); // print hundreds
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent / 100U) + '0')); // print hundreds
 			battery_text_offset++;
 		}
 		if(battery_percent >= 10U){
-			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X + BATTERY_FONT_SIZE * battery_text_offset, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, (battery_percent / 10U % 10U) + '0')); // print tens
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 3/2 + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent / 10U % 10U) + '0')); // print tens
 			battery_text_offset++;
 		}
-		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X + BATTERY_FONT_SIZE * battery_text_offset, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, (battery_percent % 10U) + '0')); // print units
-		battery_text_offset++;
-		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X + BATTERY_FONT_SIZE * battery_text_offset, BATTERY_TEXT_Y, BATTERY_FONT_SIZE, '%')); // print percent symbol
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent % 10U) + '0')); // print units
+		battery_text_offset+=2;//this is to force the % sign to move an entire width to the right
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, '%')); // print percent symbol
 		wr32(RAM_DL + (index+=4), restore_context());
 
 
@@ -299,6 +300,18 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), line_width(SPEEDOMETER_THICKNESS * 16));
 		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS + x * SPEEDOMETER_INNER_RADIUS / SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS + y * SPEEDOMETER_INNER_RADIUS / SPEEDOMETER_RADIUS));
 		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS + x, SPEEDOMETER_Y + SPEEDOMETER_RADIUS + y));
+		//km/h text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS));
+		wr32(RAM_DL + (index+=4), color_rgb(0U, 0U, 0U)); // change color to black
+		wr32(RAM_DL + (index+=4), bitmap_handle(SPEEDOMETER_SMALL_FONT));
+		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, SPEEDOMETER_SMALL_FONT_WIDTH*2, SPEEDOMETER_SMALL_FONT_HEIGHT*2));
+		wr32(RAM_DL + (index+=4), bitmap_transform_a(128));
+		wr32(RAM_DL + (index+=4), bitmap_transform_e(128));//TODO change to save/restore context
+		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*4, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'k'));
+		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'm'));
+		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, '/'));
+		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS + SPEEDOMETER_SMALL_FONT_WIDTH * 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'h'));
+		//SPEEDOMETER END
 		wr32(RAM_DL + (index+=4), restore_context());
 
 
@@ -369,8 +382,17 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), line_width(POWERMETER_THICKNESS * 16));
 		wr32(RAM_DL + (index+=4), vertex2f(POWERMETER_X + POWERMETER_RADIUS + x * POWERMETER_INNER_RADIUS / POWERMETER_RADIUS, POWERMETER_Y + POWERMETER_RADIUS + y * POWERMETER_INNER_RADIUS / POWERMETER_RADIUS));
 		wr32(RAM_DL + (index+=4), vertex2f(POWERMETER_X + POWERMETER_RADIUS + x, POWERMETER_Y + POWERMETER_RADIUS + y));
+		//kW text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS));
+		wr32(RAM_DL + (index+=4), color_rgb(0U, 0U, 0U)); // change color to black
+		wr32(RAM_DL + (index+=4), bitmap_handle(POWERMETER_SMALL_FONT));
+		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, POWERMETER_SMALL_FONT_WIDTH*2, POWERMETER_SMALL_FONT_HEIGHT*2));
+		wr32(RAM_DL + (index+=4), bitmap_transform_a(128));
+		wr32(RAM_DL + (index+=4), bitmap_transform_e(128));//TODO change to save/restore context
+		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH*2, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'k'));
+		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'W'));
+		//POWERMETER END
 		wr32(RAM_DL + (index+=4), restore_context());
-
 
 		wr32(RAM_DL + (index+=4), display()); // display the image
 		wr8(REG_DLSWAP,DLSWAP_FRAME); //display list swap

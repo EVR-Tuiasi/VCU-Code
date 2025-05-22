@@ -27,19 +27,25 @@ extern "C"{
 /*==================================================================================================
 *                                      DEFINES AND MACROS
 ==================================================================================================*/
+//Indicator limits graphical properties
+#define INDICATOR_LIMIT_UPPER 150
+#define INDICATOR_LIMIT_LOWER 450
+
 //Battery indicator graphical properties
 #define BATTERY_HEIGHT 300
-#define BATTERY_WIDTH 200
+#define BATTERY_WIDTH 400
 #define BATTERY_THICKNESS 10
-#define BATTERY_X 0
+#define BATTERY_X 200
 #define BATTERY_Y 150
-#define BATTERY_TEXT_X 10
+#define BATTERY_TEXT_X 400
 #define BATTERY_TEXT_Y 100
-#define BATTERY_FONT_SIZE 31 //TODO change name from font size to just font
+#define BATTERY_FONT 31
+#define BATTERY_FONT_WIDTH 25
+#define BATTERY_FONT_HEIGHT 20
 //Speedometer graphical properties
 #define SPEEDOMETER_RADIUS 180
 #define SPEEDOMETER_INNER_RADIUS 120
-#define SPEEDOMETER_X 50
+#define SPEEDOMETER_X 20
 #define SPEEDOMETER_Y 100
 #define SPEEDOMETER_THICKNESS 4
 #define SPEEDOMETER_LOWER_THICKNESS 60
@@ -59,7 +65,7 @@ extern "C"{
 //Power meter graphical properties
 #define POWERMETER_RADIUS 180
 #define POWERMETER_INNER_RADIUS 120
-#define POWERMETER_X 50
+#define POWERMETER_X 20
 #define POWERMETER_Y 100
 #define POWERMETER_THICKNESS 4
 #define POWERMETER_LOWER_THICKNESS 60
