@@ -161,47 +161,76 @@ void SoundTest(void){
 }
 
 void DashboardTest(void){
-	uint32 delay, battery_percent = 0, speed = 0, power = 0;
+	uint32 delay, battery_percent = 0, speed = 0, power = 0, inverter_temp = 0;
 	while(1){
 		delay = 1000000;
 		while(delay--);
-		DashboardUpdate(speed, power, 0, battery_percent, 0, 0);
+		DashboardUpdate(speed, power, 0, battery_percent, 0, inverter_temp/2);
 		battery_percent++;
 		speed++;
 		power++;
+		inverter_temp++;
 		battery_percent %= 101;
 		speed %= 200;
 		power %= 100;
+		inverter_temp%=202;
 	}
 }
 
+void DashboardInit(void){
+
+}
 
 void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp){
 	uint32 index = 0;
-	uint8 color_red, color_green, battery_text_offset = 0, speed_text_offset = 0, power_text_offset = 0;
-	uint16 height_offset;
+	uint8 battery_color_red, battery_color_green, inverter_temp_color_red, inverter_temp_color_blue, battery_text_offset = 0, speed_text_offset = 0, power_text_offset = 0;
+	uint16 battery_height_offset, inverter_temp_height_offset;
+	uint16 limited_inverter_temp;
 	//input value tests
-	if(battery_percent > 100U){
-		battery_percent = 100U;
+	if(battery_percent > 999U){
+		battery_percent = 999U;
 	}
-	//battery color calculation
-	if(battery_percent >= 50U){
-		color_red = (100U - battery_percent) * 255U / 50U;
-		color_green = 255U;
+	if(inverter_temp > 999U){
+		inverter_temp = 999U;
+	}
+	if(inverter_temp >= INVERTER_TEMP_MAX){
+		limited_inverter_temp = INVERTER_TEMP_MAX;
 	}
 	else{
-		color_red = 255U;
-		color_green = battery_percent * 255U / 50U;
+		limited_inverter_temp = inverter_temp;
 	}
 	if(speed > 999U){
 		speed = 999U;
 	}
+	//battery color calculation
+	if(battery_percent >= 50U){
+		battery_color_red = (100U - battery_percent) * 255U / 50U;
+		battery_color_green = 255U;
+	}
+	else{
+		battery_color_red = 255U;
+		battery_color_green = battery_percent * 255U / 50U;
+	}
+	battery_height_offset = ((uint32) BATTERY_HEIGHT - BATTERY_THICKNESS) * (100U - battery_percent) / ((uint32)100U);
+
+	//inverter temp color calculation
+	if(limited_inverter_temp >= INVERTER_TEMP_MAX/2){
+		inverter_temp_color_blue = (INVERTER_TEMP_MAX - limited_inverter_temp) * 255U * 2/ INVERTER_TEMP_MAX;
+		inverter_temp_color_red = 255U;
+	}
+	else{
+		inverter_temp_color_blue = 255U;
+		inverter_temp_color_red = limited_inverter_temp * 255U * 2 / INVERTER_TEMP_MAX;
+	}
+
+	//inverter temp height calculation
+	inverter_temp_height_offset = ((uint32) INVERTER_TEMP_HEIGHT - INVERTER_TEMP_THICKNESS) * (INVERTER_TEMP_MAX - limited_inverter_temp) / ((uint32)INVERTER_TEMP_MAX);
+
 
 	if(rd8(REG_DLSWAP) == 0){
 		wr32(RAM_DL + (index+=4), clear(1, 1, 1)); // clear screen
 		wr32(RAM_DL + (index+=4), vertex_format(0)); // make vertex2f use 1/1 precision
 		//INDICATOR LIMITS
-		wr32(RAM_DL + (index+=4), save_context());
 		wr32(RAM_DL + (index+=4), color_rgb(50U, 50U, 50U)); // change color to grey
 		wr32(RAM_DL + (index+=4), begin(RECTS));
 		//upper indicator
@@ -211,10 +240,10 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2f(0, BATTERY_Y + BATTERY_HEIGHT));
 		wr32(RAM_DL + (index+=4), vertex2f(800, BATTERY_Y + BATTERY_HEIGHT + BATTERY_THICKNESS));
 		//BATTERY INDICATOR
+		wr32(RAM_DL + (index+=4), save_context());
 		//moving colored battery indicator
-		wr32(RAM_DL + (index+=4), color_rgb(color_red, color_green, 0)); // change colour dependent on battery percentage
-		height_offset = ((uint32) BATTERY_HEIGHT - BATTERY_THICKNESS) * (100U - battery_percent) / ((uint32)100U);
-		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_THICKNESS + height_offset));
+		wr32(RAM_DL + (index+=4), color_rgb(battery_color_red, battery_color_green, 0)); // change colour dependent on battery percentage
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_THICKNESS + battery_height_offset));
 		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT));//change height depending on battery percentage
 		//battery percentage text
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
@@ -231,7 +260,31 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		battery_text_offset+=2;//this is to force the % sign to move an entire width to the right
 		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, '%')); // print percent symbol
 		wr32(RAM_DL + (index+=4), restore_context());
+		//BATTERY INDICATOR END
 
+		//INVERTER TEMP INDICATOR
+		wr32(RAM_DL + (index+=4), save_context());
+		//moving colored inverter temp indicator
+		wr32(RAM_DL + (index+=4), begin(RECTS));
+		wr32(RAM_DL + (index+=4), color_rgb(inverter_temp_color_red, 0, inverter_temp_color_blue)); // change colour dependent on inverter temp
+		wr32(RAM_DL + (index+=4), vertex2f(INVERTER_TEMP_X, INVERTER_TEMP_Y + INVERTER_TEMP_THICKNESS + inverter_temp_height_offset));
+		wr32(RAM_DL + (index+=4), vertex2f(INVERTER_TEMP_X + INVERTER_TEMP_WIDTH, INVERTER_TEMP_Y + INVERTER_TEMP_HEIGHT));//change height depending on inverter temp
+		//inverter temp text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
+		battery_text_offset = 0;
+		if(inverter_temp >= 100U){
+			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH * 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp / 100U) + '0')); // print hundreds
+			battery_text_offset++;
+		}
+		if(inverter_temp >= 10U){
+			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH * 3/2 + INVERTER_TEMP_FONT_WIDTH * battery_text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp / 10U % 10U) + '0')); // print tens
+			battery_text_offset++;
+		}
+		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * battery_text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp % 10U) + '0')); // print units
+		battery_text_offset+=2;//this is to force the % sign to move an entire width to the right
+		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * battery_text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, 'C')); // print percent symbol
+		wr32(RAM_DL + (index+=4), restore_context());
+		//INVERTER TEMP INDICATOR END
 
 		//SPEEDOMETER
 		wr32(RAM_DL + (index+=4), save_context());

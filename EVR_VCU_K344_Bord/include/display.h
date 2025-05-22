@@ -42,6 +42,18 @@ extern "C"{
 #define BATTERY_FONT 31
 #define BATTERY_FONT_WIDTH 25
 #define BATTERY_FONT_HEIGHT 20
+//Inverter temperature indicator graphical properties
+#define INVERTER_TEMP_HEIGHT 300
+#define INVERTER_TEMP_WIDTH 200
+#define INVERTER_TEMP_THICKNESS 10
+#define INVERTER_TEMP_X 0
+#define INVERTER_TEMP_Y 150
+#define INVERTER_TEMP_TEXT_X 50
+#define INVERTER_TEMP_TEXT_Y 100
+#define INVERTER_TEMP_FONT 31
+#define INVERTER_TEMP_FONT_WIDTH 25
+#define INVERTER_TEMP_FONT_HEIGHT 20
+#define INVERTER_TEMP_MAX 60
 //Speedometer graphical properties
 #define SPEEDOMETER_RADIUS 180
 #define SPEEDOMETER_INNER_RADIUS 120
@@ -105,6 +117,7 @@ void DisplayTest(void);
 void VladTest(void);
 void SoundTest(void);
 void DashboardTest(void);
+void DashboardInit(void);
 void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp);
 
 #ifdef __cplusplus

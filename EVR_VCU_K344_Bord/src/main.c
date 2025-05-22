@@ -138,43 +138,15 @@ int main(void)
     	Dio_WriteChannel(142, 0);
     }
 
-	/*Cod nebun display*/
-#if 1
+
 	DisplayInit();
 	//DisplayTest();
 	DashboardTest();
 	//VladTest();
 	//SoundTest();
-	while(1){
-		//wr16(0x0C0008, 0x45);
 
-		//volatile uint32 codid = rd32(0xC0000);
-		//codid = rd32(RAM_G+0x0C);
-	    //wr32(0xC0000, 0x01234567);
-		//codid = rd32(0xC0000);
-		//codid = rd32(0xC0000);
-		//codid = rd32(REG_ID);
-	    //(uint32)codid;
-	    int delei = 30000;
-	    while(delei){
-	    	delei--;
-	    }
-	}
-#endif
 	while(1);
-#if 0
-	uint8 buffTrimitere[12] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	uint8 buffPrimire[12] = {0};
-	volatile int delei;
-	while(1){
-        Spi_SetupEB(1U, buffTrimitere, buffPrimire, 12U);
-        Spi_SyncTransmit(1U);
-    	delei = 300000;
-    	while(delei){
-    		delei--;
-    	}
-	}
-#endif
+
 
 }
 
