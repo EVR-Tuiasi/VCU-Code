@@ -28,7 +28,9 @@ extern "C"{
 *                                      DEFINES AND MACROS
 ==================================================================================================*/
 //Indicator limits graphical properties
-#define INDICATOR_LIMIT_UPPER 150
+#define INDICATOR_LIMIT_UPPER 50
+#define INDICATOR_UPPER_SPACING 125
+#define INDICATOR_LIMIT_MIDDLE 150
 #define INDICATOR_LIMIT_LOWER 450
 #define INDICATOR_LIMIT_THICKNESS 10
 
@@ -39,10 +41,10 @@ extern "C"{
 #define BATTERY_X 200
 #define BATTERY_Y 150
 #define BATTERY_TEXT_X 400
-#define BATTERY_TEXT_Y 100
+#define BATTERY_TEXT_Y 105
 #define BATTERY_FONT 31
 #define BATTERY_FONT_WIDTH 25
-#define BATTERY_FONT_HEIGHT 20
+#define BATTERY_FONT_HEIGHT 30
 //Inverter temperature indicator graphical properties
 #define INVERTER_TEMP_HEIGHT 300
 #define INVERTER_TEMP_WIDTH 200

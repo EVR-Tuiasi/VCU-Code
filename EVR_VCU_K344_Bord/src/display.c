@@ -163,7 +163,7 @@ void SoundTest(void){
 void DashboardTest(void){
 	uint32 delay, battery_percent = 0, speed = 0, power = 0, inverter_temp = 0, battery_voltage = 0, battery_temp = 0;
 	while(1){
-		delay = 1000000;
+		delay = 100000;
 		while(delay--);
 		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2);
 		battery_percent++;
@@ -200,16 +200,29 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 	if(speed > 999U){
 		speed = 999U;
 	}
+	if(battery_voltage > 999U){
+		battery_voltage = 999U;
+	}
 
 	if(rd8(REG_DLSWAP) == 0){
 		wr32(RAM_DL + (index+=4), clear(1, 1, 1)); // clear screen
 		wr32(RAM_DL + (index+=4), vertex_format(0)); // make vertex2f use 1/1 precision
 		//INDICATOR LIMITS
-		wr32(RAM_DL + (index+=4), color_rgb(50U, 50U, 50U)); // change color to grey
+		wr32(RAM_DL + (index+=4), color_rgb(150U, 150U, 150U)); // change color to grey
 		wr32(RAM_DL + (index+=4), begin(RECTS));
 		//upper indicator
 		wr32(RAM_DL + (index+=4), vertex2f(0, INDICATOR_LIMIT_UPPER));
-		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_UPPER + INDICATOR_LIMIT_THICKNESS));
+		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_UPPER+ INDICATOR_LIMIT_THICKNESS));
+		//vertical upper indicators
+		wr32(RAM_DL + (index+=4), vertex2f(400 - INDICATOR_LIMIT_THICKNESS/2, 0));
+		wr32(RAM_DL + (index+=4), vertex2f(400 + INDICATOR_LIMIT_THICKNESS/2, INDICATOR_LIMIT_UPPER));
+		wr32(RAM_DL + (index+=4), vertex2f(400 - INDICATOR_LIMIT_THICKNESS/2 - INDICATOR_UPPER_SPACING, 0));
+		wr32(RAM_DL + (index+=4), vertex2f(400 + INDICATOR_LIMIT_THICKNESS/2 - INDICATOR_UPPER_SPACING, INDICATOR_LIMIT_UPPER));
+		wr32(RAM_DL + (index+=4), vertex2f(400 - INDICATOR_LIMIT_THICKNESS/2 + INDICATOR_UPPER_SPACING, 0));
+		wr32(RAM_DL + (index+=4), vertex2f(400 + INDICATOR_LIMIT_THICKNESS/2 + INDICATOR_UPPER_SPACING, INDICATOR_LIMIT_UPPER));
+		//middle indicator
+		wr32(RAM_DL + (index+=4), vertex2f(0, INDICATOR_LIMIT_MIDDLE));
+		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_MIDDLE + INDICATOR_LIMIT_THICKNESS));
 		//lower indicator
 		wr32(RAM_DL + (index+=4), vertex2f(0, INDICATOR_LIMIT_LOWER));
 		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_LOWER + INDICATOR_LIMIT_THICKNESS));
@@ -245,6 +258,19 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent % 10U) + '0')); // print units
 		text_offset+=2;//this is to force the % sign to move an entire width to the right
 		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, '%')); // print percent symbol
+		//battery voltage text
+		text_offset = 0;
+		if(battery_voltage >= 100U){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 2, BATTERY_TEXT_Y - BATTERY_FONT_HEIGHT - 5U, BATTERY_FONT, (battery_voltage / 100U) + '0')); // print hundreds
+			text_offset++;
+		}
+		if(battery_voltage >= 10U){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 3/2 + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y - BATTERY_FONT_HEIGHT - 5U, BATTERY_FONT, (battery_voltage / 10U % 10U) + '0')); // print tens
+			text_offset++;
+		}
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y - BATTERY_FONT_HEIGHT - 5U, BATTERY_FONT, (battery_voltage % 10U) + '0')); // print units
+		text_offset+=2;//this is to force the % sign to move an entire width to the right
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y - BATTERY_FONT_HEIGHT - 5U, BATTERY_FONT, 'V')); // print volts symbol
 		wr32(RAM_DL + (index+=4), restore_context());
 		//BATTERY INDICATOR END
 
