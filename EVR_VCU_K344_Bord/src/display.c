@@ -161,19 +161,23 @@ void SoundTest(void){
 }
 
 void DashboardTest(void){
-	uint32 delay, battery_percent = 0, speed = 0, power = 0, inverter_temp = 0;
+	uint32 delay, battery_percent = 0, speed = 0, power = 0, inverter_temp = 0, battery_voltage = 0, battery_temp = 0;
 	while(1){
 		delay = 1000000;
 		while(delay--);
-		DashboardUpdate(speed, power, 0, battery_percent, 0, inverter_temp/2);
+		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2);
 		battery_percent++;
 		speed++;
 		power++;
 		inverter_temp++;
+		battery_voltage++;
+		battery_temp++;
 		battery_percent %= 101;
-		speed %= 200;
-		power %= 100;
+		speed %= 201;
+		power %= 101;
 		inverter_temp%=202;
+		battery_voltage%=150;
+		battery_temp%=152;
 	}
 }
 
@@ -183,9 +187,9 @@ void DashboardInit(void){
 
 void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp){
 	uint32 index = 0;
-	uint8 battery_color_red, battery_color_green, inverter_temp_color_red, inverter_temp_color_blue, battery_text_offset = 0, speed_text_offset = 0, power_text_offset = 0;
-	uint16 battery_height_offset, inverter_temp_height_offset;
-	uint16 limited_inverter_temp;
+	uint8 color_red = 0, color_blue = 0, color_green = 0, text_offset = 0;
+	uint16 height_offset;
+	uint16 limited_temp;
 	//input value tests
 	if(battery_percent > 999U){
 		battery_percent = 999U;
@@ -193,39 +197,9 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 	if(inverter_temp > 999U){
 		inverter_temp = 999U;
 	}
-	if(inverter_temp >= INVERTER_TEMP_MAX){
-		limited_inverter_temp = INVERTER_TEMP_MAX;
-	}
-	else{
-		limited_inverter_temp = inverter_temp;
-	}
 	if(speed > 999U){
 		speed = 999U;
 	}
-	//battery color calculation
-	if(battery_percent >= 50U){
-		battery_color_red = (100U - battery_percent) * 255U / 50U;
-		battery_color_green = 255U;
-	}
-	else{
-		battery_color_red = 255U;
-		battery_color_green = battery_percent * 255U / 50U;
-	}
-	battery_height_offset = ((uint32) BATTERY_HEIGHT - BATTERY_THICKNESS) * (100U - battery_percent) / ((uint32)100U);
-
-	//inverter temp color calculation
-	if(limited_inverter_temp >= INVERTER_TEMP_MAX/2){
-		inverter_temp_color_blue = (INVERTER_TEMP_MAX - limited_inverter_temp) * 255U * 2/ INVERTER_TEMP_MAX;
-		inverter_temp_color_red = 255U;
-	}
-	else{
-		inverter_temp_color_blue = 255U;
-		inverter_temp_color_red = limited_inverter_temp * 255U * 2 / INVERTER_TEMP_MAX;
-	}
-
-	//inverter temp height calculation
-	inverter_temp_height_offset = ((uint32) INVERTER_TEMP_HEIGHT - INVERTER_TEMP_THICKNESS) * (INVERTER_TEMP_MAX - limited_inverter_temp) / ((uint32)INVERTER_TEMP_MAX);
-
 
 	if(rd8(REG_DLSWAP) == 0){
 		wr32(RAM_DL + (index+=4), clear(1, 1, 1)); // clear screen
@@ -234,57 +208,132 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), color_rgb(50U, 50U, 50U)); // change color to grey
 		wr32(RAM_DL + (index+=4), begin(RECTS));
 		//upper indicator
-		wr32(RAM_DL + (index+=4), vertex2f(0, BATTERY_Y));
-		wr32(RAM_DL + (index+=4), vertex2f(800, BATTERY_Y + BATTERY_THICKNESS));
+		wr32(RAM_DL + (index+=4), vertex2f(0, INDICATOR_LIMIT_UPPER));
+		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_UPPER + INDICATOR_LIMIT_THICKNESS));
 		//lower indicator
-		wr32(RAM_DL + (index+=4), vertex2f(0, BATTERY_Y + BATTERY_HEIGHT));
-		wr32(RAM_DL + (index+=4), vertex2f(800, BATTERY_Y + BATTERY_HEIGHT + BATTERY_THICKNESS));
+		wr32(RAM_DL + (index+=4), vertex2f(0, INDICATOR_LIMIT_LOWER));
+		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_LOWER + INDICATOR_LIMIT_THICKNESS));
+
 		//BATTERY INDICATOR
+		//battery variables calculation
+		if(battery_percent >= 50U){
+			color_red = (100U - battery_percent) * 255U / 50U;
+			color_green = 255U;
+		}
+		else{
+			color_red = 255U;
+			color_green = battery_percent * 255U / 50U;
+		}
+		height_offset = ((uint32) BATTERY_HEIGHT - BATTERY_THICKNESS) * (100U - battery_percent) / ((uint32)100U);
+
 		wr32(RAM_DL + (index+=4), save_context());
 		//moving colored battery indicator
-		wr32(RAM_DL + (index+=4), color_rgb(battery_color_red, battery_color_green, 0)); // change colour dependent on battery percentage
-		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_THICKNESS + battery_height_offset));
+		wr32(RAM_DL + (index+=4), color_rgb(color_red, color_green, 0)); // change colour dependent on battery percentage
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_THICKNESS + height_offset));
 		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT));//change height depending on battery percentage
 		//battery percentage text
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
-		battery_text_offset = 0;
+		text_offset = 0;
 		if(battery_percent >= 100U){
 			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent / 100U) + '0')); // print hundreds
-			battery_text_offset++;
+			text_offset++;
 		}
 		if(battery_percent >= 10U){
-			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 3/2 + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent / 10U % 10U) + '0')); // print tens
-			battery_text_offset++;
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH * 3/2 + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent / 10U % 10U) + '0')); // print tens
+			text_offset++;
 		}
-		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent % 10U) + '0')); // print units
-		battery_text_offset+=2;//this is to force the % sign to move an entire width to the right
-		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * battery_text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, '%')); // print percent symbol
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, (battery_percent % 10U) + '0')); // print units
+		text_offset+=2;//this is to force the % sign to move an entire width to the right
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEXT_X - BATTERY_FONT_WIDTH + BATTERY_FONT_WIDTH * text_offset / 2, BATTERY_TEXT_Y, BATTERY_FONT, '%')); // print percent symbol
 		wr32(RAM_DL + (index+=4), restore_context());
 		//BATTERY INDICATOR END
 
 		//INVERTER TEMP INDICATOR
+		//inverter variables calculation
+		if(inverter_temp >= INVERTER_TEMP_MAX){
+			limited_temp = INVERTER_TEMP_MAX;
+		}
+		else{
+			limited_temp = inverter_temp;
+		}
+		if(limited_temp >= INVERTER_TEMP_MAX/2){
+			color_blue = (INVERTER_TEMP_MAX - limited_temp) * 255U * 2/ INVERTER_TEMP_MAX;
+			color_red = 255U;
+			color_green = 0U;
+		}
+		else{
+			color_blue = 255U;
+			color_red = limited_temp * 255U * 2 / INVERTER_TEMP_MAX;
+			color_green = 0U;
+		}
+		height_offset = ((uint32) INVERTER_TEMP_HEIGHT - INVERTER_TEMP_THICKNESS) * (INVERTER_TEMP_MAX - limited_temp) / ((uint32)INVERTER_TEMP_MAX);
+
 		wr32(RAM_DL + (index+=4), save_context());
 		//moving colored inverter temp indicator
 		wr32(RAM_DL + (index+=4), begin(RECTS));
-		wr32(RAM_DL + (index+=4), color_rgb(inverter_temp_color_red, 0, inverter_temp_color_blue)); // change colour dependent on inverter temp
-		wr32(RAM_DL + (index+=4), vertex2f(INVERTER_TEMP_X, INVERTER_TEMP_Y + INVERTER_TEMP_THICKNESS + inverter_temp_height_offset));
+		wr32(RAM_DL + (index+=4), color_rgb(color_red, 0, color_blue)); // change colour dependent on inverter temp
+		wr32(RAM_DL + (index+=4), vertex2f(INVERTER_TEMP_X, INVERTER_TEMP_Y + INVERTER_TEMP_THICKNESS + height_offset));
 		wr32(RAM_DL + (index+=4), vertex2f(INVERTER_TEMP_X + INVERTER_TEMP_WIDTH, INVERTER_TEMP_Y + INVERTER_TEMP_HEIGHT));//change height depending on inverter temp
 		//inverter temp text
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
-		battery_text_offset = 0;
+		text_offset = 0;
 		if(inverter_temp >= 100U){
 			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH * 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp / 100U) + '0')); // print hundreds
-			battery_text_offset++;
+			text_offset++;
 		}
 		if(inverter_temp >= 10U){
-			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH * 3/2 + INVERTER_TEMP_FONT_WIDTH * battery_text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp / 10U % 10U) + '0')); // print tens
-			battery_text_offset++;
+			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH * 3/2 + INVERTER_TEMP_FONT_WIDTH * text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp / 10U % 10U) + '0')); // print tens
+			text_offset++;
 		}
-		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * battery_text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp % 10U) + '0')); // print units
-		battery_text_offset+=2;//this is to force the % sign to move an entire width to the right
-		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * battery_text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, 'C')); // print percent symbol
+		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp % 10U) + '0')); // print units
+		text_offset+=2;//this is to force the % sign to move an entire width to the right
+		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, 'C')); // print percent symbol
 		wr32(RAM_DL + (index+=4), restore_context());
 		//INVERTER TEMP INDICATOR END
+
+		//BATTERY TEMP INDICATOR
+		//battery variables calculation
+		if(battery_temp >= BATTERY_TEMP_MAX){
+			limited_temp = BATTERY_TEMP_MAX;
+		}
+		else{
+			limited_temp = battery_temp;
+		}
+		if(limited_temp >= BATTERY_TEMP_MAX/2){
+			color_blue = (BATTERY_TEMP_MAX - limited_temp) * 255U * 2/ BATTERY_TEMP_MAX;
+			color_red = 255U;
+			color_green = 0U;
+		}
+		else{
+			color_blue = 255U;
+			color_red = limited_temp * 255U * 2 / BATTERY_TEMP_MAX;
+			color_green = 0U;
+		}
+		height_offset = ((uint32) BATTERY_TEMP_HEIGHT - BATTERY_TEMP_THICKNESS) * (BATTERY_TEMP_MAX - limited_temp) / ((uint32)BATTERY_TEMP_MAX);
+
+		wr32(RAM_DL + (index+=4), save_context());
+		wr32(RAM_DL + (index+=4), vertex_translate_x(400*16));
+		//moving colored battery temp indicator
+		wr32(RAM_DL + (index+=4), begin(RECTS));
+		wr32(RAM_DL + (index+=4), color_rgb(color_red, 0, color_blue)); // change colour dependent on battery temp
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_TEMP_X, BATTERY_TEMP_Y + BATTERY_TEMP_THICKNESS + height_offset));
+		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_TEMP_X + BATTERY_TEMP_WIDTH, BATTERY_TEMP_Y + BATTERY_TEMP_HEIGHT));//change height depending on battery temp
+		//battery temp text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
+		text_offset = 0;
+		if(battery_temp >= 100U){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - BATTERY_TEMP_FONT_WIDTH * 2, BATTERY_TEMP_TEXT_Y, BATTERY_TEMP_FONT, (battery_temp / 100U) + '0')); // print hundreds
+			text_offset++;
+		}
+		if(battery_temp >= 10U){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - BATTERY_TEMP_FONT_WIDTH * 3/2 + BATTERY_TEMP_FONT_WIDTH * text_offset / 2, BATTERY_TEMP_TEXT_Y, BATTERY_TEMP_FONT, (battery_temp / 10U % 10U) + '0')); // print tens
+			text_offset++;
+		}
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - BATTERY_TEMP_FONT_WIDTH + BATTERY_TEMP_FONT_WIDTH * text_offset / 2, BATTERY_TEMP_TEXT_Y, BATTERY_TEMP_FONT, (battery_temp % 10U) + '0')); // print units
+		text_offset+=2;//this is to force the % sign to move an entire width to the right
+		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - BATTERY_TEMP_FONT_WIDTH + BATTERY_TEMP_FONT_WIDTH * text_offset / 2, BATTERY_TEMP_TEXT_Y, BATTERY_TEMP_FONT, 'C')); // print percent symbol
+		wr32(RAM_DL + (index+=4), restore_context());
+		//BATTERY TEMP INDICATOR END
 
 		//SPEEDOMETER
 		wr32(RAM_DL + (index+=4), save_context());
@@ -311,15 +360,16 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(256/SPEEDOMETER_FONT_SCALE));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256/SPEEDOMETER_FONT_SCALE));
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text
+		text_offset = 0;
 		if(speed >= 100U){
 			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE*3/2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_HEIGHT*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT, (speed / 100U) + '0')); // print hundreds
-			speed_text_offset++;
+			text_offset++;
 		}
 		if(speed >= 10U){
-			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE + SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE * speed_text_offset / 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_HEIGHT*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT, (speed / 10U % 10U) + '0')); // print tens
-			speed_text_offset++;
+			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE + SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE * text_offset / 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_HEIGHT*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT, (speed / 10U % 10U) + '0')); // print tens
+			text_offset++;
 		}
-		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE/2 + SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE * speed_text_offset / 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_HEIGHT*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT, (speed % 10U) + '0')); // print units
+		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE/2 + SPEEDOMETER_FONT_WIDTH*SPEEDOMETER_FONT_SCALE * text_offset / 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_FONT_HEIGHT*SPEEDOMETER_FONT_SCALE/2, SPEEDOMETER_FONT, (speed % 10U) + '0')); // print units
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(256));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256));
 		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, SPEEDOMETER_FONT_WIDTH, SPEEDOMETER_FONT_HEIGHT));
@@ -328,16 +378,16 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		for(uint16 i = 0; i <= SPEEDOMETER_INDICES_NUM; i++){
 			uint16 angle = (SPEEDOMETER_END_ANGLE - SPEEDOMETER_START_ANGLE) - i * (SPEEDOMETER_END_ANGLE - SPEEDOMETER_START_ANGLE) / SPEEDOMETER_INDICES_NUM + SPEEDOMETER_START_ANGLE, value = i * SPEEDOMETER_MAX_VALUE / SPEEDOMETER_INDICES_NUM;
 			sint32 x = sin(angle * 0.0175) * (SPEEDOMETER_INNER_RADIUS + SPEEDOMETER_RADIUS) / 2, y = cos(angle * 0.0175) * (SPEEDOMETER_INNER_RADIUS + SPEEDOMETER_RADIUS) / 2;
-			speed_text_offset = 0;
+			text_offset = 0;
 			if(value >= 100U){
 				wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*3/2 + x, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_HEIGHT/2 + y, SPEEDOMETER_SMALL_FONT, (value / 100U) + '0')); // print hundreds
-				speed_text_offset++;
+				text_offset++;
 			}
 			if(value >= 10U){
-				wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH + SPEEDOMETER_SMALL_FONT_WIDTH * speed_text_offset / 2 + x, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_HEIGHT/2 + y, SPEEDOMETER_SMALL_FONT, (value / 10U % 10U) + '0')); // print tens
-				speed_text_offset++;
+				wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH + SPEEDOMETER_SMALL_FONT_WIDTH * text_offset / 2 + x, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_HEIGHT/2 + y, SPEEDOMETER_SMALL_FONT, (value / 10U % 10U) + '0')); // print tens
+				text_offset++;
 			}
-			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH/2 + SPEEDOMETER_SMALL_FONT_WIDTH * speed_text_offset / 2 + x, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_HEIGHT/2 + y, SPEEDOMETER_SMALL_FONT, (value % 10U) + '0')); // print units
+			wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH/2 + SPEEDOMETER_SMALL_FONT_WIDTH * text_offset / 2 + x, SPEEDOMETER_Y + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_HEIGHT/2 + y, SPEEDOMETER_SMALL_FONT, (value % 10U) + '0')); // print units
 		}
 		// moving line
 		sint32 x, y;
@@ -364,9 +414,8 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'm'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, '/'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS + SPEEDOMETER_SMALL_FONT_WIDTH * 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'h'));
-		//SPEEDOMETER END
 		wr32(RAM_DL + (index+=4), restore_context());
-
+		//SPEEDOMETER END
 
 		//POWER METER
 		wr32(RAM_DL + (index+=4), save_context());
@@ -394,15 +443,16 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(256/POWERMETER_FONT_SCALE));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256/POWERMETER_FONT_SCALE));
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text
+		text_offset = 0;
 		if(power >= 100U){
 			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE*3/2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power / 100U) + '0')); // print hundreds
-			power_text_offset++;
+			text_offset++;
 		}
 		if(power >= 10U){
-			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * power_text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power / 10U % 10U) + '0')); // print tens
-			power_text_offset++;
+			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power / 10U % 10U) + '0')); // print tens
+			text_offset++;
 		}
-		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE/2 + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * power_text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power % 10U) + '0')); // print units
+		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE/2 + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power % 10U) + '0')); // print units
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(256));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256));
 		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, POWERMETER_FONT_WIDTH, POWERMETER_FONT_HEIGHT));
@@ -411,16 +461,16 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		for(uint16 i = 0; i <= POWERMETER_INDICES_NUM; i++){
 			uint16 angle = (POWERMETER_END_ANGLE - POWERMETER_START_ANGLE) - i * (POWERMETER_END_ANGLE - POWERMETER_START_ANGLE) / POWERMETER_INDICES_NUM + POWERMETER_START_ANGLE, value = i * POWERMETER_MAX_VALUE / POWERMETER_INDICES_NUM;
 			sint32 x = sin(angle * 0.0175) * (POWERMETER_INNER_RADIUS + POWERMETER_RADIUS) / 2, y = cos(angle * 0.0175) * (POWERMETER_INNER_RADIUS + POWERMETER_RADIUS) / 2;
-			power_text_offset = 0;
+			text_offset = 0;
 			if(value >= 100U){
 				wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH*3/2 + x, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_HEIGHT/2 + y, POWERMETER_SMALL_FONT, (value / 100U) + '0')); // print hundreds
-				power_text_offset++;
+				text_offset++;
 			}
 			if(value >= 10U){
-				wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH + POWERMETER_SMALL_FONT_WIDTH * power_text_offset / 2 + x, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_HEIGHT/2 + y, POWERMETER_SMALL_FONT, (value / 10U % 10U) + '0')); // print tens
-				power_text_offset++;
+				wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH + POWERMETER_SMALL_FONT_WIDTH * text_offset / 2 + x, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_HEIGHT/2 + y, POWERMETER_SMALL_FONT, (value / 10U % 10U) + '0')); // print tens
+				text_offset++;
 			}
-			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH/2 + POWERMETER_SMALL_FONT_WIDTH * power_text_offset / 2 + x, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_HEIGHT/2 + y, POWERMETER_SMALL_FONT, (value % 10U) + '0')); // print units
+			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH/2 + POWERMETER_SMALL_FONT_WIDTH * text_offset / 2 + x, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_HEIGHT/2 + y, POWERMETER_SMALL_FONT, (value % 10U) + '0')); // print units
 		}
 		// moving line
 		if(power > POWERMETER_MAX_VALUE){
@@ -444,8 +494,8 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(128));//TODO change to save/restore context
 		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH*2, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'k'));
 		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'W'));
-		//POWERMETER END
 		wr32(RAM_DL + (index+=4), restore_context());
+		//POWERMETER END
 
 		wr32(RAM_DL + (index+=4), display()); // display the image
 		wr8(REG_DLSWAP,DLSWAP_FRAME); //display list swap

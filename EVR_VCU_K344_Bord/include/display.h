@@ -30,6 +30,7 @@ extern "C"{
 //Indicator limits graphical properties
 #define INDICATOR_LIMIT_UPPER 150
 #define INDICATOR_LIMIT_LOWER 450
+#define INDICATOR_LIMIT_THICKNESS 10
 
 //Battery indicator graphical properties
 #define BATTERY_HEIGHT 300
@@ -54,6 +55,18 @@ extern "C"{
 #define INVERTER_TEMP_FONT_WIDTH 25
 #define INVERTER_TEMP_FONT_HEIGHT 20
 #define INVERTER_TEMP_MAX 60
+//Battery temperature indicator graphical properties
+#define BATTERY_TEMP_HEIGHT 300
+#define BATTERY_TEMP_WIDTH 200
+#define BATTERY_TEMP_THICKNESS 10
+#define BATTERY_TEMP_X 200
+#define BATTERY_TEMP_Y 150
+#define BATTERY_TEMP_TEXT_X 350
+#define BATTERY_TEMP_TEXT_Y 100
+#define BATTERY_TEMP_FONT 31
+#define BATTERY_TEMP_FONT_WIDTH 25
+#define BATTERY_TEMP_FONT_HEIGHT 20
+#define BATTERY_TEMP_MAX 60
 //Speedometer graphical properties
 #define SPEEDOMETER_RADIUS 180
 #define SPEEDOMETER_INNER_RADIUS 120
