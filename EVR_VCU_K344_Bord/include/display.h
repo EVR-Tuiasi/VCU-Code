@@ -65,7 +65,7 @@ extern "C"{
 #define BATTERY_TEMP_TEXT_Y 100
 #define BATTERY_TEMP_FONT 31
 #define BATTERY_TEMP_FONT_WIDTH 25
-#define BATTERY_TEMP_FONT_HEIGHT 20
+#define BATTERY_TEMP_FONT_HEIGHT 30
 #define BATTERY_TEMP_MAX 60
 //Speedometer graphical properties
 #define SPEEDOMETER_RADIUS 180

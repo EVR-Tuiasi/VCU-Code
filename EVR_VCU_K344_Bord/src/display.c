@@ -292,7 +292,7 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		char inverter_text[] = "Inverter:";
 		uint16 horizontal_offsets[] = {0, INVERTER_TEMP_FONT_WIDTH / 3, INVERTER_TEMP_FONT_WIDTH * 8 / 7, INVERTER_TEMP_FONT_WIDTH * 13/7, INVERTER_TEMP_FONT_WIDTH * 19/7, INVERTER_TEMP_FONT_WIDTH * 23/7, INVERTER_TEMP_FONT_WIDTH * 27/7, INVERTER_TEMP_FONT_WIDTH * 33/7, INVERTER_TEMP_FONT_WIDTH * 37/7};
 		for(int i=0; i<9; i++){
-			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - 45U + horizontal_offsets[i], INVERTER_TEMP_TEXT_Y - INVERTER_TEMP_FONT_HEIGHT - 5U, INVERTER_TEMP_FONT, inverter_text[i]));
+			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - 45U + horizontal_offsets[i], INVERTER_TEMP_TEXT_Y - INVERTER_TEMP_FONT_HEIGHT - 10U, INVERTER_TEMP_FONT, inverter_text[i]));
 		}
 
 		wr32(RAM_DL + (index+=4), restore_context());
@@ -339,6 +339,12 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - BATTERY_TEMP_FONT_WIDTH + BATTERY_TEMP_FONT_WIDTH * text_offset / 2, BATTERY_TEMP_TEXT_Y, BATTERY_TEMP_FONT, (battery_temp % 10U) + '0')); // print units
 		text_offset+=2;//this is to force the % sign to move an entire width to the right
 		wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - BATTERY_TEMP_FONT_WIDTH + BATTERY_TEMP_FONT_WIDTH * text_offset / 2, BATTERY_TEMP_TEXT_Y, BATTERY_TEMP_FONT, 'C')); // print percent symbol
+		//battery static text
+		char battery_text[] = "Battery:";
+		uint16 battery_horizontal_offsets[] = {0, BATTERY_TEMP_FONT_WIDTH * 7/ 7, BATTERY_TEMP_FONT_WIDTH * 13 / 7, BATTERY_TEMP_FONT_WIDTH * 17/7, BATTERY_TEMP_FONT_WIDTH * 20/7, BATTERY_TEMP_FONT_WIDTH * 26/7, BATTERY_TEMP_FONT_WIDTH * 30/7, BATTERY_TEMP_FONT_WIDTH * 36/7};
+		for(int i=0; i<8; i++){
+			wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - 90U + battery_horizontal_offsets[i], BATTERY_TEMP_TEXT_Y - BATTERY_TEMP_FONT_HEIGHT - 10U, BATTERY_TEMP_FONT, battery_text[i]));
+		}
 		wr32(RAM_DL + (index+=4), restore_context());
 		//BATTERY TEMP INDICATOR END
 
