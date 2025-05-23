@@ -161,23 +161,27 @@ void SoundTest(void){
 }
 
 void DashboardTest(void){
-	uint32 delay, battery_percent = 0, speed = 0, power = 0, inverter_temp = 0, battery_voltage = 0, battery_temp = 0;
+	uint32 delay, battery_percent = 0, speed = 0, power = 0, inverter_temp = 0, battery_voltage = 0, battery_temp = 0, brake = 0, acceleration = 0;
 	while(1){
 		delay = 100000;
 		while(delay--);
-		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2);
+		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2, brake, acceleration);
 		battery_percent++;
 		speed++;
 		power++;
 		inverter_temp++;
 		battery_voltage++;
 		battery_temp++;
+		brake++;
+		acceleration++;
 		battery_percent %= 101;
 		speed %= 201;
 		power %= 101;
 		inverter_temp%=202;
 		battery_voltage%=150;
 		battery_temp%=152;
+		brake%=110;
+		acceleration%=110;
 	}
 }
 
@@ -185,10 +189,10 @@ void DashboardInit(void){
 
 }
 
-void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp){
+void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp, uint32 brake, uint32 acceleration){
 	uint32 index = 0;
 	uint8 color_red = 0, color_blue = 0, color_green = 0, text_offset = 0;
-	uint16 height_offset;
+	uint16 height_offset, width_offset;
 	uint16 limited_temp;
 	//input value tests
 	if(battery_percent > 999U){
@@ -202,6 +206,12 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 	}
 	if(battery_voltage > 999U){
 		battery_voltage = 999U;
+	}
+	if(brake > 100U){
+		brake = 100U;
+	}
+	if(acceleration > 100U){
+		acceleration = 100U;
 	}
 
 	if(rd8(REG_DLSWAP) == 0){
@@ -227,6 +237,40 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2f(0, INDICATOR_LIMIT_LOWER));
 		wr32(RAM_DL + (index+=4), vertex2f(800, INDICATOR_LIMIT_LOWER + INDICATOR_LIMIT_THICKNESS));
 
+		//BRAKE INDICATOR
+		wr32(RAM_DL + (index+=4), save_context());
+		width_offset = ((uint32) PEDAL_WIDTH) * brake / ((uint32)100U);
+		wr32(RAM_DL + (index+=4), color_rgb(255, 0, 0)); // change color to red
+		wr32(RAM_DL + (index+=4), begin(RECTS));
+		wr32(RAM_DL + (index+=4), vertex2f(0, 0));
+		wr32(RAM_DL + (index+=4), vertex2f(width_offset, PEDAL_HEIGHT ));
+		//brake static text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
+		char brake_text[] = "BRAKE";
+		uint16 horizontal_offsets_brake[] = {0, PEDAL_FONT_WIDTH, PEDAL_FONT_WIDTH * 2, PEDAL_FONT_WIDTH * 3, PEDAL_FONT_WIDTH * 4};
+		for(int i=0; i<5; i++){
+			wr32(RAM_DL + (index+=4), vertex2ii(PEDAL_BRAKE_TEXT_X + horizontal_offsets_brake[i], PEDAL_BRAKE_TEXT_Y, PEDAL_FONT, brake_text[i]));
+		}
+		wr32(RAM_DL + (index+=4), restore_context());
+		//BRAKE INDICATOR END
+
+		//ACCELERATION INDICATOR
+		wr32(RAM_DL + (index+=4), save_context());
+		width_offset = ((uint32) PEDAL_WIDTH) * acceleration / ((uint32)100U);
+		wr32(RAM_DL + (index+=4), color_rgb(0, 255, 0)); // change color to green
+		wr32(RAM_DL + (index+=4), begin(RECTS));
+		wr32(RAM_DL + (index+=4), vertex2f(800, 0));
+		wr32(RAM_DL + (index+=4), vertex2f(800-width_offset, PEDAL_HEIGHT));
+		//acceleration static text
+		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text with color inherited from above
+		char accel_text[] = "ACCEL";
+		uint16 horizontal_offsets_accel[] = {0, PEDAL_FONT_WIDTH, PEDAL_FONT_WIDTH * 2, PEDAL_FONT_WIDTH * 3, PEDAL_FONT_WIDTH * 4};
+		for(int i=0; i<5; i++){
+			wr32(RAM_DL + (index+=4), vertex2ii(PEDAL_ACCEL_TEXT_X + horizontal_offsets_accel[i], PEDAL_ACCEL_TEXT_Y, PEDAL_FONT, accel_text[i]));
+		}
+		wr32(RAM_DL + (index+=4), restore_context());
+		//ACCELERATION INDICATOR END
+
 		//BATTERY INDICATOR
 		//battery variables calculation
 		if(battery_percent >= 50U){
@@ -241,6 +285,7 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 
 		wr32(RAM_DL + (index+=4), save_context());
 		//moving colored battery indicator
+		wr32(RAM_DL + (index+=4), begin(RECTS));
 		wr32(RAM_DL + (index+=4), color_rgb(color_red, color_green, 0)); // change colour dependent on battery percentage
 		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X, BATTERY_Y + BATTERY_THICKNESS + height_offset));
 		wr32(RAM_DL + (index+=4), vertex2f(BATTERY_X + BATTERY_WIDTH, BATTERY_Y + BATTERY_HEIGHT));//change height depending on battery percentage
