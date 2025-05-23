@@ -288,6 +288,13 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, (inverter_temp % 10U) + '0')); // print units
 		text_offset+=2;//this is to force the % sign to move an entire width to the right
 		wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - INVERTER_TEMP_FONT_WIDTH + INVERTER_TEMP_FONT_WIDTH * text_offset / 2, INVERTER_TEMP_TEXT_Y, INVERTER_TEMP_FONT, 'C')); // print percent symbol
+		//inverter static text
+		char inverter_text[] = "Inverter:";
+		uint16 horizontal_offsets[] = {0, INVERTER_TEMP_FONT_WIDTH / 3, INVERTER_TEMP_FONT_WIDTH * 8 / 7, INVERTER_TEMP_FONT_WIDTH * 13/7, INVERTER_TEMP_FONT_WIDTH * 19/7, INVERTER_TEMP_FONT_WIDTH * 23/7, INVERTER_TEMP_FONT_WIDTH * 27/7, INVERTER_TEMP_FONT_WIDTH * 33/7, INVERTER_TEMP_FONT_WIDTH * 37/7};
+		for(int i=0; i<9; i++){
+			wr32(RAM_DL + (index+=4), vertex2ii(INVERTER_TEMP_TEXT_X - 45U + horizontal_offsets[i], INVERTER_TEMP_TEXT_Y - INVERTER_TEMP_FONT_HEIGHT - 5U, INVERTER_TEMP_FONT, inverter_text[i]));
+		}
+
 		wr32(RAM_DL + (index+=4), restore_context());
 		//INVERTER TEMP INDICATOR END
 

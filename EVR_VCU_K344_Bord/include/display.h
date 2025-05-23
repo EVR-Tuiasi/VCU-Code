@@ -53,7 +53,7 @@ extern "C"{
 #define INVERTER_TEMP_TEXT_Y 100
 #define INVERTER_TEMP_FONT 31
 #define INVERTER_TEMP_FONT_WIDTH 25
-#define INVERTER_TEMP_FONT_HEIGHT 20
+#define INVERTER_TEMP_FONT_HEIGHT 30
 #define INVERTER_TEMP_MAX 60
 //Battery temperature indicator graphical properties
 #define BATTERY_TEMP_HEIGHT 300
