@@ -16,6 +16,7 @@ extern "C" {
 #include "pedal.h"
 #include "Adc.h"
 #include "Platform.h"
+#include "Pwm.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -45,7 +46,7 @@ extern "C" {
 /*==================================================================================================
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
-
+#define PWM_MAX_DUTY 65535
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -85,17 +86,38 @@ int main(void)
     /* Initialize all pins using the Port driver */
     Port_Init(NULL_PTR);
     Platform_Init(NULL_PTR);
+    Pwm_Init(NULL_PTR);
     Adc_Init(NULL_PTR);
     PedalsInit();
 
-    while(1){
-    	volatile uint8 test = PedalsGetAcceleration();
 
+    Pwm_SetDutyCycle ( 0,2457 );
+
+    while(1){
+    //	volatile uint8 acc_value = PedalsGetAcceleration();
+    //	volatile uint8 brake_value = PedalsGetBrake();
+
+
+        /* Calcularea duty cycle-ului pentru fiecare motor */
+        uint16 motor1_duty = (PWM_MAX_DUTY * accel_value) / 100;
+        uint16 motor2_duty = (PWM_MAX_DUTY * accel_value) / 100;
+
+        /* Aplica franarea daca e cazul */
+        if (brake_value > 0)
+        {
+            motor1_duty = 0;
+            motor2_duty = 0;
+        }
+
+        /* Setarea PWM pentru motoare */
+        Pwm_SetDutyCycle(0, motor1_duty); // Motor 1
+        Pwm_SetDutyCycle(1, motor2_duty); // Motor 2
     }
 }
 
 
-
+// 2 inturi motor 1 si motor 2 si o valoare care reprezinta 0-100%. pe asta il transform in duty cicle si cu pwm_setdutycicle
+// setez viteza pt motoare.
 
 
 #ifdef __cplusplus

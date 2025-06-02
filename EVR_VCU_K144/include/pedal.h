@@ -34,7 +34,7 @@ extern "C"{
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
-
+//structura pentru datele de la pedala
 typedef struct {
 	Adc_GroupType AccelerationAdcChannel1, AccelerationAdcChannel2, BrakeAdcChannel;
 	Adc_ValueGroupType AccelerationValue1, AccelerationValue2, BrakeValue, MaxError;
@@ -82,14 +82,15 @@ typedef struct {
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 
-void PedalsInit(void );
+void PedalsInit(void);
 
-uint8 PedalsGetAcceleration( void);
+uint8 PedalsGetAcceleration(void);
 
-uint8 PedalsGetBrake( void );
+uint8 PedalsGetBrake(void);
 
 void PedalsTest(void);
 
+uint8 OutOfRange(void);
 
 #ifdef __cplusplus
 }
