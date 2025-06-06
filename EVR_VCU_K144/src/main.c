@@ -77,6 +77,8 @@ int curent1,curent2;
 int i1,i2;
 int v1,v2;
 
+volatile int tensiuneMILIvolti;
+
 struct biemese icBaterie;
 
 /*==================================================================================================
@@ -150,40 +152,54 @@ int main(void)
     buffTrimitere[1]=0x2C;
     transmisie(); //read RDSID
 
+
     parametriiADC();
 
 
     //USBInit(0);
     //Icu_EnableNotification(0);
 
-
+    //CLRFLG here
     /*
+    buffTrimitere[0]=0x17;
+    buffTrimitere[1]=0x07;
+    transmisieCMD(); //CLRFLG
+	*/
     buffTrimitere[0]=0;
     buffTrimitere[1]=0x2;
     transmisieRD48();     //RDCFGA
+    /*
+    buffTrimitere[0]=0x02;
+    buffTrimitere[1]=0xE0;
+    transmisieCMD(); //ADCV
+
+    buffTrimitere[0]=0x01;
+    buffTrimitere[1]=0xE8;
+    transmisieCMD(); //ADSV
 	*/
 
+    buffTrimitere[0]=0x03;
+    buffTrimitere[1]=0xE0;
+    transmisieCMD(); //ADCV
 
     uint8 buffer[7];
     buffer[0]=12;
 
 
-    volatile int delayul=1000000;
+    //volatile int delayul=1000000;
     while (1)
     {
-    	delayul=300000;
-    		while(delayul--);
-    	i1=BmsGetPackCurrent();
-    	//i1*=100;
 
-    	////USBSendBMSCurrent(i1,0);
-
-
-    	delayul=30000;
-   	    	while(delayul--);
-       	v1=BmsGetPackVoltage();
-       	//v1*=10;
-
+    	for (int i=0x44;i<=0x44+4;i++)
+    		{
+        		//delayul=30000;
+        			//while(delayul--);
+    			buffTrimitere[0]=0;
+    			buffTrimitere[1]=i; //0x0C
+    			transmisieRD160();
+    			tensiuneMILIvolti=150*(buffPrimire[5]*256+buffPrimire[4])+1500000;
+    			tensiuneMILIvolti++;
+    		}
 
 
     	buffer[1]=v1>>16;
