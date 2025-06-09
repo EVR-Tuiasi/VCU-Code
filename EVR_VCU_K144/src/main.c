@@ -77,7 +77,7 @@ int curent1,curent2;
 int i1,i2;
 int v1,v2;
 
-volatile int tensiuneMILIvolti;
+volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 
 struct biemese icBaterie;
 
@@ -156,7 +156,7 @@ int main(void)
     parametriiADC();
 
 
-    //USBInit(0);
+    USBInit(0);
     //Icu_EnableNotification(0);
 
     //CLRFLG here
@@ -182,36 +182,48 @@ int main(void)
     buffTrimitere[1]=0xE0;
     transmisieCMD(); //ADCV
 
-    uint8 buffer[7];
-    buffer[0]=12;
+    uint8 buffer[10];
+
+    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A, 0x49};
 
 
-    //volatile int delayul=1000000;
-    while (1)
-    {
+    volatile int delayul=1000000;
+    while (1) {
+    	for (int i=0;i<=4;i++)
+    	{
+			buffer[0] = 13+i;
+			delayul = 30000;
+			while (delayul--) {
+				// wait
+			}
 
-    	for (int i=0x44;i<=0x44+4;i++)
-    		{
-        		//delayul=30000;
-        			//while(delayul--);
-    			buffTrimitere[0]=0;
-    			buffTrimitere[1]=i; //0x0C
-    			transmisieRD160();
-    			tensiuneMILIvolti=150*(buffPrimire[5]*256+buffPrimire[4])+1500000;
-    			tensiuneMILIvolti++;
-    		}
+			buffTrimitere[0] = 0x03;
+			buffTrimitere[1] = 0xE0;
+			transmisieCMD(); // ADCV
 
+			buffTrimitere[0] = 0;
+			buffTrimitere[1] = pachete[i]; // 0x0C
+			transmisieRD160();
 
-    	buffer[1]=v1>>16;
-    	buffer[2]=v1>>8;
-    	buffer[3]=v1%256;
-    	buffer[4]=i1>>16;
-    	buffer[5]=i1>>8;
-    	buffer[6]=i1%256;
-    	Uart_SyncSend(0, buffer, 7, 10000000);
+			tensiuneMILIvolti1 = 15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
+			tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
+			tensiuneMILIvolti3 = 15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
+
+			buffer[1] = tensiuneMILIvolti1 >> 16;
+			buffer[2] = tensiuneMILIvolti1 >> 8;
+			buffer[3] = tensiuneMILIvolti1 % 256;
+
+			buffer[4] = tensiuneMILIvolti2 >> 16;
+			buffer[5] = tensiuneMILIvolti2 >> 8;
+			buffer[6] = tensiuneMILIvolti2 % 256;
+
+			buffer[7] = tensiuneMILIvolti3 >> 16;
+			buffer[8] = tensiuneMILIvolti3 >> 8;
+			buffer[9] = tensiuneMILIvolti3 % 256;
+
+			Uart_SyncSend(0, buffer, 10, 10000000);
+    	}
     }
-	while(1);
-
 
 }
 // test
