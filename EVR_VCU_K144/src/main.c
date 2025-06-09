@@ -192,7 +192,7 @@ int main(void)
     	for (int i=0;i<=4;i++)
     	{
 			buffer[0] = 13+i;
-			delayul = 30000;
+			delayul = 50000;
 			while (delayul--) {
 				// wait
 			}

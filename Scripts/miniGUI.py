@@ -2,39 +2,37 @@ import serial
 import threading
 import tkinter as tk
 from tkinter import Canvas
+from datetime import datetime
 
-# Setup Serial
+# Serial setup
 ser = serial.Serial('COM15', 9600, timeout=1)
 
-# Parse signed 24-bit int
 def parse_signed_24bit(b):
     val = b[0] << 16 | b[1] << 8 | b[2]
     if val & 0x800000:
         val -= 0x1000000
     return val
 
-# Map voltage to color (2.5V = red, 4.2V = green)
 def voltage_to_color(v):
-    v = max(2.5, min(4.2, v))  # Clamp
+    v = max(2.5, min(4.2, v))
     norm = (v - 2.5) / (4.2 - 2.5)
     r = int(255 * (1 - norm))
     g = int(255 * norm)
     b = 0
     return f'#{r:02x}{g:02x}{b:02x}'
 
-# GUI Setup
 root = tk.Tk()
 root.title("15S LiPo Monitor")
 
 labels = []
 
-# 15 cell labels
+# Voltage labels
 for i in range(15):
     lbl = tk.Label(root, text=f"C{i+1}: --- V", font=("Arial", 14), width=20, anchor="w", bg="#eeeeee")
     lbl.grid(row=i // 3, column=i % 3, padx=10, pady=5)
     labels.append(lbl)
 
-# Total voltage label
+# Total voltage
 total_label = tk.Label(root, text="Total: --- V", font=("Arial", 16, "bold"), fg="blue")
 total_label.grid(row=5, column=0, columnspan=3, pady=10)
 
@@ -48,7 +46,6 @@ legend_label.pack()
 legend_canvas = Canvas(legend_frame, width=200, height=20)
 legend_canvas.pack()
 
-# Draw gradient legend
 for x in range(200):
     v = 2.5 + (x / 199) * (4.2 - 2.5)
     color = voltage_to_color(v)
@@ -56,6 +53,19 @@ for x in range(200):
 
 legend_canvas.create_text(0, 25, anchor='nw', text="2.5V", font=("Arial", 10))
 legend_canvas.create_text(180, 25, anchor='nw', text="4.2V", font=("Arial", 10))
+
+# Timestamp log
+log_label = tk.Label(root, text="Last 3 data timestamps:", font=("Arial", 12, "italic"))
+log_label.grid(row=7, column=0, sticky="w", padx=10)
+
+log_text = tk.StringVar()
+log_display = tk.Label(root, textvariable=log_text, font=("Courier", 12), justify="left")
+log_display.grid(row=8, column=0, columnspan=3, sticky="w", padx=10)
+
+log_entries = []
+
+def update_log():
+    log_text.set('\n'.join(log_entries[-3:]))
 
 # Update GUI
 def update_gui(data):
@@ -65,6 +75,10 @@ def update_gui(data):
         color = voltage_to_color(voltage)
         labels[i].config(text=f"C{i+1}: {voltage:.3f} V", bg=color)
     total_label.config(text=f"Total: {total:.3f} V")
+
+    timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Truncate microseconds to ms
+    log_entries.append(timestamp)
+    root.after(0, update_log)
 
 # Serial thread
 def serial_thread():
@@ -89,7 +103,7 @@ def serial_thread():
 
             root.after(0, update_gui, voltages)
 
-# Start thread and GUI
+# Run
 threading.Thread(target=serial_thread, daemon=True).start()
 root.mainloop()
 ser.close()
