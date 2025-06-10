@@ -28,21 +28,21 @@ extern "C"{
 *                                      DEFINES AND MACROS
 ==================================================================================================*/
 //Indicator limits graphical properties
-#define INDICATOR_LIMIT_UPPER 50
+#define INDICATOR_LIMIT_UPPER 45
 #define INDICATOR_UPPER_SPACING 145
 #define INDICATOR_LIMIT_MIDDLE 150
 #define INDICATOR_LIMIT_LOWER 450
 #define INDICATOR_LIMIT_THICKNESS 10
 //Brake indicator graphical properties
-#define PEDAL_HEIGHT 50
+#define PEDAL_HEIGHT 45
 #define PEDAL_WIDTH 250
 #define PEDAL_FONT 31
 #define PEDAL_FONT_WIDTH 25
 #define PEDAL_FONT_HEIGHT 30
 #define PEDAL_BRAKE_TEXT_X 265
-#define PEDAL_BRAKE_TEXT_Y 3
+#define PEDAL_BRAKE_TEXT_Y 1
 #define PEDAL_ACCEL_TEXT_X 410
-#define PEDAL_ACCEL_TEXT_Y 3
+#define PEDAL_ACCEL_TEXT_Y 1
 //Battery indicator graphical properties
 #define BATTERY_HEIGHT 300
 #define BATTERY_WIDTH 400

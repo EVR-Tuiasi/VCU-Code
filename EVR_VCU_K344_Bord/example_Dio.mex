@@ -104,6 +104,16 @@
                         <pin_feature name="pullEnable" value="enabled"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="LPI2C0" signal="lpi2c0_sda" pin_num="P5" pin_signal="PTD13">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT/OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="LPI2C0" signal="lpi2c0_scl" pin_num="M4" pin_signal="PTD14">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT/OUTPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -507,9 +517,14 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.cdd_i2c" description="I2c is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
-                  <data>true</data>
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.cdd_i2c" description="An unsupported version of the I2c in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
                </feature>
             </dependency>
          </dependencies>
@@ -518,6 +533,9 @@
             <file path="board/Siul2_Port_Ip_Cfg.h" update_enabled="true"/>
             <file path="board/Tspc_Port_Ip_Cfg.c" update_enabled="true"/>
             <file path="board/Tspc_Port_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/CDD_I2c_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/CDD_I2c_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/CDD_I2c_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Mcl_Cfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Mcl_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/CDD_Mcl_PBcfg.h" update_enabled="true"/>
@@ -542,6 +560,9 @@
             <file path="generate/include/Emios_Mcl_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_I2c_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_I2c_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_I2c_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Mcl_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Mcl_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
@@ -552,6 +573,7 @@
             <file path="generate/include/Gpt_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Gpt_Ipw_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Gpt_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/I2c_Ipw_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Igf_Port_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Igf_Port_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/IntCtrl_Ip_Cfg.h" update_enabled="true"/>
@@ -563,6 +585,9 @@
             <file path="generate/include/Lcu_Ip_Features.h" update_enabled="true"/>
             <file path="generate/include/Lcu_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Lcu_Ip_Regs.h" update_enabled="true"/>
+            <file path="generate/include/Lpi2c_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Lpi2c_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/Lpi2c_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Lpspi_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Lpspi_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Mcu_Cfg.h" update_enabled="true"/>
@@ -611,6 +636,8 @@
             <file path="generate/include/Wdg_43_fs26_CfgExt.h" update_enabled="true"/>
             <file path="generate/include/Wdg_43_fs26_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/modules.h" update_enabled="true"/>
+            <file path="generate/src/CDD_I2c_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/CDD_I2c_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Mcl_Cfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Mcl_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Sbc_fs26_PBcfg.c" update_enabled="true"/>
@@ -621,15 +648,18 @@
             <file path="generate/src/Dma_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Emios_Gpt_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Emios_Mcl_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Flexio_I2c_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Mcl_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Spi_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Gpt_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Gpt_Ipw_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Gpt_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/I2c_Ipw_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Igf_Port_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/IntCtrl_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Lcu_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Lcu_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Lpi2c_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Lpspi_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Mcu_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Mcu_PBcfg.c" update_enabled="true"/>
@@ -1107,6 +1137,10 @@
                                     <struct name="0">
                                        <setting name="Name" value="McuClockReferencePoint_0"/>
                                        <setting name="McuClockFrequencySelect" value="CORE_CLK"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="LPI2C_0"/>
+                                       <setting name="McuClockFrequencySelect" value="AIPS_SLOW_CLK"/>
                                     </struct>
                                  </array>
                               </struct>
@@ -2224,6 +2258,50 @@
                                        <array name="IGFSettings"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
+                                    <struct name="12">
+                                       <setting name="Name" value="SevenSeg_SCL"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="13"/>
+                                       <setting name="PortPinPcr" value="110"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="13">
+                                       <setting name="Name" value="SevenSeg_SDA"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="14"/>
+                                       <setting name="PortPinPcr" value="109"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
                                  </array>
                               </struct>
                            </array>
@@ -2754,7 +2832,15 @@
                         <array name="IntCtrlConfig">
                            <struct name="0">
                               <setting name="Name" value="IntCtrlConfig_0"/>
-                              <array name="PlatformIsrConfig"/>
+                              <array name="PlatformIsrConfig">
+                                 <struct name="0">
+                                    <setting name="Name" value="SevenSegment_I2C0"/>
+                                    <setting name="IsrName" value="LPI2C0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="LPI2C0_Master_IRQHandler"/>
+                                 </struct>
+                              </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
                         </array>
@@ -3450,6 +3536,112 @@
                         </struct>
                         <struct name="CommonPublishedInformation">
                            <setting name="Name" value="CommonPublishedInformation"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="I2c" uuid="bf589a68-e770-45b8-a4fe-a20f5714dcad" type="I2c" type_id="I2c" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="I2c">
+                        <setting name="Name" value="I2c"/>
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="GeneralConfiguration">
+                           <setting name="Name" value="GeneralConfiguration"/>
+                           <setting name="I2cDevErrorDetect" value="true"/>
+                           <setting name="I2cDisableDemReportErrorStatus" value="false"/>
+                           <setting name="I2cVersionInfoApi" value="false"/>
+                           <setting name="I2cDmaUsed" value="false"/>
+                           <setting name="I2cDmaOptimize" value="false"/>
+                           <setting name="I2cFlexIOUsed" value="false"/>
+                           <setting name="I2cMulticoreSupport" value="false"/>
+                           <setting name="I2cEnableUserModeSupport" value="false"/>
+                           <setting name="I2cTimeoutDuration" value="65535"/>
+                           <setting name="I2cTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
+                           <setting name="VendorId" value="0"/>
+                           <array name="I2cCallback">
+                              <setting name="0" value="I2c_Callback"/>
+                           </array>
+                           <array name="I2cErrorCallback">
+                              <setting name="0" value="I2c_ErrorCallback"/>
+                           </array>
+                        </struct>
+                        <struct name="I2cGlobalConfig">
+                           <setting name="Name" value="I2cGlobalConfig"/>
+                           <array name="I2cDemEventParameterRefs"/>
+                           <array name="I2cChannel">
+                              <struct name="0">
+                                 <setting name="Name" value="I2cChannel_0"/>
+                                 <setting name="I2cChannelId" value="0"/>
+                                 <setting name="I2cHwChannel" value="LPI2C_0"/>
+                                 <setting name="I2cMasterSlaveConfiguration" value="MASTER_MODE"/>
+                                 <setting name="I2cOperatingMode" value="LPI2C_STANDARD_MODE"/>
+                                 <array name="I2cChannelEcucPartitionRef"/>
+                                 <struct name="I2cMasterConfiguration">
+                                    <setting name="Name" value="I2c_Lpi2cMasterChannel0"/>
+                                    <setting name="I2cPrescaler" value="LPI2C_MASTER_PRESC_DIV_64"/>
+                                    <setting name="I2cDataValidDelay" value="1"/>
+                                    <setting name="I2cSetupHoldDelay" value="2"/>
+                                    <setting name="I2cClockHighPeriod" value="1"/>
+                                    <setting name="I2cClockLowPeriod" value="3"/>
+                                    <setting name="I2cPinLowTimeout" value="0"/>
+                                    <setting name="I2cBusIdleTimeout" value="0"/>
+                                    <setting name="I2cMasterFilterEnable" value="false"/>
+                                    <setting name="I2cGlitchFilterSDA" value="0"/>
+                                    <setting name="I2cGlitchFilterSCL" value="0"/>
+                                    <array name="I2cClockRef">
+                                       <setting name="0" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/LPI2C_0"/>
+                                    </array>
+                                    <setting name="I2cAsyncMethod" value="LPI2C_USING_INTERRUPTS"/>
+                                    <array name="I2cDmaTxChannelRef"/>
+                                    <array name="I2cDmaRxChannelRef"/>
+                                    <struct name="I2cHighSpeedModeConfiguration">
+                                       <setting name="Name" value="I2c_Lpi2cMasterHighSpeedMode0"/>
+                                       <setting name="I2cMasterCode" value="0"/>
+                                       <setting name="I2cDataValidDelay" value="1"/>
+                                       <setting name="I2cSetupHoldDelay" value="2"/>
+                                       <setting name="I2cClockHighPeriod" value="1"/>
+                                       <setting name="I2cClockLowPeriod" value="3"/>
+                                    </struct>
+                                 </struct>
+                                 <struct name="I2cSlaveConfiguration">
+                                    <setting name="Name" value="I2c_Lpi2cSlaveChannel0"/>
+                                    <setting name="I2cSlaveAddress" value="0x32"/>
+                                    <setting name="I2cSlaveIs10BitAddress" value="false"/>
+                                    <setting name="Lpi2cSlaveListening" value="false"/>
+                                    <setting name="I2cSlaveFilterEnable" value="false"/>
+                                    <setting name="I2cGlitchFilterSDA" value="0"/>
+                                    <setting name="I2cGlitchFilterSCL" value="0"/>
+                                    <setting name="I2cAsyncMethod" value="LPI2C_USING_INTERRUPTS"/>
+                                    <array name="I2cSlaveDmaTxChannelRef"/>
+                                    <array name="I2cSlaveDmaRxChannelRef"/>
+                                 </struct>
+                                 <struct name="I2cFlexIOConfiguration">
+                                    <setting name="Name" value="I2c_FlexIOChannel0"/>
+                                    <setting name="I2cAsyncMethod" value="FLEXIO_I2C_USING_INTERRUPTS"/>
+                                    <setting name="I2cDmaTxChannelRef" value="/Mcl/Mcl/MclConfig/dmaLogicChannel_Type_0"/>
+                                    <setting name="I2cDmaRxChannelRef" value="/Mcl/Mcl/MclConfig/dmaLogicChannel_Type_0"/>
+                                    <setting name="SclFlexioRef" value="/Mcl/Mcl/MclConfig/FlexioCommon_0/FlexioMclLogicChannels_0"/>
+                                    <setting name="SdaFlexioRef" value="/Mcl/Mcl/MclConfig/FlexioCommon_0/FlexioMclLogicChannels_0"/>
+                                    <setting name="FlexIO_clock" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                    <setting name="I2cFlexIOCompareValue" value="0"/>
+                                    <setting name="I2cFlexIOChannelPrescaler" value="DIV_1"/>
+                                 </struct>
+                              </struct>
+                           </array>
+                           <array name="I2cEcucPartitionRef"/>
+                        </struct>
+                        <struct name="CommonPublishedInformation" quick_selection="Default">
+                           <setting name="Name" value="CommonPublishedInformation"/>
+                           <setting name="ModuleId" value="255"/>
+                           <setting name="VendorId" value="43"/>
+                           <setting name="VendorApiInfix" value=""/>
+                           <setting name="ArReleaseMajorVersion" value="4"/>
+                           <setting name="ArReleaseMinorVersion" value="7"/>
+                           <setting name="ArReleaseRevisionVersion" value="0"/>
+                           <setting name="SwMajorVersion" value="4"/>
+                           <setting name="SwMinorVersion" value="0"/>
+                           <setting name="SwPatchVersion" value="0"/>
                         </struct>
                      </config_set>
                   </instance>

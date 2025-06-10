@@ -1,6 +1,22 @@
+/*
+*   (c) Copyright 2020 NXP
+*
+*   NXP Confidential. This software is owned or controlled by NXP and may only be used strictly
+*   in accordance with the applicable license terms.  By expressly accepting
+*   such terms or by downloading, installing, activating and/or otherwise using
+*   the software, you are agreeing that you have read, and that you agree to
+*   comply with and are bound by, such license terms.  If you do not agree to
+*   be bound by the applicable license terms, then you may not retain,
+*   install, activate or otherwise use the software.
+*
+*   This file contains sample code only. It is not part of the production code deliverables.
+*/
+
+#ifndef SEVEN_SEGMENT_DISPLAY_H
+#define SEVEN_SEGMENT_DISPLAY_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"{
 #endif
 
 
@@ -10,29 +26,24 @@ extern "C" {
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-#include "CDD_Sbc_fs26.h"
-#include "Port.h"
-#include "Det.h"
-#include "Dem.h"
-#include "Spi.h"
-#include "Platform.h"
-#include "Wdg_43_fs26_CfgExt.h"
-#include "Wdg_43_fs26_Cfg.h"
-#include "Wdg_43_fs26.h"
-#include "Gpt.h"
-#include "Mcu.h"
-#include "Dio.h"
-#include "Mcl.h"
 
-#include "display.h"
-#include "FT81_misc.h"
-#include "FT81_display.h"
-#include "FT81_sound.h"
-#include "FT81_touch.h"
+#include "Mcu.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
+
+typedef struct {
+	uint8 *elemente;
+	uint8 nr_elemente;
+} SevenSegmentGroup;
+
+typedef struct {
+	int I2c_used_channel;
+	int I2c_Slave_Address;
+	SevenSegmentGroup *group;
+	uint8 SevenSegmentGroup_elements_count;
+} SevenSegmentDriver;
 
 
 /*==================================================================================================
@@ -74,85 +85,15 @@ extern "C" {
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 
-
-
-void TestDelay(uint32 delay);
-void TestDelay(uint32 delay)
-{
-    static volatile uint32 DelayTimer = 0;
-    while(DelayTimer < delay)
-    {
-        DelayTimer++;
-    }
-    DelayTimer = 0;
-}
-
-/**
-* @brief        Main function of the example
-* @details      Initialize the used drivers and uses the Icu
-*               and Dio drivers to toggle a LED on a push button
-*/
-int main(void)
-{
-    /* Initialize the Mcu driver */
-    Mcu_Init(NULL_PTR);
-
-    /* Initialize the clock tree and apply PLL as system clock */
-    Mcu_InitClock(McuClockSettingConfig_0);
-
-    while(MCU_PLL_LOCKED != Mcu_GetPllStatus())
-    {
-    	;
-    }
-    Mcu_DistributePllClock();
-    /* Apply a mode configuration */
-    Mcu_SetMode(McuModeSettingConf_0);
-
-    /* Platform initialization */
-    Platform_Init(NULL_PTR);
-
-    /* Port initialization */
-    Port_Init(NULL_PTR);
-
-    Mcl_Init(NULL_PTR);
-
-    /* GPT initialization */
-    Gpt_Init(NULL_PTR);
-
-    /* SPI initialization */
-    Spi_Init(NULL_PTR);
-
-    /* Wdg_43_fs26 initialization */
-    volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
-    eReturnValue |= Sbc_fs26_Init(NULL_PTR);
-    Wdg_43_fs26_Init(NULL_PTR);
-
-    eReturnValue |= Sbc_fs26_InitDevice();
-    eReturnValue |= Wdg_43_fs26_SetMode(WDGIF_OFF_MODE);
-    if(eReturnValue == E_OK){
-    	Dio_WriteChannel(140, 0);
-    	Dio_WriteChannel(142, 1);
-    }
-    else{
-    	Dio_WriteChannel(140, 1);
-    	Dio_WriteChannel(142, 0);
-    }
-
-    SevSegGrTest(0);
-	DisplayInit();
-	//DisplayTest();
-	DashboardTest();
-	//VladTest();
-	//SoundTest();
-
-	while(1);
-
-
-}
-
+void SevenSegmentInit(void);
+void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint);
+void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent);
+void SevSegGrTest(uint8 GroupIndex);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 /** @} */
