@@ -2,6 +2,7 @@
 extern "C" {
 #endif
 
+#include "uart_datasend.h"
 #include "uart_error_handling.h"
 #include "CDD_Uart.h"
 
@@ -13,7 +14,7 @@ Errors errors_instance;
 void ErrorsSet(uint8 Module, uint8 Error)
 {
 	switch (Module) {
-	case TEMP_SENSOR:
+	case CELL_TEMP:
 		errors_instance.temperature_error = errors_instance.temperature_error | (1 << Error);
 	break;
 	case BMS_VOLTAGE:
@@ -36,7 +37,7 @@ void ErrorsSet(uint8 Module, uint8 Error)
 uint8 ErrorsGet(uint8 Module)
 {
 	switch (Module) {
-		case TEMP_SENSOR:
+		case CELL_TEMP:
 			return errors_instance.temperature_error;
 		break;
 		case BMS_VOLTAGE:
@@ -59,7 +60,7 @@ uint8 ErrorsGet(uint8 Module)
 void ErrorsClear(uint8 Module, uint8 Error)
 {
 	switch (Module) {
-		case TEMP_SENSOR:
+		case CELL_TEMP:
 			errors_instance.temperature_error = errors_instance.temperature_error & (~(1 << Error));
 		break;
 		case BMS_VOLTAGE:

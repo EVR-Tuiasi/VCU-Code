@@ -51,7 +51,18 @@ typedef enum{
 /*==================================================================================================
 *                                       LOCAL MACROS
 ==================================================================================================*/
-
+#define ERROR 9
+//#define MODULE_START 10
+#define CELL_TEMP 10
+#define CELL_VOLTAGE 11
+#define BMS_VOLTAGE 12
+#define BMS_CURRENT 13
+#define ACCELERATOR_PEDALS 14
+#define BRAKE_PEDAL 15
+#define SEVEN_SEGMENT 16
+#define PROCESSOR 17
+#define TIME 18
+//#define MODULE_END 19
 
 /*==================================================================================================
 *                                      LOCAL CONSTANTS
@@ -85,15 +96,14 @@ typedef enum{
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
-void sendvolt(unsigned int volt);
 void USBInit(uint8 UartChannel);
-void USBSendCellTemperature(uint8 CellIndex, uint16 Value, uint8 Precision);
-void USBSendBMSCellVoltage(uint16 CellIndex, uint16 Value, uint8 Precision);
-void USBSendBMSCurrent(uint16 Value, uint8 Precision);
-void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2, uint8 Precision);
-void USBSendBrakePedal(uint16 Value, uint8 Precision);
+void USBSendCellTemperature(uint16 CellIndex, sint32 Value);
+void USBSendCellVoltage(uint16 CellIndex, sint32 Value);
+void USBSendBMSCurrent(sint32 Value);
+void USBSendBMSVoltage(sint32 Value);
+void USBSendAcceleratorPedals(uint16 Value1, uint16 Value2);
+void USBSendBrakePedal(uint16 Value);
 void USBSendErrors(void);
-void USBTempTotal(uint8 Precision, uint16* Value);
 uint8 CRC_calculate(uint8 length);
 
 

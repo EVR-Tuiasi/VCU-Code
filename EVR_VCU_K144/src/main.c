@@ -17,7 +17,7 @@ extern "C" {
 #include "Platform.h"
 #include "Port.h"
 #include "uart_datasend.h"
-#include "uart_error_handling.h"
+//#include "uart_error_handling.h"
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
 
@@ -130,15 +130,11 @@ int main(void)
     USBInit(0);
    /*SevenSegmentInit();
    SevSegGrTest(0);*/
-    ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
+    /*ErrorsSet(BMS_VOLTAGE, BMS_NO_RESPONSE);
     ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NO_RESPONSE);
     ErrorsSet(SEVEN_SEGMENT, SEVEN_SEG_NUMBER_TOO_LARGE);
     ErrorsSet(BRAKE_PEDAL, ACCELERATOR_PEDALS_DIFFERENT_OUTPUT);
-    ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);
-    ErrorsGet(BMS_CURRENT);
-    ErrorsGet(BRAKE_PEDAL);
-    ErrorsGet(SEVEN_SEGMENT);
-    ErrorsGet(BMS_VOLTAGE);
+    ErrorsSet(BMS_CURRENT, BMS_NO_RESPONSE);*/
 
     /*while(1){
     	USBSendBrakePedal(1562, 2);
@@ -155,17 +151,35 @@ int main(void)
 
 
 	while(1){
-		/*USBTempTotal(2, valori);
-		USBSendErrors();*/
-
-		USBSendBrakePedal(1837, 2);
-		volatile int i = 10000000;
-			while(i)
-				i--;
-		USBSendAcceleratorPedals(2983, 2983, 1);
-		volatile int k = 10000000;
+		//USBTempTotal(2, valori);
+		//USBSendErrors();
+		volatile int k = 0;
+		for(uint32 i=0; i<1000; i++){
+			USBSendAcceleratorPedals(i, i);
+			k = 100000;
 			while(k)
 				k--;
+			USBSendBrakePedal(i);
+			k = 100000;
+			while(k)
+				k--;
+			USBSendCellTemperature(i, i);
+			k = 100000;
+			while(k)
+				k--;
+			USBSendCellVoltage(i, i);
+			k = 100000;
+			while(k)
+				k--;
+			USBSendBMSVoltage(i);
+			k = 100000;
+			while(k)
+				k--;
+			USBSendBMSCurrent(i);
+			k = 100000;
+			while(k)
+				k--;
+		}
 	}
 }
 
