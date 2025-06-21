@@ -35,6 +35,6 @@ void transmisieRD160(void);
 
 void populeazaCMD(char MSB,char LSB);
 
-void flushTX();
+void flushTX(void);
 
 #endif /* BMS_COSA_H_ */

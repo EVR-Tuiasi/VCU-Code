@@ -165,7 +165,7 @@ int main(void)
     flushTX();
 
     populeazaCMD(0x00,0x02);
-    transmisieRD48();     //RDCFGA
+    transmisieCMD();     //RDCFGA
     flushTX();
 
     parametriiADC();
@@ -182,7 +182,8 @@ int main(void)
 	*/
 
     populeazaCMD(0x00,0x02);
-    transmisieRD48();     //RDCFGA
+    transmisieCMD();     //RDCFGA
+    flushTX();
     /*
     buffTrimitere[0]=0x02;
     buffTrimitere[1]=0xE0;
@@ -195,6 +196,7 @@ int main(void)
 
     buffTrimitere[0]=0x03;
     buffTrimitere[1]=0xE0;
+    populeazaCMD(0x03, 0xE0);
     transmisieCMD(); //ADCV
 
     uint8 buffer[10];

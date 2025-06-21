@@ -50,15 +50,30 @@ void BmsTest(void)
 
 void parametriiADC(void)
 {
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x1;
+	buffTrimitere[0] = 0x00;
+	buffTrimitere[1] = 0x01;
 
-    buffTrimitere[4]=0x81; //default
-    buffTrimitere[5]=0; //CFGAR1
-    buffTrimitere[6]=0; //CFGAR2
-    buffTrimitere[7]=0xFF; //porneste GPIO
-    buffTrimitere[8]=0x03;
-    buffTrimitere[9]=0x10;
+	for (int i=0;i<numberOfMonitoare;i++)
+	{
+
+	    buffTrimitere[4+i*8]=0x81; //default
+	    buffTrimitere[5+i*8]=0; //CFGAR1
+	    buffTrimitere[6+i*8]=0; //CFGAR2
+	    buffTrimitere[7+i*8]=0xFF; //porneste GPIO
+	    buffTrimitere[8+i*8]=0x03;
+	    buffTrimitere[9+i*8]=0x10;
+	}
+	for (int i=0;i<numberOfSunturi;i++)
+	{
+	    buffTrimitere[4+i*8+numberOfMonitoare*8]=0x0; //default
+	    buffTrimitere[5+i*8+numberOfMonitoare*8]=0; //CFGAR1
+	    buffTrimitere[6+i*8+numberOfMonitoare*8]=0; //CFGAR2
+	    buffTrimitere[7+i*8+numberOfMonitoare*8]=0x5F; //porneste GPIO
+	    buffTrimitere[8+i*8+numberOfMonitoare*8]=0x0;
+	    buffTrimitere[9+i*88+numberOfMonitoare*8]=0x10;
+	}
+
+
     transmisieWR48(); //WRCFGA
 
 
@@ -257,14 +272,26 @@ void transmisieRD48(void)
 
 void transmisieWR48(void)
 {
-
-
 	uint16 pec = Pec15_Calc(2U, buffTrimitere);
 	buffTrimitere[2] = pec >> 8;
 	buffTrimitere[3] = pec % 256;
-	uint16 dpec = pec10_calc(false,6U, buffTrimitere+4);
-	buffTrimitere[10] = dpec >> 8;
-	buffTrimitere[11] = dpec % 256;
+
+	for (int i=0;i<numberOfMonitoare;i++)
+	{
+
+		uint16 dpec = pec10_calc(false,6U, buffTrimitere+4+i*8);
+		buffTrimitere[10+i*10] = dpec >> 8;
+		buffTrimitere[11+i*10] = dpec % 256;
+	}
+
+	for (int i=0;i<numberOfSunturi;i++)
+	{
+		uint16 dpec = pec10_calc(false,6U, buffTrimitere+4+i*8+numberOfMonitoare*8);
+		buffTrimitere[10+i*10+numberOfMonitoare*8] = dpec >> 8;
+		buffTrimitere[11+i*10+numberOfMonitoare*8] = dpec % 256;
+	}
+
+
 
 
 	#if 1
@@ -285,7 +312,7 @@ void transmisieWR48(void)
 	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
 	        //comanda cu pec
 
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64U);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
@@ -348,6 +375,7 @@ void flushTX()
 	for(int i=0;i<64;i++)
 	{
 		buffTrimitere[i]=0;
+		buffPrimire[i]=0;
 	}
 }
 
