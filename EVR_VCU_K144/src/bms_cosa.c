@@ -19,10 +19,14 @@
 #include "7-segment-display.h"
 #include "bms.h"
 
-extern uint8 buffTrimitere[16];
-extern uint8 buffPrimire[32];
+extern uint8 buffTrimitere[64];
+extern uint8 buffPrimire[64];
 extern volatile int delei;
 extern struct biemese icBaterie;
+
+extern int numberOfSunturi;
+extern int numberOfMonitoare;
+extern int numberOfDevices;
 
 void BmsInit(void)
 {
@@ -132,29 +136,42 @@ void transmisie(void)
 
 void transmisieCMD(void)
 {
+
+
+	    	for (int i=0;i<numberOfMonitoare;i++)
+	    	{
+	    		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4);
+	    		buffTrimitere[2+i*4] = pec >> 8;
+	    		buffTrimitere[3+i*4] = pec % 256;
+	    	}
+
+	    	for (int i=0;i<numberOfSunturi;i++)
+	    	{
+	    		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4+numberOfMonitoare*4);
+	    		buffTrimitere[2+i*4+numberOfMonitoare*4] = pec >> 8;
+	    		buffTrimitere[3+i*4+numberOfMonitoare*4] = pec % 256;
+	    	}
+
 	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
+			Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+			Dio_WriteChannel(37, 0);
+			delei = 30;
+			while(delei){
+				delei--;
+			}
+			Dio_WriteChannel(37, 1);
+			Port_ResetPinMode(9);
+			delei = 3000;
+			while(delei){
+				delei--;
+			}
 	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
+			//comanda fara pec
+			//TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+			//comanda cu pec
 
 
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 4U);
+/*AICI*/    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64u);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif

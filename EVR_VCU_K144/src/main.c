@@ -70,8 +70,8 @@ I2c_RequestType numarpedigit1 = {0, false, false, false, false, 2, I2C_SEND_DATA
 volatile uint8 ok = 0;
 
 
-uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint8 buffPrimire[32] = {0};
+uint8 buffTrimitere[64] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint8 buffPrimire[64] = {0};
 volatile int delei;
 int curent1,curent2;
 int i1,i2;
@@ -80,6 +80,13 @@ int v1,v2;
 volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 
 struct biemese icBaterie;
+#define NUMARUL_DE_MONITOARE 1
+#define NUMARUL_DE_SUNTURI 1
+int numberOfSunturi = NUMARUL_DE_SUNTURI;
+int numberOfMonitoare = NUMARUL_DE_MONITOARE;
+
+int numarulDeDispozitive = NUMARUL_DE_MONITOARE + NUMARUL_DE_SUNTURI;
+
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -146,12 +153,24 @@ int main(void)
 
     //alt branch
 
+    buffTrimitere[0]=0;
+    buffTrimitere[1]=0x27;
+
+    buffTrimitere[4]=0;
+    buffTrimitere[5]=0x27;
+    transmisieCMD(); //SRST
 
     BmsInit();
+    while(1){
     buffTrimitere[0]=0;
     buffTrimitere[1]=0x2C;
-    transmisie(); //read RDSID
 
+    buffTrimitere[4]=0;
+    buffTrimitere[5]=0x2C;
+
+
+    transmisieCMD(); //read RDSID
+    }
 
     parametriiADC();
 
