@@ -153,27 +153,23 @@ int main(void)
 
     //alt branch
 
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x27;
-
-    buffTrimitere[4]=0;
-    buffTrimitere[5]=0x27;
+    populeazaCMD(0x00, 0x27);
     transmisieCMD(); //SRST
+    flushTX();
 
     BmsInit();
-    while(1){
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x2C;
+    flushTX();
 
-    buffTrimitere[4]=0;
-    buffTrimitere[5]=0x2C;
-
-
+    populeazaCMD(0x00, 0x2C);
     transmisieCMD(); //read RDSID
-    }
+    flushTX();
+
+    populeazaCMD(0x00,0x02);
+    transmisieRD48();     //RDCFGA
+    flushTX();
 
     parametriiADC();
-
+    flushTX();
 
     USBInit(0);
     //Icu_EnableNotification(0);
@@ -184,8 +180,8 @@ int main(void)
     buffTrimitere[1]=0x07;
     transmisieCMD(); //CLRFLG
 	*/
-    buffTrimitere[0]=0;
-    buffTrimitere[1]=0x2;
+
+    populeazaCMD(0x00,0x02);
     transmisieRD48();     //RDCFGA
     /*
     buffTrimitere[0]=0x02;

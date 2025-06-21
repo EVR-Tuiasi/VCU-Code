@@ -33,6 +33,8 @@ void transmisieWR48(void);
 
 void transmisieRD160(void);
 
+void populeazaCMD(char MSB,char LSB);
 
+void flushTX();
 
 #endif /* BMS_COSA_H_ */

@@ -132,6 +132,20 @@ void transmisie(void)
 	    	//////
 }
 
+void populeazaCMD(char MSB,char LSB)
+{
+	for (int i=0;i<numberOfMonitoare;i++)
+	{
+		buffTrimitere[i*4] = MSB;
+		buffTrimitere[1+i*4] = LSB;
+	}
+	for (int i=0;i<numberOfSunturi;i++)
+	{
+		buffTrimitere[i*4+numberOfMonitoare*4] = MSB;
+		buffTrimitere[1+i*4+numberOfMonitoare*4] = LSB;
+	}
+}
+
 
 
 void transmisieCMD(void)
@@ -190,6 +204,21 @@ void transmisieCMD(void)
 
 void transmisieRD48(void)
 {
+	for (int i=0;i<numberOfMonitoare;i++)
+	{
+		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4);
+		buffTrimitere[2+i*4] = pec >> 8;
+		buffTrimitere[3+i*4] = pec % 256;
+	}
+
+	for (int i=0;i<numberOfSunturi;i++)
+	{
+		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4+numberOfMonitoare*4);
+		buffTrimitere[2+i*4+numberOfMonitoare*4] = pec >> 8;
+		buffTrimitere[3+i*4+numberOfMonitoare*4] = pec % 256;
+	}
+
+
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
 	    	Dio_WriteChannel(37, 0);
@@ -209,10 +238,7 @@ void transmisieRD48(void)
 	        //comanda cu pec
 
 
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
+
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
@@ -231,6 +257,16 @@ void transmisieRD48(void)
 
 void transmisieWR48(void)
 {
+
+
+	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	buffTrimitere[2] = pec >> 8;
+	buffTrimitere[3] = pec % 256;
+	uint16 dpec = pec10_calc(false,6U, buffTrimitere+4);
+	buffTrimitere[10] = dpec >> 8;
+	buffTrimitere[11] = dpec % 256;
+
+
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
 	    	Dio_WriteChannel(37, 0);
@@ -248,14 +284,6 @@ void transmisieWR48(void)
 	    	//comanda fara pec
 	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
 	        //comanda cu pec
-
-
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	    	uint16 dpec = pec10_calc(false,6U, buffTrimitere+4);
-	    	buffTrimitere[10] = dpec >> 8;
-	    	buffTrimitere[11] = dpec % 256;
 
 	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
 	#if 0
@@ -313,5 +341,13 @@ void transmisieRD160(void)
 	    	}
 
 	    	//////
+}
+
+void flushTX()
+{
+	for(int i=0;i<64;i++)
+	{
+		buffTrimitere[i]=0;
+	}
 }
 
