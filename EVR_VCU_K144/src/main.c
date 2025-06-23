@@ -157,9 +157,6 @@ int main(void)
     transmisieCMD(); //SRST
     flushTX();
 
-    BmsInit();
-    flushTX();
-
     populeazaCMD(0x00, 0x2C);
     transmisieCMD(); //read RDSID
     flushTX();
@@ -225,6 +222,19 @@ int main(void)
 			tensiuneMILIvolti1 = 15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
 			tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
 			tensiuneMILIvolti3 = 15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
+
+			if(pachete[i]==0x44)
+			{
+				i1=((buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]));
+				i1++;
+			}
+			/*else if(pachete[i]==0x46)
+			{
+				v1=((buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]));
+				v1++;
+			}*/
+
+
 
 			buffer[1] = tensiuneMILIvolti1 >> 16;
 			buffer[2] = tensiuneMILIvolti1 >> 8;

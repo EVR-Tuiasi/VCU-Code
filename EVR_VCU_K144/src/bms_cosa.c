@@ -52,32 +52,25 @@ void parametriiADC(void)
 {
 	buffTrimitere[0] = 0x00;
 	buffTrimitere[1] = 0x01;
-
-	for (int i=0;i<numberOfMonitoare;i++)
-	{
-
-	    buffTrimitere[4+i*8]=0x81; //default
-	    buffTrimitere[5+i*8]=0; //CFGAR1
-	    buffTrimitere[6+i*8]=0; //CFGAR2
-	    buffTrimitere[7+i*8]=0xFF; //porneste GPIO
-	    buffTrimitere[8+i*8]=0x03;
-	    buffTrimitere[9+i*8]=0x10;
-	}
 	for (int i=0;i<numberOfSunturi;i++)
 	{
-	    buffTrimitere[4+i*8+numberOfMonitoare*8]=0x0; //default
-	    buffTrimitere[5+i*8+numberOfMonitoare*8]=0; //CFGAR1
-	    buffTrimitere[6+i*8+numberOfMonitoare*8]=0; //CFGAR2
-	    buffTrimitere[7+i*8+numberOfMonitoare*8]=0x5F; //porneste GPIO
-	    buffTrimitere[8+i*8+numberOfMonitoare*8]=0x0;
-	    buffTrimitere[9+i*88+numberOfMonitoare*8]=0x10;
+	    buffTrimitere[4+i*8]=0x0; //default
+	    buffTrimitere[5+i*8]=0; //CFGAR1
+	    buffTrimitere[6+i*8]=0; //CFGAR2
+	    buffTrimitere[7+i*8]=0x5F; //porneste GPIO
+	    buffTrimitere[8+i*8]=0x0;
+	    buffTrimitere[9+i*8]=0x10;
 	}
-
-
+	for (int i=0;i<numberOfMonitoare;i++)
+	{
+		buffTrimitere[4+i*8+8*numberOfSunturi]=0x81; //default
+		buffTrimitere[5+i*8+8*numberOfSunturi]=0; //CFGAR1
+		buffTrimitere[6+i*8+8*numberOfSunturi]=0; //CFGAR2
+		buffTrimitere[7+i*8+8*numberOfSunturi]=0xFF; //porneste GPIO
+		buffTrimitere[8+i*8+8*numberOfSunturi]=0x03;
+		buffTrimitere[9+i*8+8*numberOfSunturi]=0x10;
+	}
     transmisieWR48(); //WRCFGA
-
-
-
 
 }
 
@@ -149,38 +142,17 @@ void transmisie(void)
 
 void populeazaCMD(char MSB,char LSB)
 {
-	for (int i=0;i<numberOfMonitoare;i++)
-	{
-		buffTrimitere[i*4] = MSB;
-		buffTrimitere[1+i*4] = LSB;
-	}
-	for (int i=0;i<numberOfSunturi;i++)
-	{
-		buffTrimitere[i*4+numberOfMonitoare*4] = MSB;
-		buffTrimitere[1+i*4+numberOfMonitoare*4] = LSB;
-	}
+	buffTrimitere[0] = MSB;
+	buffTrimitere[1] = LSB;
 }
 
 
 
 void transmisieCMD(void)
 {
-
-
-	    	for (int i=0;i<numberOfMonitoare;i++)
-	    	{
-	    		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4);
-	    		buffTrimitere[2+i*4] = pec >> 8;
-	    		buffTrimitere[3+i*4] = pec % 256;
-	    	}
-
-	    	for (int i=0;i<numberOfSunturi;i++)
-	    	{
-	    		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4+numberOfMonitoare*4);
-	    		buffTrimitere[2+i*4+numberOfMonitoare*4] = pec >> 8;
-	    		buffTrimitere[3+i*4+numberOfMonitoare*4] = pec % 256;
-	    	}
-
+	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	buffTrimitere[2] = pec >> 8;
+	buffTrimitere[3] = pec % 256;
 	#if 1
 			Port_SetPinMode(9, PORT_MUX_AS_GPIO);
 			Dio_WriteChannel(37, 0);
@@ -331,6 +303,13 @@ void transmisieWR48(void)
 
 void transmisieRD160(void)
 {
+
+
+	uint16 pec = Pec15_Calc(2U, buffTrimitere);
+	buffTrimitere[2] = pec >> 8;
+	buffTrimitere[3] = pec % 256;
+    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64U);
+
 	#if 1
 	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
 	    	Dio_WriteChannel(37, 0);
@@ -350,10 +329,6 @@ void transmisieRD160(void)
 	        //comanda cu pec
 
 
-	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	    	buffTrimitere[2] = pec >> 8;
-	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 32U);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
