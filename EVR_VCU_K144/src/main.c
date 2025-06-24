@@ -184,12 +184,12 @@ int main(void)
 
     uint8 buffer[10];
 
-    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A, 0x49};
+    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A, 0x49, 0x4B};
 
 
     volatile int delayul=1000000;
     while (1) {
-    	for (int i=0;i<=4;i++)
+    	for (int i=0;i<=5;i++)
     	{
 			buffer[0] = 13+i;
 			delayul = 50000;

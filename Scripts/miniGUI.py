@@ -27,7 +27,7 @@ root.title("15S LiPo Monitor")
 labels = []
 
 # Voltage labels
-for i in range(15):
+for i in range(16):
     lbl = tk.Label(root, text=f"C{i+1}: --- V", font=("Arial", 14), width=20, anchor="w", bg="#eeeeee")
     lbl.grid(row=i // 3, column=i % 3, padx=10, pady=5)
     labels.append(lbl)
@@ -82,7 +82,7 @@ def update_gui(data):
 
 # Serial thread
 def serial_thread():
-    voltages = [0.0] * 15
+    voltages = [0.0] * 16
     while True:
         if ser.in_waiting >= 10:
             buffer = ser.read(10)
@@ -94,11 +94,11 @@ def serial_thread():
             v2 = parse_signed_24bit(buffer[4:7]) / 100000.0
             v3 = parse_signed_24bit(buffer[7:10]) / 100000.0
 
-            if base < 15:
+            if base < 16:
                 voltages[base] = v1
-            if base + 1 < 15:
+            if base + 1 < 16:
                 voltages[base + 1] = v2
-            if base + 2 < 15:
+            if base + 2 < 16:
                 voltages[base + 2] = v3
 
             root.after(0, update_gui, voltages)
