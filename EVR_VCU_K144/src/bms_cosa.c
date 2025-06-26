@@ -70,7 +70,19 @@ int BmsGetPackCurrent(void)
 	buffTrimitere[1]=0x0C;
 	transmisieRD160();     //RDALLI
 
-	icBaterie.packCurrent=((buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]))*20;
+	icBaterie.packCurrent=((buffPrimire[9]<<16)+(buffPrimire[8]<<8)+(buffPrimire[7]))*20;
+
+	volatile int32_t value24 = (buffPrimire[6] << 16) | (buffPrimire[5] << 8) | buffPrimire[4];
+
+	// Sign-extend manually
+	if (value24 & 0x800000) {
+	    value24 |= 0xFF000000;  // Set upper 8 bits to 1
+	} else {
+	    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
+	}
+
+	icBaterie.packCurrent= value24*-20;
+
 
 	return icBaterie.packCurrent;
 }
@@ -80,6 +92,16 @@ int BmsGetPackVoltage(void)
 	buffTrimitere[0]=0;
 	buffTrimitere[1]=0x4C;
 	transmisieRD160();     //RDALLA
+
+	volatile int32_t value24 = (buffPrimire[12] << 16) | (buffPrimire[11] << 8) | buffPrimire[10];
+
+	// Sign-extend manually
+	if (value24 & 0x800000) {
+	    value24 |= 0xFF000000;  // Set upper 8 bits to 1
+	} else {
+	    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
+	}
+
 	//curent2=(buffPrimire[6]<<16)+(buffPrimire[5]<<8)+(buffPrimire[4]);
 	//i2=5*curent2;//teoretic s-ar imparti la 4
 	icBaterie.packVoltage=((buffPrimire[12]<<16)+(buffPrimire[11]<<8)+(buffPrimire[10]))*10;
