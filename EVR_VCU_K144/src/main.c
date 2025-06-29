@@ -71,7 +71,7 @@ volatile uint8 ok = 0;
 
 
 uint8 buffTrimitere[16] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint8 buffPrimire[32] = {0};
+uint8 buffPrimire[64] = {0};
 volatile int delei;
 int curent1,curent2;
 int i1,i2;

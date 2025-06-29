@@ -219,7 +219,7 @@ void transmisieRD48(void)
 	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
 	    	buffTrimitere[2] = pec >> 8;
 	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 12U);
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64U);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
@@ -305,7 +305,7 @@ void transmisieRD160(void)
 	    	uint16 pec = Pec15_Calc(2U, buffTrimitere);
 	    	buffTrimitere[2] = pec >> 8;
 	    	buffTrimitere[3] = pec % 256;
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 32U);
+	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64U);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
