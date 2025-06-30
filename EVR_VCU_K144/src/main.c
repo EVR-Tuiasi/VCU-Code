@@ -78,6 +78,7 @@ volatile int i1,i2;
 volatile int v1,v2;
 volatile int32_t value24;
 volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
+uint16 dpec;
 
 struct biemese icBaterie;
 #define NUMARUL_DE_MONITOARE 1
@@ -165,6 +166,35 @@ int main(void)
     transmisieCMD();     //RDCFGA
     flushTX();
 
+    populeazaCMD(0x00, 0x01);
+
+    buffTrimitere[4]=0x0; //default
+    buffTrimitere[5]=0; //CFGAR1
+    buffTrimitere[6]=0; //CFGAR2
+    buffTrimitere[7]=0x5F; //porneste GPIO
+    buffTrimitere[8]=0x0;
+    buffTrimitere[9]=0x10;
+    dpec = pec10_calc(false,6U, buffTrimitere+4);
+    buffTrimitere[10] = dpec >> 8;
+    buffTrimitere[11] = dpec % 256;
+
+    buffTrimitere[12]=0x81; //default
+    buffTrimitere[13]=0; //CFGAR1
+    buffTrimitere[14]=0; //CFGAR2
+    buffTrimitere[15]=0xFF; //porneste GPIO
+    buffTrimitere[16]=0x03;
+    buffTrimitere[17]=0x10;
+    dpec = pec10_calc(false,6U, buffTrimitere+12);
+    buffTrimitere[18] = dpec >> 8;
+    buffTrimitere[19] = dpec % 256;
+    transmisieCMD();     //WRCFGA
+    flushTX();
+
+    populeazaCMD(0x00,0x02);
+    transmisieCMD();     //RDCFGA
+    flushTX();
+
+
     parametriiADC();
     flushTX();
 
@@ -203,15 +233,15 @@ int main(void)
 
     uint8 buffer[10];
 
-    uint8 pachete[6]={0x44, 0x1F, 0x48, 0x4A, 0x49};
+    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A, 0x49};
 
 
     volatile int delayul=1000000;
     while (1) {
-    	for (int i=0;i<=4;i++)
+    	for (int i=0;i<=5;i++)
     	{
 			buffer[0] = 13+i;
-			delayul = 500000;
+			delayul = 50000;
 			while (delayul--) {
 				// wait
 			}
@@ -230,12 +260,11 @@ int main(void)
 
 			if(i==0)
 			{
-				i1=((buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]));
+				i1=(buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]);
 				i1++;
 			}
-			else
+			else if (i==1)
 			{
-				v1=((buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]));
 				value24 = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
 
 					// Sign-extend manually
@@ -245,6 +274,7 @@ int main(void)
 					    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
 					}
 				v1=value24;
+				v1++;
 			}
 
 

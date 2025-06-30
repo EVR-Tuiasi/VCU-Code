@@ -172,7 +172,7 @@ void transmisieCMD(void)
 			//comanda cu pec
 
 
-/*AICI*/    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64u);
+/*AICI*/    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 20u);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
