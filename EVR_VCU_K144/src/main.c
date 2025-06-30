@@ -74,9 +74,9 @@ uint8 buffTrimitere[64] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8 buffPrimire[64] = {0};
 volatile int delei;
 int curent1,curent2;
-int i1,i2;
-int v1,v2;
-
+volatile int i1,i2;
+volatile int v1,v2;
+volatile int32_t value24;
 volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 
 struct biemese icBaterie;
@@ -179,7 +179,7 @@ int main(void)
 	*/
 
     populeazaCMD(0x00,0x02);
-    transmisieCMD();     //RDCFGA
+    transmisieCMD();     //RDCFGA //ceva HV mosfet de verificat
     flushTX();
     /*
     buffTrimitere[0]=0x02;
@@ -196,9 +196,14 @@ int main(void)
     populeazaCMD(0x03, 0xE0);
     transmisieCMD(); //ADCV
 
+    buffTrimitere[0]=0x04;
+    buffTrimitere[1]=0x30;
+    populeazaCMD(0x04, 0x30);
+    transmisieCMD(); //ADCV
+
     uint8 buffer[10];
 
-    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A, 0x49};
+    uint8 pachete[6]={0x44, 0x1F, 0x48, 0x4A, 0x49};
 
 
     volatile int delayul=1000000;
@@ -206,7 +211,7 @@ int main(void)
     	for (int i=0;i<=4;i++)
     	{
 			buffer[0] = 13+i;
-			delayul = 50000;
+			delayul = 500000;
 			while (delayul--) {
 				// wait
 			}
@@ -223,16 +228,24 @@ int main(void)
 			tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
 			tensiuneMILIvolti3 = 15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
 
-			if(pachete[i]==0x44)
+			if(i==0)
 			{
 				i1=((buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]));
 				i1++;
 			}
-			/*else if(pachete[i]==0x46)
+			else
 			{
 				v1=((buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]));
-				v1++;
-			}*/
+				value24 = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
+
+					// Sign-extend manually
+					if (value24 & 0x800000) {
+					    value24 |= 0xFF000000;  // Set upper 8 bits to 1
+					} else {
+					    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
+					}
+				v1=value24;
+			}
 
 
 
