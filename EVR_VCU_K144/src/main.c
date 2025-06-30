@@ -238,61 +238,95 @@ int main(void)
 
     volatile int delayul=1000000;
     while (1) {
-    	for (int i=0;i<=5;i++)
-    	{
-			buffer[0] = 13+i;
-			delayul = 50000;
-			while (delayul--) {
-				// wait
-			}
+        for (int i = 0; i <= 5; i++) {
+            buffer[0] = 13 + i;
+            delayul = 50000;
+            while (delayul--) {
+                // wait
+            }
 
-			buffTrimitere[0] = 0x03;
-			buffTrimitere[1] = 0xE0;
-			transmisieCMD(); // ADCV
+            buffTrimitere[0] = 0x03;
+            buffTrimitere[1] = 0xE0;
+            transmisieCMD(); // ADCV
 
-			buffTrimitere[0] = 0;
-			buffTrimitere[1] = pachete[i]; // 0x0C
-			transmisieRD160();
+            buffTrimitere[0] = 0;
+            buffTrimitere[1] = pachete[i]; // 0x0C
+            transmisieRD160();
 
-			tensiuneMILIvolti1 = 15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
-			tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
-			tensiuneMILIvolti3 = 15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
+            tensiuneMILIvolti1 = 15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
+            tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
+            tensiuneMILIvolti3 = 15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
 
-			if(i==0)
-			{
-				i1=(buffPrimire[17]<<16)+(buffPrimire[16]<<8)+(buffPrimire[15]);
-				i1++;
-			}
-			else if (i==1)
-			{
-				value24 = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
+            if (i == 0) {
+                i1 = (buffPrimire[17] << 16) + (buffPrimire[16] << 8) + (buffPrimire[15]);
+            } else if (i == 1) {
+                value24 = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
+                if (value24 & 0x800000) {
+                    value24 |= 0xFF000000;  // Set upper 8 bits to 1
+                } else {
+                    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
+                }
+                v1 = value24;
+            }
 
-					// Sign-extend manually
-					if (value24 & 0x800000) {
-					    value24 |= 0xFF000000;  // Set upper 8 bits to 1
-					} else {
-					    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
-					}
-				v1=value24;
-				v1++;
-			}
+            buffer[1] = tensiuneMILIvolti1 >> 16;
+            buffer[2] = tensiuneMILIvolti1 >> 8;
+            buffer[3] = tensiuneMILIvolti1 % 256;
 
+            buffer[4] = tensiuneMILIvolti2 >> 16;
+            buffer[5] = tensiuneMILIvolti2 >> 8;
+            buffer[6] = tensiuneMILIvolti2 % 256;
 
+            buffer[7] = tensiuneMILIvolti3 >> 16;
+            buffer[8] = tensiuneMILIvolti3 >> 8;
+            buffer[9] = tensiuneMILIvolti3 % 256;
 
-			buffer[1] = tensiuneMILIvolti1 >> 16;
-			buffer[2] = tensiuneMILIvolti1 >> 8;
-			buffer[3] = tensiuneMILIvolti1 % 256;
+            Uart_SyncSend(0, buffer, 10, 10000000);
 
-			buffer[4] = tensiuneMILIvolti2 >> 16;
-			buffer[5] = tensiuneMILIvolti2 >> 8;
-			buffer[6] = tensiuneMILIvolti2 % 256;
+            if (i==0) {
+                i1 *= 5;
+                buffer[0] = 13;
+                buffer[1] = (i1 >> 24) % 256;
+                buffer[2] = (i1 >> 16) % 256;
+                buffer[3] = (i1 >> 8)  % 256;
+                buffer[4] = i1 % 256;
+                buffer[5] = 0x8D;
+                Uart_SyncSend(0, buffer, 6, 10000000);
+            }
+            else if(i==1)
+            {
+                v1 *= 1;
+                buffer[0] = 12;
+                buffer[1] = (v1 >> 24) % 256;
+                buffer[2] = (v1 >> 16) % 256;
+                buffer[3] = (v1 >> 8)  % 256;
+                buffer[4] = v1 % 256;
+                buffer[5] = 0x8D;
+                Uart_SyncSend(0, buffer, 6, 10000000);
+            }
 
-			buffer[7] = tensiuneMILIvolti3 >> 16;
-			buffer[8] = tensiuneMILIvolti3 >> 8;
-			buffer[9] = tensiuneMILIvolti3 % 256;
+            for (int j = 0; j < 3; j++) {
+                switch (j)
+                {
+                    case 0: v1 = tensiuneMILIvolti1; break;
+                    case 1: v1 = tensiuneMILIvolti2; break;
+                    case 2: v1 = tensiuneMILIvolti3; break;
+                    default: break;
+                }
 
-			Uart_SyncSend(0, buffer, 10, 10000000);
-    	}
+                buffer[0] = 11;
+                buffer[1] = 0;
+                buffer[2] = 3 * i + j;
+                buffer[3] = (v1 >> 24) % 256;
+                buffer[4] = (v1 >> 16) % 256;
+                buffer[5] = (v1 >> 8)  % 256;
+                buffer[6] = v1 % 256;
+                buffer[7] = 0x8D;
+
+                Uart_SyncSend(0, buffer, 8, 10000000);
+            }
+        }
+
     }
 
 }
