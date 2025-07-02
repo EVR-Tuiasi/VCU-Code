@@ -23,12 +23,16 @@ extern "C" {
 #include "Mcu.h"
 #include "Dio.h"
 #include "Mcl.h"
+#include "CDD_I2c.h"
+#include "Adc.h"
 
 #include "display.h"
 #include "FT81_misc.h"
 #include "FT81_display.h"
 #include "FT81_sound.h"
 #include "FT81_touch.h"
+#include "7-segment-display.h"
+#include "pedals.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -68,7 +72,13 @@ extern "C" {
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
+void I2c_Callback(uint8 Event, uint8 Channel){
+	;
+}
 
+void I2c_ErrorCallback(uint8 Event, uint8 Channel){
+	;
+}
 
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
@@ -122,6 +132,11 @@ int main(void)
     /* SPI initialization */
     Spi_Init(NULL_PTR);
 
+    /*I2c initialization */
+    I2c_Init(NULL_PTR);
+
+    Adc_Init(NULL_PTR);
+
     /* Wdg_43_fs26 initialization */
     volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
     eReturnValue |= Sbc_fs26_Init(NULL_PTR);
@@ -138,12 +153,20 @@ int main(void)
     	Dio_WriteChannel(142, 0);
     }
 
-    SevSegGrTest(0);
+    //SevenSegmentInit();
+    //SevSegGrTest(0);
 	DisplayInit();
+	PedalsInit();
 	//DisplayTest();
-	DashboardTest();
+	//DashboardTest();
+	//VladTest();
 	//VladTest();
 	//SoundTest();
+	while(1){
+		volatile uint16 frana = PedalsGetBrakePercent();
+		volatile uint16 acceleratie = PedalsGetAccelerationPercent();
+		DashboardUpdate(0, 0, 0, 0, 0, 0, frana, acceleratie);
+	}
 
 	while(1);
 
