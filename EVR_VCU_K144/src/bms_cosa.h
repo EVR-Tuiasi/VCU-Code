@@ -44,6 +44,7 @@ void RDCFGA(void);
 void CLRFLG(void);
 void ADCV(void);
 void readBieMieSe(void);
+void sendAllUart(void);
 
 
 

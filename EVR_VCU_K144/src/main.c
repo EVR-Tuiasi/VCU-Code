@@ -178,36 +178,7 @@ int main(void)
 
     while (1) {
     	readBieMieSe();
-
-        buffer[0] = 13;
-        buffer[1] = (icBaterie.packCurrent >> 24) % 256;
-        buffer[2] = (icBaterie.packCurrent >> 16) % 256;
-        buffer[3] = (icBaterie.packCurrent >> 8)  % 256;
-        buffer[4] = icBaterie.packCurrent % 256;
-        buffer[5] = CRC_DARIUS;
-        Uart_SyncSend(0, buffer, 6, 10000000);
-
-        buffer[0] = 12;
-        buffer[1] = (icBaterie.packVoltage >> 24) % 256;
-        buffer[2] = (icBaterie.packVoltage >> 16) % 256;
-        buffer[3] = (icBaterie.packVoltage >> 8)  % 256;
-        buffer[4] = icBaterie.packVoltage % 256;
-        buffer[5] = CRC_DARIUS;
-        Uart_SyncSend(0, buffer, 6, 10000000);
-
-
-        for(int i=0;i<BATTERY_CELLS;i++)
-        {
-			buffer[0] = 11;
-			buffer[1] = 0;
-			buffer[2] = i;
-			buffer[3] = (icBaterie.cellVoltage[i]>>24) % 256;
-			buffer[4] = (icBaterie.cellVoltage[i] >> 16) % 256;
-			buffer[5] = (icBaterie.cellVoltage[i] >> 8)  % 256;
-			buffer[6] = icBaterie.cellVoltage[i] % 256;
-			buffer[7] = CRC_DARIUS;
-			Uart_SyncSend(0, buffer, 8, 10000000);
-        }
+    	sendAllUart();
     }
    }
 
