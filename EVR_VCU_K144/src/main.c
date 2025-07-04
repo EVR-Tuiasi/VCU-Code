@@ -233,14 +233,14 @@ int main(void)
 
     uint8 buffer[10];
 
-    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A, 0x49};
+    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
 
 
     volatile int delayul=1000000;
     while (1) {
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 0; i <= 3; i++) {
             buffer[0] = 13 + i;
-            delayul = 50000;
+            delayul = 5000;
             while (delayul--) {
                 // wait
             }
@@ -281,7 +281,7 @@ int main(void)
             buffer[8] = tensiuneMILIvolti3 >> 8;
             buffer[9] = tensiuneMILIvolti3 % 256;
 
-            Uart_SyncSend(0, buffer, 10, 10000000);
+            //Uart_SyncSend(0, buffer, 10, 10000000);
 
             if (i==0) {
                 i1 *= 5;

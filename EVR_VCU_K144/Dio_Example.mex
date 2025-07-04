@@ -1430,7 +1430,7 @@
                                  <struct name="DetailModuleConfiguration">
                                     <setting name="Name" value="DetailModuleConfiguration"/>
                                     <setting name="UartHwChannel" value="LPUART_1"/>
-                                    <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_9600"/>
+                                    <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_115200"/>
                                     <setting name="CustomBaudrateMantissa" value="1"/>
                                     <setting name="CustomBaudrateDivisor" value="4"/>
                                     <setting name="UartInteruptDmaMethod" value="LPUART_UART_IP_USING_INTERRUPTS"/>
