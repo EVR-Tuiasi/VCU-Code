@@ -23,6 +23,9 @@ extern uint8 buffTrimitere[64];
 extern uint8 buffPrimire[64];
 extern volatile int delei;
 extern struct biemese icBaterie;
+extern uint8 buffer[10];
+
+extern uint8 pachete[6];
 
 extern int numberOfSunturi;
 extern int numberOfMonitoare;
@@ -269,4 +272,45 @@ void CLRFLG()
 {
     populeazaCMD(0x17,0x07);
     transmisieCMD(); //CLRFLG
+}
+
+void ADCV()
+{
+    populeazaCMD(0x03, 0xE0);
+    transmisieCMD(); //ADCV
+}
+
+void readBieMieSe()
+{
+	volatile int delayul=1000000;
+    for (int i = 0; i <= 3; i++) {
+        delayul = MARELE_DELAY;
+        while (delayul--) {
+            // wait
+        }
+
+        ADCV();
+
+        populeazaCMD(0,pachete[i]);
+        transmisieCMD();
+
+        icBaterie.cellVoltage[0+i*3]=15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
+        icBaterie.cellVoltage[1+i*3]=15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
+        icBaterie.cellVoltage[2+i*3]=15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
+
+        if (i == 0) {
+            icBaterie.packCurrent = ((buffPrimire[17] << 16) + (buffPrimire[16] << 8) + (buffPrimire[15]))*5;
+
+        }
+        else if (i == 1) {
+        	icBaterie.packVoltage = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
+            if (icBaterie.packVoltage & 0x800000) {
+            	icBaterie.packVoltage |= 0xFF000000;  // Set upper 8 bits to 1
+            } else {
+            	icBaterie.packVoltage &= 0x00FFFFFF;  // Clear upper 8 bits
+            }
+
+        }
+
+    }
 }

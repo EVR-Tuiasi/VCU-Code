@@ -70,8 +70,7 @@ I2c_RequestType numarpedigit1 = {0, false, false, false, false, 2, I2C_SEND_DATA
 volatile uint8 ok = 0;
 
 
-uint8 buffTrimitere[64] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint8 buffPrimire[64] = {0};
+
 volatile int delei;
 int curent1,curent2;
 volatile int i1,i2;
@@ -83,6 +82,13 @@ uint16 dpec;
 struct biemese icBaterie;
 
 int numarulDeDispozitive = NUMARUL_DE_MONITOARE + NUMARUL_DE_SUNTURI;
+
+uint8 buffTrimitere[64] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint8 buffPrimire[64] = {0};
+
+uint8 buffer[10];
+
+uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
 
 
 /*==================================================================================================
@@ -122,6 +128,7 @@ void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 
 int main(void)
 {
+
 
     /* Initialize the Mcu driver */
 #if (MCU_PRECOMPILE_SUPPORT == STD_ON)
@@ -166,114 +173,44 @@ int main(void)
 
     USBInit(0);
 
-
-    populeazaCMD(0x03, 0xE0);
-    transmisieCMD(); //ADCV
-/*
-    buffTrimitere[0]=0x04;
-    buffTrimitere[1]=0x30;
-    populeazaCMD(0x04, 0x30);
-    transmisieCMD(); //ADCV*/
-
-    uint8 buffer[10];
-
-    uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
+    ADCV();
 
 
-    volatile int delayul=1000000;
     while (1) {
-        for (int i = 0; i <= 3; i++) {
-            buffer[0] = 13 + i;
-            delayul = 5000;
-            while (delayul--) {
-                // wait
-            }
+    	readBieMieSe();
 
-            buffTrimitere[0] = 0x03;
-            buffTrimitere[1] = 0xE0;
-            transmisieCMD(); // ADCV
+        buffer[0] = 13;
+        buffer[1] = (icBaterie.packCurrent >> 24) % 256;
+        buffer[2] = (icBaterie.packCurrent >> 16) % 256;
+        buffer[3] = (icBaterie.packCurrent >> 8)  % 256;
+        buffer[4] = icBaterie.packCurrent % 256;
+        buffer[5] = CRC_DARIUS;
+        Uart_SyncSend(0, buffer, 6, 10000000);
 
-            buffTrimitere[0] = 0;
-            buffTrimitere[1] = pachete[i]; // 0x0C
-            transmisieCMD();
+        buffer[0] = 12;
+        buffer[1] = (icBaterie.packVoltage >> 24) % 256;
+        buffer[2] = (icBaterie.packVoltage >> 16) % 256;
+        buffer[3] = (icBaterie.packVoltage >> 8)  % 256;
+        buffer[4] = icBaterie.packVoltage % 256;
+        buffer[5] = CRC_DARIUS;
+        Uart_SyncSend(0, buffer, 6, 10000000);
 
-            tensiuneMILIvolti1 = 15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
-            tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
-            tensiuneMILIvolti3 = 15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
 
-            if (i == 0) {
-                i1 = (buffPrimire[17] << 16) + (buffPrimire[16] << 8) + (buffPrimire[15]);
-            } else if (i == 1) {
-                value24 = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
-                if (value24 & 0x800000) {
-                    value24 |= 0xFF000000;  // Set upper 8 bits to 1
-                } else {
-                    value24 &= 0x00FFFFFF;  // Clear upper 8 bits
-                }
-                v1 = value24;
-            }
-
-            buffer[1] = tensiuneMILIvolti1 >> 16;
-            buffer[2] = tensiuneMILIvolti1 >> 8;
-            buffer[3] = tensiuneMILIvolti1 % 256;
-
-            buffer[4] = tensiuneMILIvolti2 >> 16;
-            buffer[5] = tensiuneMILIvolti2 >> 8;
-            buffer[6] = tensiuneMILIvolti2 % 256;
-
-            buffer[7] = tensiuneMILIvolti3 >> 16;
-            buffer[8] = tensiuneMILIvolti3 >> 8;
-            buffer[9] = tensiuneMILIvolti3 % 256;
-
-            //Uart_SyncSend(0, buffer, 10, 10000000);
-
-            if (i==0) {
-                i1 *= 5;
-                buffer[0] = 13;
-                buffer[1] = (i1 >> 24) % 256;
-                buffer[2] = (i1 >> 16) % 256;
-                buffer[3] = (i1 >> 8)  % 256;
-                buffer[4] = i1 % 256;
-                buffer[5] = 0x8D;
-                Uart_SyncSend(0, buffer, 6, 10000000);
-            }
-            else if(i==1)
-            {
-                v1 *= 1;
-                buffer[0] = 12;
-                buffer[1] = (v1 >> 24) % 256;
-                buffer[2] = (v1 >> 16) % 256;
-                buffer[3] = (v1 >> 8)  % 256;
-                buffer[4] = v1 % 256;
-                buffer[5] = 0x8D;
-                Uart_SyncSend(0, buffer, 6, 10000000);
-            }
-
-            for (int j = 0; j < 3; j++) {
-                switch (j)
-                {
-                    case 0: v1 = tensiuneMILIvolti1; break;
-                    case 1: v1 = tensiuneMILIvolti2; break;
-                    case 2: v1 = tensiuneMILIvolti3; break;
-                    default: break;
-                }
-
-                buffer[0] = 11;
-                buffer[1] = 0;
-                buffer[2] = 3 * i + j;
-                buffer[3] = (v1 >> 24) % 256;
-                buffer[4] = (v1 >> 16) % 256;
-                buffer[5] = (v1 >> 8)  % 256;
-                buffer[6] = v1 % 256;
-                buffer[7] = 0x8D;
-
-                Uart_SyncSend(0, buffer, 8, 10000000);
-            }
+        for(int i=0;i<BATTERY_CELLS;i++)
+        {
+			buffer[0] = 11;
+			buffer[1] = 0;
+			buffer[2] = i;
+			buffer[3] = (icBaterie.cellVoltage[i]>>24) % 256;
+			buffer[4] = (icBaterie.cellVoltage[i] >> 16) % 256;
+			buffer[5] = (icBaterie.cellVoltage[i] >> 8)  % 256;
+			buffer[6] = icBaterie.cellVoltage[i] % 256;
+			buffer[7] = CRC_DARIUS;
+			Uart_SyncSend(0, buffer, 8, 10000000);
         }
-
     }
+   }
 
-}
 // test
 
 #ifdef __cplusplus
