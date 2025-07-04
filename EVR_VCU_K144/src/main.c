@@ -81,10 +81,6 @@ volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 uint16 dpec;
 
 struct biemese icBaterie;
-#define NUMARUL_DE_MONITOARE 1
-#define NUMARUL_DE_SUNTURI 1
-int numberOfSunturi = NUMARUL_DE_SUNTURI;
-int numberOfMonitoare = NUMARUL_DE_MONITOARE;
 
 int numarulDeDispozitive = NUMARUL_DE_MONITOARE + NUMARUL_DE_SUNTURI;
 
@@ -154,82 +150,30 @@ int main(void)
 
     //alt branch
 
-    populeazaCMD(0x00, 0x27);
-    transmisieCMD(); //SRST
+    SRST();
+
+    RDSID();
     flushTX();
 
-    populeazaCMD(0x00, 0x2C);
-    transmisieCMD(); //read RDSID
+    RDCFGA();
     flushTX();
-
-    populeazaCMD(0x00,0x02);
-    transmisieCMD();     //RDCFGA
-    flushTX();
-
-    populeazaCMD(0x00, 0x01);
-
-    buffTrimitere[4]=0x0; //default
-    buffTrimitere[5]=0; //CFGAR1
-    buffTrimitere[6]=0; //CFGAR2
-    buffTrimitere[7]=0x5F; //porneste GPIO
-    buffTrimitere[8]=0x0;
-    buffTrimitere[9]=0x10;
-    dpec = pec10_calc(false,6U, buffTrimitere+4);
-    buffTrimitere[10] = dpec >> 8;
-    buffTrimitere[11] = dpec % 256;
-
-    buffTrimitere[12]=0x81; //default
-    buffTrimitere[13]=0; //CFGAR1
-    buffTrimitere[14]=0; //CFGAR2
-    buffTrimitere[15]=0xFF; //porneste GPIO
-    buffTrimitere[16]=0x03;
-    buffTrimitere[17]=0x10;
-    dpec = pec10_calc(false,6U, buffTrimitere+12);
-    buffTrimitere[18] = dpec >> 8;
-    buffTrimitere[19] = dpec % 256;
-    transmisieCMD();     //WRCFGA
-    flushTX();
-
-    populeazaCMD(0x00,0x02);
-    transmisieCMD();     //RDCFGA
-    flushTX();
-
 
     parametriiADC();
     flushTX();
 
-    USBInit(0);
-    //Icu_EnableNotification(0);
-
-    //CLRFLG here
-    /*
-    buffTrimitere[0]=0x17;
-    buffTrimitere[1]=0x07;
-    transmisieCMD(); //CLRFLG
-	*/
-
-    populeazaCMD(0x00,0x02);
-    transmisieCMD();     //RDCFGA //ceva HV mosfet de verificat
+    RDCFGA();
     flushTX();
-    /*
-    buffTrimitere[0]=0x02;
-    buffTrimitere[1]=0xE0;
-    transmisieCMD(); //ADCV
 
-    buffTrimitere[0]=0x01;
-    buffTrimitere[1]=0xE8;
-    transmisieCMD(); //ADSV
-	*/
+    USBInit(0);
 
-    buffTrimitere[0]=0x03;
-    buffTrimitere[1]=0xE0;
+
     populeazaCMD(0x03, 0xE0);
     transmisieCMD(); //ADCV
-
+/*
     buffTrimitere[0]=0x04;
     buffTrimitere[1]=0x30;
     populeazaCMD(0x04, 0x30);
-    transmisieCMD(); //ADCV
+    transmisieCMD(); //ADCV*/
 
     uint8 buffer[10];
 
@@ -251,7 +195,7 @@ int main(void)
 
             buffTrimitere[0] = 0;
             buffTrimitere[1] = pachete[i]; // 0x0C
-            transmisieRD160();
+            transmisieCMD();
 
             tensiuneMILIvolti1 = 15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
             tensiuneMILIvolti2 = 15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;

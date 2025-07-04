@@ -27,6 +27,7 @@ extern struct biemese icBaterie;
 extern int numberOfSunturi;
 extern int numberOfMonitoare;
 extern int numberOfDevices;
+extern uint16 dpec;
 
 void BmsInit(void)
 {
@@ -48,32 +49,7 @@ void BmsTest(void)
 
 }
 
-void parametriiADC(void)
-{
-	buffTrimitere[0] = 0x00;
-	buffTrimitere[1] = 0x01;
-	for (int i=0;i<numberOfSunturi;i++)
-	{
-	    buffTrimitere[4+i*8]=0x0; //default
-	    buffTrimitere[5+i*8]=0; //CFGAR1
-	    buffTrimitere[6+i*8]=0; //CFGAR2
-	    buffTrimitere[7+i*8]=0x5F; //porneste GPIO
-	    buffTrimitere[8+i*8]=0x0;
-	    buffTrimitere[9+i*8]=0x10;
-	}
-	for (int i=0;i<numberOfMonitoare;i++)
-	{
-		buffTrimitere[4+i*8+8*numberOfSunturi]=0x81; //default
-		buffTrimitere[5+i*8+8*numberOfSunturi]=0; //CFGAR1
-		buffTrimitere[6+i*8+8*numberOfSunturi]=0; //CFGAR2
-		buffTrimitere[7+i*8+8*numberOfSunturi]=0xFF; //porneste GPIO
-		buffTrimitere[8+i*8+8*numberOfSunturi]=0x03;
-		buffTrimitere[9+i*8+8*numberOfSunturi]=0x10;
-	}
-    transmisieWR48(); //WRCFGA
-
-}
-
+/*
 int BmsGetPackCurrent(void)
 {
 	buffTrimitere[0]=0;
@@ -96,7 +72,7 @@ int BmsGetPackVoltage(void)
 
 	return icBaterie.packVoltage;
 }
-
+*/
 
 
 void transmisie(void)
@@ -172,60 +148,7 @@ void transmisieCMD(void)
 			//comanda cu pec
 
 
-/*AICI*/    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 20u);
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
-
-void transmisieRD48(void)
-{
-	for (int i=0;i<numberOfMonitoare;i++)
-	{
-		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4);
-		buffTrimitere[2+i*4] = pec >> 8;
-		buffTrimitere[3+i*4] = pec % 256;
-	}
-
-	for (int i=0;i<numberOfSunturi;i++)
-	{
-		uint16 pec = Pec15_Calc(2U, buffTrimitere+i*4+numberOfMonitoare*4);
-		buffTrimitere[2+i*4+numberOfMonitoare*4] = pec >> 8;
-		buffTrimitere[3+i*4+numberOfMonitoare*4] = pec % 256;
-	}
-
-
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-
+/*AICI*/    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64u);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
@@ -247,44 +170,26 @@ void transmisieWR48(void)
 	uint16 pec = Pec15_Calc(2U, buffTrimitere);
 	buffTrimitere[2] = pec >> 8;
 	buffTrimitere[3] = pec % 256;
-
-	for (int i=0;i<numberOfMonitoare;i++)
-	{
-
-		uint16 dpec = pec10_calc(false,6U, buffTrimitere+4+i*8);
-		buffTrimitere[10+i*10] = dpec >> 8;
-		buffTrimitere[11+i*10] = dpec % 256;
-	}
-
-	for (int i=0;i<numberOfSunturi;i++)
-	{
-		uint16 dpec = pec10_calc(false,6U, buffTrimitere+4+i*8+numberOfMonitoare*8);
-		buffTrimitere[10+i*10+numberOfMonitoare*8] = dpec >> 8;
-		buffTrimitere[11+i*10+numberOfMonitoare*8] = dpec % 256;
-	}
-
-
-
-
 	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
+			Port_SetPinMode(9, PORT_MUX_AS_GPIO);
+			Dio_WriteChannel(37, 0);
+			delei = 30;
+			while(delei){
+				delei--;
+			}
+			Dio_WriteChannel(37, 1);
+			Port_ResetPinMode(9);
+			delei = 3000;
+			while(delei){
+				delei--;
+			}
 	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
+			//comanda fara pec
+			//TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
+			//comanda cu pec
 
-	        Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64U);
+
+/*AICI*/    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 4+8*NUMARUL_DE_SUNTURI+8*NUMARUL_DE_MONITOARE);
 	#if 0
 	    	Dio_WriteChannel(37, 0);
 	#endif
@@ -301,49 +206,6 @@ void transmisieWR48(void)
 	    	//////
 }
 
-void transmisieRD160(void)
-{
-
-
-	uint16 pec = Pec15_Calc(2U, buffTrimitere);
-	buffTrimitere[2] = pec >> 8;
-	buffTrimitere[3] = pec % 256;
-    Spi_SetupEB(0u, buffTrimitere, buffPrimire, 64U);
-
-	#if 1
-	    	Port_SetPinMode(9, PORT_MUX_AS_GPIO);
-	    	Dio_WriteChannel(37, 0);
-	    	delei = 30;
-	    	while(delei){
-	    		delei--;
-	    	}
-	    	Dio_WriteChannel(37, 1);
-	    	Port_ResetPinMode(9);
-	    	delei = 3000;
-	    	while(delei){
-	    		delei--;
-	    	}
-	#endif
-	    	//comanda fara pec
-	        //TODO GRIJA MARE LA LSB SI MSB, acum se trimit pe dos
-	        //comanda cu pec
-
-
-	#if 0
-	    	Dio_WriteChannel(37, 0);
-	#endif
-
-	        Spi_SyncTransmit(0);
-	#if 0
-	    	Dio_WriteChannel(37, 1);
-	#endif
-	    	delei = 300000;
-	    	while(delei){
-	    		delei--;
-	    	}
-
-	    	//////
-}
 
 void flushTX()
 {
@@ -354,3 +216,57 @@ void flushTX()
 	}
 }
 
+void SRST()
+{
+    populeazaCMD(0x00, 0x27);
+    transmisieCMD(); //SRST
+}
+
+void RDSID()
+{
+    populeazaCMD(0x00, 0x2C);
+    transmisieCMD(); //read RDSID
+}
+
+void RDCFGA()
+{
+    populeazaCMD(0x00,0x02);
+    transmisieCMD();     //RDCFGA
+}
+
+void parametriiADC()
+{
+    populeazaCMD(0x00, 0x01);
+    for(int i=0;i<NUMARUL_DE_SUNTURI;i++)
+    {
+        buffTrimitere[4+8*i]=0x0; //default
+        buffTrimitere[5+8*i]=0; //CFGAR1
+        buffTrimitere[6+8*i]=0; //CFGAR2
+        buffTrimitere[7+8*i]=0x5F; //porneste GPIO
+        buffTrimitere[8+8*i]=0x0;
+        buffTrimitere[9+8*i]=0x10;
+        dpec = pec10_calc(false,6U, buffTrimitere+4+8*i);
+        buffTrimitere[10+8*i] = dpec >> 8;
+        buffTrimitere[11+8*i] = dpec % 256;
+    }
+
+    for(int i=0;i<NUMARUL_DE_MONITOARE;i++)
+    {
+        buffTrimitere[4+8*NUMARUL_DE_SUNTURI+8*i]=0x81; //default
+        buffTrimitere[5+8*NUMARUL_DE_SUNTURI+8*i]=0; //CFGAR1
+        buffTrimitere[6+8*NUMARUL_DE_SUNTURI+8*i]=0; //CFGAR2
+        buffTrimitere[7+8*NUMARUL_DE_SUNTURI+8*i]=0xFF; //porneste GPIO
+        buffTrimitere[8+8*NUMARUL_DE_SUNTURI+8*i]=0x03;
+        buffTrimitere[9+8*NUMARUL_DE_SUNTURI+8*i]=0x10;
+        dpec = pec10_calc(false,6U, buffTrimitere+4+8*NUMARUL_DE_SUNTURI+8*i);
+        buffTrimitere[10+8*NUMARUL_DE_SUNTURI+8*i] = dpec >> 8;
+        buffTrimitere[11+8*NUMARUL_DE_SUNTURI+8*i] = dpec % 256;
+    }
+    transmisieWR48();     //WRCFGA
+}
+
+void CLRFLG()
+{
+    populeazaCMD(0x17,0x07);
+    transmisieCMD(); //CLRFLG
+}
