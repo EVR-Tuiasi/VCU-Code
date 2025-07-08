@@ -11,6 +11,9 @@ extern "C" {
 ==================================================================================================*/
 #include"Mcu.h"
 #include"Can_43_FLEXCAN.h"
+#include "CanIf.h"
+#include "SchM_Can_43_FLEXCAN.h"
+
 #include"invertor.h"
 #include"Dio.h"
 
@@ -51,40 +54,20 @@ InverterData InverterInstance[2];
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
-void CanIf_PrimitMesaj1(PduIdType RxPduId, const PduInfoType * PduInfoPtr)
-{
-	uint16 rpm = 0, current = 0, voltage = 0;
-    (void)RxPduId;
-    if(PduInfoPtr->SduLength == 8){
-    	rpm = ((uint16)PduInfoPtr->SduDataPtr[0]) + (((uint16)PduInfoPtr->SduDataPtr[1])<<8U);
-    	current = ((uint16)PduInfoPtr->SduDataPtr[2]) + (((uint16)PduInfoPtr->SduDataPtr[3])<<8U);
-    	voltage = ((uint16)PduInfoPtr->SduDataPtr[4]) + (((uint16)PduInfoPtr->SduDataPtr[5])<<8U);
-        if(rpm <= 6000U){
-        	InverterInstance[0].rpm = rpm;
-        }
-        if(current <= 4000U){
-        	InverterInstance[0].current = current;
-        }
-        if(voltage <= 1800){
-        	InverterInstance[0].voltage = voltage;
-        }
-    }
-}
-
-void CanIf_PrimitMesaj2(PduIdType RxPduId, const PduInfoType * PduInfoPtr)
-{
-    (void)RxPduId;
-	uint8 throttle = 0, controllerTemp = 0, motorTemp = 0;
-    if(PduInfoPtr->SduLength == 8){
-        throttle = PduInfoPtr->SduDataPtr[0];
-        controllerTemp = PduInfoPtr->SduDataPtr[1];
-        motorTemp = PduInfoPtr->SduDataPtr[2];
-        //these do not need tests, whole uint8 range of values is valid
-        InverterInstance[0].throttle = throttle;
-        InverterInstance[0].controllerTemperature = controllerTemp;
-        InverterInstance[0].motorTemperature = motorTemp;
-    }
-
+boolean InverterReceivedMessage(Can_HwHandleType handle, Can_IdType id, PduLengthType length, uint8* data){
+	if(length == 8U){
+		if((id & 0x3FFFFFFF) == 0x0CF11E05){//mesaj tip 1 invertor, mascat deoarece driverul de CAN modifica cei mai din stanga doi biti
+			InverterInstance[0].rpm = ((uint16)data[0]) + (((uint16)data[1])<<8U);
+			InverterInstance[0].current = ((uint16)data[2]) + (((uint16)data[3])<<8U);
+			InverterInstance[0].voltage = ((uint16)data[4]) + (((uint16)data[5])<<8U);
+		}
+		else if((id & 0x3FFFFFFF) == 0x0CF11F05){//mesaj tip 2 invertor, mascat deoarece driverul de CAN modifica cei mai din stanga doi biti
+	        InverterInstance[0].throttle = data[0];
+	        InverterInstance[0].controllerTemperature = data[1];
+	        InverterInstance[0].motorTemperature = data[2];
+		}
+	}
+	return TRUE;
 }
 
 /*==================================================================================================
@@ -95,10 +78,15 @@ void InverterInit(void){
 	volatile int i = 1000000;
 	while(i--);
 	Dio_WriteChannel(88, STD_HIGH);
+    Can_43_FLEXCAN_SetControllerMode(Can_43_FLEXCANConf_CanController_CanController_0, CAN_CS_STARTED);
+    Can_43_FLEXCAN_EnableControllerInterrupts(0);
 }
+
 
 uint16 InverterGetRpm(uint8 InverterIndex){
 	if(InverterIndex < 2U){
+		return InverterInstance[InverterIndex].rpm;
+
 		if(InverterInstance[InverterIndex].rpm > 6000U){
 			return 6000U;
 		}
@@ -113,6 +101,8 @@ uint16 InverterGetRpm(uint8 InverterIndex){
 
 uint16 InverterGetCurrent(uint8 InverterIndex){
 	if(InverterIndex < 2U){
+		return InverterInstance[InverterIndex].current;
+
 		if(InverterInstance[InverterIndex].current > 4000U){
 			return 4000U;
 		}
@@ -127,6 +117,8 @@ uint16 InverterGetCurrent(uint8 InverterIndex){
 
 uint16 InverterGetVoltage(uint8 InverterIndex){
 	if(InverterIndex < 2U){
+		return InverterInstance[InverterIndex].voltage;
+
 		if(InverterInstance[InverterIndex].voltage > 1800U){
 			return 1800U;
 		}
@@ -177,7 +169,7 @@ uint8 InverterGetMotorTemperature(uint8 InverterIndex){
 }
 uint8 InverterGetThrottle(uint8 InverterIndex){
 	if(InverterIndex < 2U){
-		return ((uint16)InverterInstance[InverterIndex].throttle) * 25U / 64U;
+		return (((uint16)InverterInstance[InverterIndex].throttle) * 25U) / 64U;
 	}
 	else{
 		return 0;

@@ -3285,6 +3285,27 @@
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="Adc_Sar_0_Isr"/>
                                  </struct>
+                                 <struct name="3">
+                                    <setting name="Name" value="PlatformIsrConfig_3"/>
+                                    <setting name="IsrName" value="FlexCAN0_0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN0_ORED_IRQHandler"/>
+                                 </struct>
+                                 <struct name="4">
+                                    <setting name="Name" value="PlatformIsrConfig_4"/>
+                                    <setting name="IsrName" value="FlexCAN0_1_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN0_ORED_0_31_MB_IRQHandler"/>
+                                 </struct>
+                                 <struct name="5">
+                                    <setting name="Name" value="PlatformIsrConfig_5"/>
+                                    <setting name="IsrName" value="FlexCAN0_2_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="CAN0_ORED_32_63_MB_IRQHandler"/>
+                                 </struct>
                               </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
@@ -4649,7 +4670,9 @@
                            <setting name="CanMultiplexedTransmission" value="false"/>
                            <setting name="CanTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
                            <setting name="CanTimeoutDuration" value="0.01"/>
-                           <array name="CanLPduReceiveCalloutFunction"/>
+                           <array name="CanLPduReceiveCalloutFunction">
+                              <setting name="0" value="InverterReceivedMessage"/>
+                           </array>
                            <array name="CanEcucPartitionRef"/>
                            <array name="CanOsCounterRef"/>
                            <array name="CanSupportTTCANRef"/>
@@ -4676,7 +4699,7 @@
                                  <setting name="CanControllerActivation" value="true"/>
                                  <setting name="CanControllerBaseAddress" value="0"/>
                                  <setting name="CanControllerId" value="0"/>
-                                 <setting name="CanRxProcessing" value="POLLING"/>
+                                 <setting name="CanRxProcessing" value="INTERRUPT"/>
                                  <setting name="CanTxProcessing" value="INTERRUPT"/>
                                  <setting name="CanBusoffProcessing" value="INTERRUPT"/>
                                  <setting name="CanWakeupFunctionalityAPI" value="false"/>
@@ -4731,43 +4754,16 @@
                                  <array name="CanHardwareObjectUsesPolling"/>
                                  <array name="CanTriggerTransmitEnable"/>
                                  <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
-                                 <array name="CanMainFunctionRWPeriodRef">
-                                    <setting name="0" value="/Can_43_FLEXCAN/Can/CanGeneral/CanMainFunctionRWPeriods_0"/>
-                                 </array>
+                                 <array name="CanMainFunctionRWPeriodRef"/>
                                  <array name="CanHwObjectUsesBlock"/>
                                  <setting name="CanHwObjectCount" value="1"/>
                                  <array name="CanHwFilter">
                                     <struct name="0">
                                        <setting name="Name" value="Can_aHwFilter_Object_Mesaj1"/>
-                                       <setting name="CanHwFilterCode" value="0xCF11E05"/>
-                                       <setting name="CanHwFilterMask" value="0xCF11E05"/>
+                                       <setting name="CanHwFilterCode" value="0x0CF11E05"/>
+                                       <setting name="CanHwFilterMask" value="0x0CF11E05"/>
                                     </struct>
                                     <struct name="1">
-                                       <setting name="Name" value="Can_aHwFilter_Object_Mesaj2"/>
-                                       <setting name="CanHwFilterCode" value="0x0CF11F05"/>
-                                       <setting name="CanHwFilterMask" value="0x0CF11F05"/>
-                                    </struct>
-                                 </array>
-                                 <array name="CanTTHardwareObjectTrigger"/>
-                              </struct>
-                              <struct name="1">
-                                 <setting name="Name" value="CanHardwareObject_1"/>
-                                 <array name="CanFdPaddingValue"/>
-                                 <setting name="CanHandleType" value="BASIC"/>
-                                 <setting name="CanIdType" value="EXTENDED"/>
-                                 <setting name="CanObjectId" value="1"/>
-                                 <setting name="CanObjectType" value="RECEIVE"/>
-                                 <array name="CanObjectPayloadLength"/>
-                                 <array name="CanHardwareObjectUsesPolling"/>
-                                 <array name="CanTriggerTransmitEnable"/>
-                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
-                                 <array name="CanMainFunctionRWPeriodRef">
-                                    <setting name="0" value="/Can_43_FLEXCAN/Can/CanGeneral/CanMainFunctionRWPeriods_0"/>
-                                 </array>
-                                 <array name="CanHwObjectUsesBlock"/>
-                                 <setting name="CanHwObjectCount" value="1"/>
-                                 <array name="CanHwFilter">
-                                    <struct name="0">
                                        <setting name="Name" value="Can_aHwFilter_Object_Mesaj2"/>
                                        <setting name="CanHwFilterCode" value="0x0CF11F05"/>
                                        <setting name="CanHwFilterMask" value="0x0CF11F05"/>
@@ -4833,28 +4829,9 @@
                                  <array name="CanIfRxPduDataLength">
                                     <setting name="0" value="8"/>
                                  </array>
-                                 <array name="CanIfRxPduUserRxIndicationName">
-                                    <setting name="0" value="CanIf_PrimitMesaj1"/>
-                                 </array>
-                                 <array name="CanIfRxPduUserRxIndicationUL">
-                                    <setting name="0" value="CDD"/>
-                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName"/>
+                                 <array name="CanIfRxPduUserRxIndicationUL"/>
                                  <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_0"/>
-                              </struct>
-                              <struct name="1">
-                                 <setting name="Name" value="CanIfRxPduCfg_1"/>
-                                 <setting name="CanIfRxPduId" value="1"/>
-                                 <array name="CanIfRxPduDataLengthCheck"/>
-                                 <array name="CanIfRxPduDataLength">
-                                    <setting name="0" value="8"/>
-                                 </array>
-                                 <array name="CanIfRxPduUserRxIndicationName">
-                                    <setting name="0" value="CanIf_PrimitMesaj2"/>
-                                 </array>
-                                 <array name="CanIfRxPduUserRxIndicationUL">
-                                    <setting name="0" value="CDD"/>
-                                 </array>
-                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_1"/>
                               </struct>
                            </array>
                            <array name="CanIfBufferCfg"/>
@@ -4867,11 +4844,6 @@
                                        <setting name="Name" value="CanIfHrhCfg_0"/>
                                        <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
                                        <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanHardwareObject_0"/>
-                                    </struct>
-                                    <struct name="1">
-                                       <setting name="Name" value="CanIfHrhCfg_1"/>
-                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
-                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanHardwareObject_1"/>
                                     </struct>
                                  </array>
                               </struct>
@@ -4955,7 +4927,7 @@
                                  <struct name="DetailModuleConfiguration">
                                     <setting name="Name" value="DetailModuleConfiguration"/>
                                     <setting name="UartHwChannel" value="LPUART_2"/>
-                                    <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_115200"/>
+                                    <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_921600"/>
                                     <setting name="CustomBaudrateMantissa" value="1"/>
                                     <setting name="CustomBaudrateDivisor" value="4"/>
                                     <setting name="UartInteruptDmaMethod" value="LPUART_UART_IP_USING_INTERRUPTS"/>

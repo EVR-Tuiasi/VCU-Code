@@ -115,11 +115,11 @@ int main(void)
 
     /* Wdg_43_fs26 initialization */
     volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
-    eReturnValue |= Sbc_fs26_Init(NULL_PTR);
-    Wdg_43_fs26_Init(NULL_PTR);
+    //eReturnValue |= Sbc_fs26_Init(NULL_PTR);
+    //Wdg_43_fs26_Init(NULL_PTR);
 
-    eReturnValue |= Sbc_fs26_InitDevice();
-    eReturnValue |= Wdg_43_fs26_SetMode(WDGIF_OFF_MODE);
+    //eReturnValue |= Sbc_fs26_InitDevice();
+    //eReturnValue |= Wdg_43_fs26_SetMode(WDGIF_OFF_MODE);
     if(eReturnValue == E_OK){
     	Dio_WriteChannel(140, 0);
     	Dio_WriteChannel(142, 1);
@@ -139,11 +139,8 @@ int main(void)
 	DacEnable();
 	//DisplayTest();
 	//DashboardTest();
-	//VladTest();
 	//SoundTest();
 	volatile uint32 frana = 0, acceleratie = 0, rpm = 0, tensiune = 0, curent = 0, tempController = 0, tempMotor = 0, putere = 0, procentaj = 0, tempMaxim = 0, viteza = 0, throttle = 0;
-    Can_43_FLEXCAN_SetControllerMode(Can_43_FLEXCANConf_CanController_CanController_0, CAN_CS_STARTED);
-    Can_43_FLEXCAN_EnableControllerInterrupts(0);
 	while(1){
 		//citire valori senzori frana
 		frana = PedalsGetBrakePercent();
@@ -156,7 +153,9 @@ int main(void)
 		DacSetOutput(1, acceleratie);
 
 		//citire date de la invertor
-        Can_43_FLEXCAN_MainFunction_Read();
+		//InverterUpdate();
+	    //Can_43_FLEXCAN_MainFunction_Read();
+	    //Can_43_FLEXCAN_MainFunction_Read();
         rpm = InverterGetRpm(0);
         curent = InverterGetCurrent(0);//curent returnat cu o virgula
         tensiune = InverterGetVoltage(0);//tensiune returnata cu o virgula
@@ -217,6 +216,8 @@ int main(void)
         USBSendInverterVoltage(tensiune,0);
         USBSendInverterCurrent(curent, 0);
         USBSendInverterThrottle(throttle, 0);
+        USBSendInverterControllerTemperature(tempController, 0);
+		USBSendInverterMotorTemperature(tempMotor, 0);
 	}
 
 	while(1);
