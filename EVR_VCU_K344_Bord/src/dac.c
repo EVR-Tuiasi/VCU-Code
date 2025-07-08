@@ -1,24 +1,7 @@
-/*
-*   (c) Copyright 2020 NXP
-*
-*   NXP Confidential. This software is owned or controlled by NXP and may only be used strictly
-*   in accordance with the applicable license terms.  By expressly accepting
-*   such terms or by downloading, installing, activating and/or otherwise using
-*   the software, you are agreeing that you have read, and that you agree to
-*   comply with and are bound by, such license terms.  If you do not agree to
-*   be bound by the applicable license terms, then you may not retain,
-*   install, activate or otherwise use the software.
-*
-*   This file contains sample code only. It is not part of the production code deliverables.
-*/
-
-#ifndef SEVEN_SEGMENT_DISPLAY_H
-#define SEVEN_SEGMENT_DISPLAY_H
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
-
 
 /*==================================================================================================
 *                                        INCLUDE FILES
@@ -26,25 +9,14 @@ extern "C"{
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
-#include "Mcu.h"
+#include"Mcu.h"
+#include"Pwm.h"
+#include"Dio.h"
+#include"dac.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
-
-typedef struct {
-	uint8 *elemente;
-	uint8 nr_elemente;
-} SevenSegmentGroup;
-
-typedef struct {
-	int I2c_used_channel;
-	int I2c_Slave_Address;
-	SevenSegmentGroup *group;
-	uint8 SevenSegmentGroup_elements_count;
-} SevenSegmentDriver;
-
 
 /*==================================================================================================
 *                                       LOCAL MACROS
@@ -84,17 +56,25 @@ typedef struct {
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
+void DacInit(void){
+	Pwm_SetDutyCycle(0, 0);
+	Pwm_SetDutyCycle(1, 0);
+}
 
-void SevenSegmentInit(void);
-void SevenSegmentDisplayDecimalValue(uint8 SevenSegmentGroupIndex, sint16 DecimalValue, uint8 PrecisionFloatPoint);
-void SevenSegmentSetGlobalBrightness(uint8 BrightnessPercent);
-void SevSegGrTest(uint8 GroupIndex);
-void SevenSegmentTest(void);
+void DacEnable(void){
+	Dio_WriteChannel(129, STD_HIGH);
+}
+
+void DacDisable(void){
+	Dio_WriteChannel(129, STD_LOW);
+}
+
+void DacSetOutput(uint8 channel, uint16 percentage){
+	uint16 duty = ((uint32)percentage * 26214) / 100U + 3276U;
+	Pwm_SetDutyCycle(channel, duty);
+}
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif
-
 /** @} */

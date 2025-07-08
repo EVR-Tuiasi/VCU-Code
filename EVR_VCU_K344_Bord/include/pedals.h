@@ -63,11 +63,10 @@ typedef struct {
 *                                    FUNCTION PROTOTYPES
 ==================================================================================================*/
 void PedalsInit(void);
-
 uint16 PedalsGetAccelerationPercent(void);
-
+uint16 PedalsGetAccelerationPercentSensor1(void);
+uint16 PedalsGetAccelerationPercentSensor2(void);
 uint16 PedalsGetBrakePercent(void);
-
 void PedalsTest(void);
 
 #ifdef __cplusplus

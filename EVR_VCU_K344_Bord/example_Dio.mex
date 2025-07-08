@@ -103,13 +103,6 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
-                  <pin peripheral="SIUL2" signal="gpio, 129" pin_num="A5" pin_signal="PTE1">
-                     <pin_features>
-                        <pin_feature name="direction" value="INPUT"/>
-                        <pin_feature name="pullSelect" value="pullUp"/>
-                        <pin_feature name="pullEnable" value="enabled"/>
-                     </pin_features>
-                  </pin>
                   <pin peripheral="LPI2C0" signal="lpi2c0_sda" pin_num="P5" pin_signal="PTD13">
                      <pin_features>
                         <pin_feature name="direction" value="INPUT/OUTPUT"/>
@@ -133,6 +126,38 @@
                   <pin peripheral="ADC2" signal="adc2_p5" pin_num="D8" pin_signal="PTE23"/>
                   <pin peripheral="ADC2" signal="adc2_p4" pin_num="B9" pin_signal="PTE22"/>
                   <pin peripheral="ADC0" signal="adc0_p6" pin_num="E1" pin_signal="PTE11"/>
+                  <pin peripheral="eMIOS_0" signal="emios_0_ch_3_g" pin_num="J16" pin_signal="PTB15">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="eMIOS_0" signal="emios_0_ch_4_g" pin_num="K17" pin_signal="PTB16">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="SIUL2" signal="gpio, 129" pin_num="A5" pin_signal="PTE1">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="CAN0" signal="can0_tx" pin_num="M16" pin_signal="PTA7"/>
+                  <pin peripheral="CAN0" signal="can0_rx" pin_num="M15" pin_signal="PTA6"/>
+                  <pin peripheral="SIUL2" signal="gpio, 88" pin_num="R15" pin_signal="PTC24">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="SIUL2" signal="gpio, 85" pin_num="R13" pin_signal="PTC21">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="LPUART2" signal="lpuart2_tx" pin_num="B3" pin_signal="PTA9">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -279,13 +304,13 @@
                   <clock_output id="ERM0_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
                   <clock_output id="FIRCOUT.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLASH0_CLK.outFreq" value="40 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN0_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN1_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCAN2_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN1_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN2_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCAN3_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCAN4_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCAN5_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXCANA_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCANA_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXCANB_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXIO0_CLK.outFreq" value="80 MHz" locked="false" accuracy=""/>
                   <clock_output id="FXOSCOUT.outFreq" value="16 MHz" locked="false" accuracy=""/>
@@ -373,7 +398,7 @@
                   <setting id="MC_CGM_MUX_6.sel" value="N/A" locked="false"/>
                   <setting id="MC_CGM_MUX_6_DE0" value="Enabled" locked="false"/>
                   <setting id="MC_CGM_MUX_6_DIV0.scale" value="2" locked="true"/>
-                  <setting id="MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale" value="2" locked="true"/>
+                  <setting id="MODULE_CLOCKS.MC_CGM_AUX3_DIV0.scale" value="1" locked="true"/>
                   <setting id="MODULE_CLOCKS.MC_CGM_AUX4_DIV0.scale" value="2" locked="true"/>
                   <setting id="PHI0.scale" value="3" locked="true"/>
                   <setting id="PHI1.scale" value="3" locked="true"/>
@@ -556,9 +581,54 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.pwm" description="Pwm is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
-                  <data>true</data>
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.pwm" description="An unsupported version of the Pwm in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.Can_43_FLEXCAN" description="Can_43_FLEXCAN is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.Can_43_FLEXCAN" description="An unsupported version of the Can_43_FLEXCAN in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">0.1.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.CanIf" description="CanIf is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.CanIf" description="An unsupported version of the CanIf in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.ecum" description="EcuM is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.ecum" description="An unsupported version of the EcuM in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.uart" description="Uart is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.uart" description="An unsupported version of the Uart in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
                </feature>
             </dependency>
          </dependencies>
@@ -587,8 +657,18 @@
             <file path="generate/include/CDD_Mcl_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Sbc_fs26_Cfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Sbc_fs26_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/CDD_Uart_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/CDD_Uart_Defines.h" update_enabled="true"/>
+            <file path="generate/include/CDD_Uart_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Cache_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Cache_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
+            <file path="generate/include/CanIf_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/CanIf_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Can_43_FLEXCAN_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Can_43_FLEXCAN_Externals.h" update_enabled="true"/>
+            <file path="generate/include/Can_43_FLEXCAN_Ipw_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Can_43_FLEXCAN_Ipw_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Can_43_FLEXCAN_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_PBcfg.h" update_enabled="true"/>
@@ -599,6 +679,7 @@
             <file path="generate/include/Dma_Ip_Cfg_DeviceRegistersV3.h" update_enabled="true"/>
             <file path="generate/include/Dma_Ip_Cfg_Devices.h" update_enabled="true"/>
             <file path="generate/include/Dma_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/EcuM_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Emios_Gpt_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Emios_Gpt_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Emios_Gpt_Ip_PBcfg.h" update_enabled="true"/>
@@ -606,6 +687,15 @@
             <file path="generate/include/Emios_Mcl_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
             <file path="generate/include/Emios_Mcl_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Emios_Pwm_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Emios_Pwm_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/Emios_Pwm_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/FlexCAN_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/FlexCAN_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/FlexCAN_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/FlexPwm_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/FlexPwm_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/FlexPwm_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_I2c_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_I2c_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_I2c_Ip_PBcfg.h" update_enabled="true"/>
@@ -613,9 +703,16 @@
             <file path="generate/include/Flexio_Mcl_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Mcl_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Pwm_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Pwm_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Pwm_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Spi_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Spi_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Spi_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Uart_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Uart_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Uart_Ip_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Uart_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Gpt_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Gpt_Ipw_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Gpt_PBcfg.h" update_enabled="true"/>
@@ -636,6 +733,9 @@
             <file path="generate/include/Lpi2c_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Lpspi_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Lpspi_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Lpuart_Uart_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Lpuart_Uart_Ip_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Lpuart_Uart_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Mcu_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Mcu_Ipw_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Mcu_PBcfg.h" update_enabled="true"/>
@@ -654,6 +754,9 @@
             <file path="generate/include/Power_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Power_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Power_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Pwm_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Pwm_Ipw_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Pwm_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Ram_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Ram_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Ram_Ip_PBcfg.h" update_enabled="true"/>
@@ -681,6 +784,8 @@
             <file path="generate/include/Trgmux_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
             <file path="generate/include/Trgmux_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Tspc_Port_Ip_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Uart_Ipw_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Uart_Ipw_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Wdg_43_fs26_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Wdg_43_fs26_CfgExt.h" update_enabled="true"/>
             <file path="generate/include/Wdg_43_fs26_PBcfg.h" update_enabled="true"/>
@@ -695,6 +800,11 @@
             <file path="generate/src/CDD_Mcl_Cfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Mcl_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Sbc_fs26_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/CDD_Uart_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/CanIf_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/CanIf_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Can_43_FLEXCAN_Ipw_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Can_43_FLEXCAN_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Clock_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Clock_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Dio_Cfg.c" update_enabled="true"/>
@@ -702,9 +812,14 @@
             <file path="generate/src/Dma_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Emios_Gpt_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Emios_Mcl_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Emios_Pwm_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/FlexCAN_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/FlexPwm_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_I2c_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Mcl_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Flexio_Pwm_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Spi_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Flexio_Uart_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Gpt_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Gpt_Ipw_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Gpt_PBcfg.c" update_enabled="true"/>
@@ -715,6 +830,7 @@
             <file path="generate/src/Lcu_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Lpi2c_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Lpspi_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Lpuart_Uart_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Mcu_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Mcu_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Mpu_M7_Ip_Cfg.c" update_enabled="true"/>
@@ -726,6 +842,7 @@
             <file path="generate/src/Port_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Power_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Power_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Pwm_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Ram_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Ram_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Rtc_Ip_PBcfg.c" update_enabled="true"/>
@@ -737,6 +854,7 @@
             <file path="generate/src/Trgmux_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Trgmux_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Tspc_Port_Ip_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Uart_Ipw_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Wdg_43_fs26_CfgExt.c" update_enabled="true"/>
             <file path="generate/src/Wdg_43_fs26_Lcfg.c" update_enabled="true"/>
             <file path="generate/src/Wdg_43_fs26_PBcfg.c" update_enabled="true"/>
@@ -1204,6 +1322,14 @@
                                     <struct name="3">
                                        <setting name="Name" value="Adc2ClockReferencePoint"/>
                                        <setting name="McuClockFrequencySelect" value="CORE_CLK"/>
+                                    </struct>
+                                    <struct name="4">
+                                       <setting name="Name" value="Flexcan0"/>
+                                       <setting name="McuClockFrequencySelect" value="FIRC_CLK"/>
+                                    </struct>
+                                    <struct name="5">
+                                       <setting name="Name" value="LPUART_2"/>
+                                       <setting name="McuClockFrequencySelect" value="AIPS_SLOW_CLK"/>
                                     </struct>
                                  </array>
                               </struct>
@@ -2300,9 +2426,9 @@
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
                                     <struct name="11">
-                                       <setting name="Name" value="Display_INT"/>
-                                       <setting name="PortPinPue" value="true"/>
-                                       <setting name="PortPinPus" value="true"/>
+                                       <setting name="Name" value="DAC_PD"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
                                        <setting name="PortPinSafeMode" value="false"/>
                                        <setting name="PortPinDse" value="false"/>
                                        <setting name="PortPinWithReadBack" value="false"/>
@@ -2446,6 +2572,160 @@
                                        <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
                                        <setting name="PortPinId" value="18"/>
                                        <setting name="PortPinPcr" value="139"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="18">
+                                       <setting name="Name" value="PortPin_DAC_A_PWM"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="19"/>
+                                       <setting name="PortPinPcr" value="47"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="19">
+                                       <setting name="Name" value="PortPin_DAC_B_PWM"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="20"/>
+                                       <setting name="PortPinPcr" value="48"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="20">
+                                       <setting name="Name" value="CAN0_STANDBY"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="21"/>
+                                       <setting name="PortPinPcr" value="85"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="21">
+                                       <setting name="Name" value="CAN0_TX"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="22"/>
+                                       <setting name="PortPinPcr" value="7"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="22">
+                                       <setting name="Name" value="CAN0_RX"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="23"/>
+                                       <setting name="PortPinPcr" value="6"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="23">
+                                       <setting name="Name" value="CAN0_ENABLE"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="24"/>
+                                       <setting name="PortPinPcr" value="88"/>
+                                       <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
+                                       <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
+                                       <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <setting name="ImcrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
+                                       <array name="IGFSettings"/>
+                                       <array name="PortPinEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="24">
+                                       <setting name="Name" value="UART2_TX"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
+                                       <setting name="PortPinSafeMode" value="false"/>
+                                       <setting name="PortPinDse" value="false"/>
+                                       <setting name="PortPinWithReadBack" value="false"/>
+                                       <setting name="PortPinPke" value="false"/>
+                                       <setting name="PortPinIfe" value="false"/>
+                                       <setting name="PortPinDirectionChangeable" value="true"/>
+                                       <setting name="PortPinModeChangeable" value="true"/>
+                                       <setting name="PortPinInvertControl" value="false"/>
+                                       <setting name="PortPinSiul2Instance" value="SIUL2_0"/>
+                                       <setting name="PortPinId" value="25"/>
+                                       <setting name="PortPinPcr" value="9"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <setting name="OBEGroupSelect" value="NO_OBE_GROUP"/>
                                        <setting name="MscrPdacSlot" value="VIRTUAL_WRAPPER_PDAC0"/>
@@ -2987,7 +3267,7 @@
                                  <struct name="0">
                                     <setting name="Name" value="SevenSegment_I2C0"/>
                                     <setting name="IsrName" value="LPI2C0_IRQn"/>
-                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrEnabled" value="false"/>
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="LPI2C0_Master_Slave_IRQHandler"/>
                                  </struct>
@@ -3214,7 +3494,7 @@
                               </struct>
                               <struct name="1">
                                  <setting name="Name" value="SpiExternalDevice_Display"/>
-                                 <setting name="SpiBaudrate" value="1000000"/>
+                                 <setting name="SpiBaudrate" value="10000000"/>
                                  <setting name="SpiUseBaudrateConfig" value="false"/>
                                  <setting name="SpiCsIdentifier" value="PCS0"/>
                                  <setting name="SpiCsPolarity" value="LOW"/>
@@ -3724,12 +4004,8 @@
                            <setting name="I2cTimeoutDuration" value="65535"/>
                            <setting name="I2cTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
                            <setting name="VendorId" value="0"/>
-                           <array name="I2cCallback">
-                              <setting name="0" value="I2c_Callback"/>
-                           </array>
-                           <array name="I2cErrorCallback">
-                              <setting name="0" value="I2c_ErrorCallback"/>
-                           </array>
+                           <array name="I2cCallback"/>
+                           <array name="I2cErrorCallback"/>
                         </struct>
                         <struct name="I2cGlobalConfig">
                            <setting name="Name" value="I2cGlobalConfig"/>
@@ -4207,6 +4483,515 @@
                            <setting name="AdcSarEnableTempsenseApi" value="false"/>
                            <setting name="AdcSarPowerOnTempSense" value="false"/>
                            <setting name="AdcSarTempSenseVsupply" value="53"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="Pwm" uuid="3b279790-d8b3-4cc0-ac1e-18eca78c2946" type="Pwm" type_id="Pwm" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="Pwm">
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="true"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="PwmGeneral">
+                           <setting name="Name" value="PwmGeneral"/>
+                           <setting name="PwmMulticoreEnabled" value="false"/>
+                           <setting name="PwmDevErrorDetect" value="true"/>
+                           <setting name="PwmDutycycleUpdatedEndperiod" value="false"/>
+                           <setting name="PwmPeriodUpdatedEndperiod" value="false"/>
+                           <setting name="PwmNotificationSupported" value="false"/>
+                           <setting name="PwmEnableUserModeSupport" value="false"/>
+                           <array name="PwmLowPowerStatesSupport"/>
+                           <array name="PwmPowerStateAsynchTransitionMode"/>
+                           <setting name="PwmEnableDualClockMode" value="false"/>
+                           <setting name="PwmMultiChannelSync" value="false"/>
+                           <setting name="PwmIndex" value="0"/>
+                           <array name="PwmEcucPartitionRef"/>
+                           <array name="PwmKernelEcucPartitionRef"/>
+                           <array name="PwmPowerStateConfig"/>
+                        </struct>
+                        <struct name="PwmChannelConfigSet">
+                           <array name="PwmChannel">
+                              <struct name="0">
+                                 <setting name="Name" value="PwmChannel_DAC_A"/>
+                                 <setting name="PwmChannelId" value="0"/>
+                                 <setting name="PwmHwChannel" value="/Pwm/Pwm/PwmChannelConfigSet/PwmEmios_0/PwmEmiosChannels_DAC_A"/>
+                                 <array name="PwmChannelClass">
+                                    <setting name="0" value="PWM_FIXED_PERIOD"/>
+                                 </array>
+                                 <setting name="PwmPeriodInTicks" value="true"/>
+                                 <setting name="PwmPeriodDefault" value="65534"/>
+                                 <setting name="PwmDutycycleDefault" value="0"/>
+                                 <setting name="PwmPolarity" value="PWM_HIGH"/>
+                                 <setting name="PwmIdleState" value="PWM_LOW"/>
+                                 <array name="PwmNotification">
+                                    <setting name="0" value="NULL_PTR"/>
+                                 </array>
+                                 <setting name="PwmMcuClockReferencePoint" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <array name="PwmChannelEcucPartitionRef"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="PwmChannel_DAC_B"/>
+                                 <setting name="PwmChannelId" value="1"/>
+                                 <setting name="PwmHwChannel" value="/Pwm/Pwm/PwmChannelConfigSet/PwmEmios_0/PwmEmiosChannels_DAC_B"/>
+                                 <array name="PwmChannelClass">
+                                    <setting name="0" value="PWM_FIXED_PERIOD"/>
+                                 </array>
+                                 <setting name="PwmPeriodInTicks" value="true"/>
+                                 <setting name="PwmPeriodDefault" value="65534"/>
+                                 <setting name="PwmDutycycleDefault" value="0"/>
+                                 <setting name="PwmPolarity" value="PWM_HIGH"/>
+                                 <setting name="PwmIdleState" value="PWM_LOW"/>
+                                 <array name="PwmNotification"/>
+                                 <setting name="PwmMcuClockReferencePoint" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <array name="PwmChannelEcucPartitionRef"/>
+                              </struct>
+                           </array>
+                           <array name="PwmEmios">
+                              <struct name="0">
+                                 <setting name="Name" value="PwmEmios_0"/>
+                                 <setting name="PwmHwInstance" value="Emios_0"/>
+                                 <array name="PwmEmiosChannels">
+                                    <struct name="0">
+                                       <setting name="Name" value="PwmEmiosChannels_DAC_A"/>
+                                       <setting name="EmiosChId" value="CH_3"/>
+                                       <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWFMB"/>
+                                       <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
+                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_INTERNAL"/>
+                                       <array name="PwmEmiosBusRef"/>
+                                       <setting name="EmiosChFreeze" value="false"/>
+                                       <setting name="EmiosChOutputDisable" value="EMIOS_PWM_IP_OUTPUT_DISABLE_NONE"/>
+                                       <setting name="EmiosChPrescaler" value="EMIOS_PWM_IP_CLOCK_DIV_16"/>
+                                       <setting name="EmiosChPrescalerAlternate" value="EMIOS_PWM_IP_CLOCK_DIV_2"/>
+                                       <setting name="EmiosChPrescalerSource" value="EMIOS_PWM_IP_PS_SRC_MODULE_CLOCK"/>
+                                       <setting name="EmiosChInterrupt" value="EMIOS_PWM_IP_NOTIFICATION_DISABLED"/>
+                                       <setting name="EmiosChPhaseShift" value="0"/>
+                                       <setting name="EmiosChTrigger" value="0"/>
+                                       <setting name="EmiosChDeadtime" value="0"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="PwmEmiosChannels_DAC_B"/>
+                                       <setting name="EmiosChId" value="CH_4"/>
+                                       <setting name="EmiosChMode" value="EMIOS_PWM_IP_MODE_OPWFMB"/>
+                                       <setting name="EmiosChFlagGeneration" value="Trailing_Edge"/>
+                                       <setting name="EmiosChCounterBus" value="EMIOS_PWM_IP_BUS_INTERNAL"/>
+                                       <array name="PwmEmiosBusRef"/>
+                                       <setting name="EmiosChFreeze" value="false"/>
+                                       <setting name="EmiosChOutputDisable" value="EMIOS_PWM_IP_OUTPUT_DISABLE_NONE"/>
+                                       <setting name="EmiosChPrescaler" value="EMIOS_PWM_IP_CLOCK_DIV_16"/>
+                                       <setting name="EmiosChPrescalerAlternate" value="EMIOS_PWM_IP_CLOCK_DIV_2"/>
+                                       <setting name="EmiosChPrescalerSource" value="EMIOS_PWM_IP_PS_SRC_MODULE_CLOCK"/>
+                                       <setting name="EmiosChInterrupt" value="EMIOS_PWM_IP_NOTIFICATION_DISABLED"/>
+                                       <setting name="EmiosChPhaseShift" value="0"/>
+                                       <setting name="EmiosChTrigger" value="0"/>
+                                       <setting name="EmiosChDeadtime" value="0"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                           </array>
+                           <array name="PwmFlexio"/>
+                           <array name="FlexPwm"/>
+                           <setting name="Name" value="PwmChannelConfigSet"/>
+                        </struct>
+                        <struct name="PwmConfigurationOfOptApiServices">
+                           <setting name="Name" value="PwmConfigurationOfOptApiServices"/>
+                           <setting name="PwmDeInitApi" value="true"/>
+                           <setting name="PwmGetOutputState" value="false"/>
+                           <setting name="PwmSetDutyCycle" value="true"/>
+                           <setting name="PwmSetOutputToIdle" value="false"/>
+                           <setting name="PwmSetPeriodAndDuty" value="false"/>
+                           <setting name="PwmVersionInfoApi" value="false"/>
+                           <setting name="PwmGetChannelStateApi" value="false"/>
+                           <setting name="PwmSetDutyCycle_NoUpdate" value="false"/>
+                           <setting name="PwmSetPeriodAndDuty_NoUpdate" value="false"/>
+                           <setting name="PwmSetDutyPhaseShift" value="false"/>
+                           <setting name="PwmSetChannelDeadTime" value="false"/>
+                           <setting name="PwmEmiosFastUpdateApi" value="false"/>
+                           <setting name="PwmEnableMaskOutputs" value="false"/>
+                           <setting name="PwmSetCounterBusApi" value="false"/>
+                           <setting name="PwmSetChannelOutputApi" value="false"/>
+                           <setting name="PwmSetTriggerDelayApi" value="false"/>
+                        </struct>
+                        <struct name="CommonPublishedInformation" quick_selection="Default">
+                           <setting name="Name" value="CommonPublishedInformation"/>
+                           <setting name="ArReleaseMajorVersion" value="4"/>
+                           <setting name="ArReleaseMinorVersion" value="7"/>
+                           <setting name="ArReleaseRevisionVersion" value="0"/>
+                           <setting name="ModuleId" value="121"/>
+                           <setting name="SwMajorVersion" value="4"/>
+                           <setting name="SwMinorVersion" value="0"/>
+                           <setting name="SwPatchVersion" value="0"/>
+                           <array name="VendorApiInfix">
+                              <setting name="0" value=""/>
+                           </array>
+                           <setting name="VendorId" value="43"/>
+                        </struct>
+                        <setting name="Name" value="Pwm"/>
+                     </config_set>
+                  </instance>
+                  <instance name="Can_43_FLEXCAN" uuid="57bbeca1-5eec-4288-9aa2-3d28f48252c6" type="Can_43_FLEXCAN" type_id="Can_43_FLEXCAN" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="Can">
+                        <setting name="Name" value="Can"/>
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="CanGeneral">
+                           <setting name="Name" value="CanGeneral"/>
+                           <setting name="CanDevErrorDetect" value="true"/>
+                           <setting name="CanEnableUserModeSupport" value="false"/>
+                           <setting name="CanMulticoreSupport" value="false"/>
+                           <setting name="CanEnableSecurityEventReporting" value="false"/>
+                           <setting name="CanVersionInfoApi" value="false"/>
+                           <setting name="CanIndex" value="0"/>
+                           <array name="CanMainFunctionBusoffPeriod"/>
+                           <array name="CanMainFunctionWakeupPeriod"/>
+                           <setting name="CanMainFunctionModePeriod" value="0.001"/>
+                           <setting name="CanMultiplexedTransmission" value="false"/>
+                           <setting name="CanTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
+                           <setting name="CanTimeoutDuration" value="0.01"/>
+                           <array name="CanLPduReceiveCalloutFunction"/>
+                           <array name="CanEcucPartitionRef"/>
+                           <array name="CanOsCounterRef"/>
+                           <array name="CanSupportTTCANRef"/>
+                           <setting name="CanMBCountExtensionSupport" value="false"/>
+                           <array name="CanApiEnableMbAbort"/>
+                           <array name="CanSetBaudrateApi"/>
+                           <setting name="CanEnableDualClockMode" value="false"/>
+                           <array name="CanListenOnlyModeApi"/>
+                           <setting name="CanGlobalTimeSupport" value="false"/>
+                           <array name="CanTimeStamp"/>
+                           <array name="CanMainFunctionRWPeriods">
+                              <struct name="0">
+                                 <setting name="Name" value="CanMainFunctionRWPeriods_0"/>
+                                 <setting name="CanMainFunctionPeriod" value="0.001"/>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="CanConfigSet">
+                           <setting name="Name" value="CanConfigSet"/>
+                           <array name="CanController">
+                              <struct name="0">
+                                 <setting name="Name" value="CanController_0"/>
+                                 <setting name="CanHwChannel" value="FLEXCAN_0"/>
+                                 <setting name="CanControllerActivation" value="true"/>
+                                 <setting name="CanControllerBaseAddress" value="0"/>
+                                 <setting name="CanControllerId" value="0"/>
+                                 <setting name="CanRxProcessing" value="POLLING"/>
+                                 <setting name="CanTxProcessing" value="INTERRUPT"/>
+                                 <setting name="CanBusoffProcessing" value="INTERRUPT"/>
+                                 <setting name="CanWakeupFunctionalityAPI" value="false"/>
+                                 <setting name="CanWakeupProcessing" value="INTERRUPT"/>
+                                 <setting name="CanWakeupSupport" value="false"/>
+                                 <setting name="CanLoopBackMode" value="false"/>
+                                 <setting name="CanAutoBusOffRecovery" value="false"/>
+                                 <setting name="CanTrippleSamplingEnable" value="false"/>
+                                 <setting name="CanControllerPrExcEn" value="false"/>
+                                 <setting name="CanControllerEdgeFilter" value="false"/>
+                                 <setting name="CanControllerFdISO" value="false"/>
+                                 <setting name="CanControllerDefaultBaudrate" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0/CanControllerBaudrateConfig_0"/>
+                                 <array name="CanControllerEcucPartitionRef"/>
+                                 <setting name="CanCpuClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/Flexcan0"/>
+                                 <setting name="CanCpuClockRefAlternate" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/McuClockReferencePoint_0"/>
+                                 <array name="CanWakeupSourceRef"/>
+                                 <array name="CanControllerBaudrateConfig">
+                                    <struct name="0">
+                                       <setting name="Name" value="CanControllerBaudrateConfig_0"/>
+                                       <setting name="CanBaudrateTypeSuport" value="NORMAL_CBT"/>
+                                       <setting name="CanAdvancedSetting" value="true"/>
+                                       <setting name="CanBusLength" value="40"/>
+                                       <setting name="CanPropDelayTranceiver" value="150"/>
+                                       <setting name="CanTxArbitrationStartDelay" value="12"/>
+                                       <setting name="CanControllerPrescaller" value="12"/>
+                                       <setting name="CanControllerPrescallerAlternate" value="10"/>
+                                       <setting name="CanControllerBaudRateConfigID" value="0"/>
+                                       <setting name="CanControllerBaudRate" value="250"/>
+                                       <setting name="CanControllerSyncSeg" value="1"/>
+                                       <setting name="CanControllerPropSeg" value="5"/>
+                                       <setting name="CanControllerSeg1" value="5"/>
+                                       <setting name="CanControllerSeg2" value="6"/>
+                                       <setting name="CanControllerSyncJumpWidth" value="1"/>
+                                       <array name="CanControllerFdBaudrateConfig"/>
+                                    </struct>
+                                 </array>
+                                 <array name="CanTTController"/>
+                                 <array name="CanRamBlock"/>
+                                 <array name="CanRxFiFo"/>
+                                 <array name="CanControllerTimeStamp"/>
+                              </struct>
+                           </array>
+                           <array name="CanHardwareObject">
+                              <struct name="0">
+                                 <setting name="Name" value="CanHardwareObject_0"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="BASIC"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="0"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength"/>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef">
+                                    <setting name="0" value="/Can_43_FLEXCAN/Can/CanGeneral/CanMainFunctionRWPeriods_0"/>
+                                 </array>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_Mesaj1"/>
+                                       <setting name="CanHwFilterCode" value="0xCF11E05"/>
+                                       <setting name="CanHwFilterMask" value="0xCF11E05"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="Can_aHwFilter_Object_Mesaj2"/>
+                                       <setting name="CanHwFilterCode" value="0x0CF11F05"/>
+                                       <setting name="CanHwFilterMask" value="0x0CF11F05"/>
+                                    </struct>
+                                 </array>
+                                 <array name="CanTTHardwareObjectTrigger"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="CanHardwareObject_1"/>
+                                 <array name="CanFdPaddingValue"/>
+                                 <setting name="CanHandleType" value="BASIC"/>
+                                 <setting name="CanIdType" value="EXTENDED"/>
+                                 <setting name="CanObjectId" value="1"/>
+                                 <setting name="CanObjectType" value="RECEIVE"/>
+                                 <array name="CanObjectPayloadLength"/>
+                                 <array name="CanHardwareObjectUsesPolling"/>
+                                 <array name="CanTriggerTransmitEnable"/>
+                                 <setting name="CanControllerRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 <array name="CanMainFunctionRWPeriodRef">
+                                    <setting name="0" value="/Can_43_FLEXCAN/Can/CanGeneral/CanMainFunctionRWPeriods_0"/>
+                                 </array>
+                                 <array name="CanHwObjectUsesBlock"/>
+                                 <setting name="CanHwObjectCount" value="1"/>
+                                 <array name="CanHwFilter">
+                                    <struct name="0">
+                                       <setting name="Name" value="Can_aHwFilter_Object_Mesaj2"/>
+                                       <setting name="CanHwFilterCode" value="0x0CF11F05"/>
+                                       <setting name="CanHwFilterMask" value="0x0CF11F05"/>
+                                    </struct>
+                                 </array>
+                                 <array name="CanTTHardwareObjectTrigger"/>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="CommonPublishedInformation" quick_selection="Default">
+                           <setting name="Name" value="CommonPublishedInformation"/>
+                           <setting name="ModuleId" value="80"/>
+                           <setting name="VendorId" value="43"/>
+                           <setting name="VendorApiInfix" value="FLEXCAN"/>
+                           <setting name="ArReleaseMajorVersion" value="4"/>
+                           <setting name="ArReleaseMinorVersion" value="7"/>
+                           <setting name="ArReleaseRevisionVersion" value="0"/>
+                           <setting name="SwMajorVersion" value="4"/>
+                           <setting name="SwMinorVersion" value="0"/>
+                           <setting name="SwPatchVersion" value="0"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="CanIf" uuid="dbfc8a3b-3218-4656-b5b2-6a9e5492e8cc" type="CanIf" type_id="CanIf" mode="general" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="CanIf">
+                        <setting name="Name" value="CanIf"/>
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="CanIfPublicCfg">
+                           <setting name="Name" value="CanIfPublicCfg"/>
+                           <setting name="CanIfDevErrorDetect" value="true"/>
+                           <array name="CanIfPublicCddHeaderFile">
+                              <setting name="0" value="invertor"/>
+                           </array>
+                        </struct>
+                        <array name="CanIfCtrlDrvCfg">
+                           <struct name="0">
+                              <setting name="Name" value="CanIfCtrlDrvCfg_0"/>
+                              <setting name="CanIfCtrlDrvNameRef" value="/Can_43_FLEXCAN/Can/CanGeneral"/>
+                              <array name="CanIfCtrlCfg">
+                                 <struct name="0">
+                                    <setting name="Name" value="CanIfCtrlCfg_0"/>
+                                    <setting name="CanIfCtrlId" value="0"/>
+                                    <setting name="CanIfCtrlCanCtrlRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanController_0"/>
+                                 </struct>
+                              </array>
+                           </struct>
+                        </array>
+                        <struct name="CanIfInitCfg">
+                           <setting name="Name" value="CanIfInitCfg"/>
+                           <array name="CanIfMaxRxPduCfg">
+                              <setting name="0" value="2"/>
+                           </array>
+                           <array name="CanIfMaxTxPduCfg"/>
+                           <array name="CanIfTxPduCfg"/>
+                           <array name="CanIfRxPduCfg">
+                              <struct name="0">
+                                 <setting name="Name" value="CanIfRxPduCfg"/>
+                                 <setting name="CanIfRxPduId" value="0"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="CanIf_PrimitMesaj1"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_0"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="CanIfRxPduCfg_1"/>
+                                 <setting name="CanIfRxPduId" value="1"/>
+                                 <array name="CanIfRxPduDataLengthCheck"/>
+                                 <array name="CanIfRxPduDataLength">
+                                    <setting name="0" value="8"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationName">
+                                    <setting name="0" value="CanIf_PrimitMesaj2"/>
+                                 </array>
+                                 <array name="CanIfRxPduUserRxIndicationUL">
+                                    <setting name="0" value="CDD"/>
+                                 </array>
+                                 <setting name="CanIfRxPduHrhIdRef" value="/CanIf/CanIf/CanIfInitCfg/CanIfInitHohCfg_0/CanIfHrhCfg_1"/>
+                              </struct>
+                           </array>
+                           <array name="CanIfBufferCfg"/>
+                           <array name="CanIfInitHohCfg">
+                              <struct name="0">
+                                 <setting name="Name" value="CanIfInitHohCfg_0"/>
+                                 <array name="CanIfHthCfg"/>
+                                 <array name="CanIfHrhCfg">
+                                    <struct name="0">
+                                       <setting name="Name" value="CanIfHrhCfg_0"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanHardwareObject_0"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="CanIfHrhCfg_1"/>
+                                       <setting name="CanIfHrhCanCtrlIdRef" value="/CanIf/CanIf/CanIfCtrlDrvCfg_0/CanIfCtrlCfg_0"/>
+                                       <setting name="CanIfHrhIdSymRef" value="/Can_43_FLEXCAN/Can/CanConfigSet/CanHardwareObject_1"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="CanIfDispatchCfg">
+                           <setting name="Name" value="CanIfDispatchCfg"/>
+                           <array name="CanIfDispatchUserCtrlBusOffName"/>
+                           <setting name="CanIfDispatchUserCtrlBusOffUL" value="CDD"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="EcuM" uuid="e707f425-0523-4504-84e6-6ca933a39c8a" type="EcuM" type_id="EcuM" mode="general" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="EcuM">
+                        <setting name="Name" value="EcuM"/>
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-POST-BUILD"/>
+                        </struct>
+                        <struct name="EcuMConfiguration">
+                           <setting name="Name" value="EcuMConfiguration"/>
+                           <struct name="EcuMCommonConfiguration">
+                              <setting name="Name" value="EcuMCommonConfiguration"/>
+                              <array name="EcuMSleepMode">
+                                 <struct name="0">
+                                    <setting name="Name" value="EcuMSleepMode_0"/>
+                                    <setting name="EcuMSleepModeId" value="0"/>
+                                    <setting name="EcuMSleepModeSuspend" value="false"/>
+                                    <setting name="EcuMSleepModeMcuModeRef" value="/Mcu/Mcu/McuModuleConfiguration/McuModeSettingConf_0"/>
+                                    <array name="EcuMWakeupSourceMask">
+                                       <setting name="0" value="/EcuM/EcuM/EcuMConfiguration/EcuMCommonConfiguration/EcuMWakeupSource_0"/>
+                                    </array>
+                                 </struct>
+                              </array>
+                              <array name="EcuMWakeupSource">
+                                 <struct name="0">
+                                    <setting name="Name" value="EcuMWakeupSource_0"/>
+                                    <array name="EcuMCheckWakeupTimeout"/>
+                                    <array name="EcuMValidationTimeout"/>
+                                    <setting name="EcuMWakeupSourceId" value="0"/>
+                                    <setting name="EcuMWakeupSourcePolling" value="false"/>
+                                    <array name="EcuMResetReasonRef"/>
+                                 </struct>
+                              </array>
+                           </struct>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="Uart" uuid="a4937219-95bb-490f-b52e-775409770c0f" type="Uart" type_id="Uart" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="Uart">
+                        <setting name="Name" value="Uart"/>
+                        <struct name="ConfigTimeSupport" quick_selection="Default">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="GeneralConfiguration">
+                           <setting name="Name" value="GeneralConfiguration"/>
+                           <setting name="UartDevErrorDetect" value="true"/>
+                           <setting name="DisableUartRuntimeErrorDetect" value="false"/>
+                           <setting name="UartMulticoreSupport" value="false"/>
+                           <setting name="UartEnableUserModeSupport" value="false"/>
+                           <setting name="UartTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
+                           <setting name="UartTimeoutDuration" value="1000000"/>
+                           <setting name="UartDmaEnable" value="false"/>
+                           <setting name="UartVersionInfoApi" value="false"/>
+                           <array name="UartEcucPartitionRef"/>
+                           <setting name="UartCallbackCapability" value="false"/>
+                           <array name="UartCallback">
+                              <setting name="0" value=""/>
+                           </array>
+                        </struct>
+                        <struct name="UartGlobalConfig">
+                           <setting name="Name" value="UartGlobalConfig"/>
+                           <array name="UartChannel">
+                              <struct name="0">
+                                 <setting name="Name" value="UartChannel_0"/>
+                                 <setting name="UartHwUsing" value="LPUART_IP"/>
+                                 <setting name="UartChannelId" value="0"/>
+                                 <setting name="UartClockRef" value="/Mcu/Mcu/McuModuleConfiguration/McuClockSettingConfig_0/LPUART_2"/>
+                                 <array name="UartChannelEcucPartitionRef"/>
+                                 <struct name="DetailModuleConfiguration">
+                                    <setting name="Name" value="DetailModuleConfiguration"/>
+                                    <setting name="UartHwChannel" value="LPUART_2"/>
+                                    <setting name="DesireBaudrate" value="LPUART_UART_BAUDRATE_115200"/>
+                                    <setting name="CustomBaudrateMantissa" value="1"/>
+                                    <setting name="CustomBaudrateDivisor" value="4"/>
+                                    <setting name="UartInteruptDmaMethod" value="LPUART_UART_IP_USING_INTERRUPTS"/>
+                                    <array name="UartDmaTxChannelRef"/>
+                                    <array name="UartDmaRxChannelRef"/>
+                                    <setting name="UartParityType" value="LPUART_UART_IP_PARITY_DISABLED"/>
+                                    <setting name="UartStopBitNumber" value="LPUART_UART_IP_ONE_STOP_BIT"/>
+                                    <setting name="UartWordLength" value="LPUART_UART_IP_8_BITS_PER_CHAR"/>
+                                    <setting name="UartInternalLoopbackEnable" value="false"/>
+                                    <setting name="UartTimeoutEnable" value="false"/>
+                                 </struct>
+                                 <struct name="FlexioModuleConfiguration">
+                                    <setting name="Name" value="FlexioModuleConfiguration"/>
+                                    <setting name="UartHwChannelRef" value="/Mcl/Mcl/MclConfig/FlexioCommon_0/FlexioMclLogicChannels_0"/>
+                                    <setting name="FlexioUartInteruptDmaMethod" value="FLEXIO_UART_IP_DRIVER_TYPE_INTERRUPTS"/>
+                                    <array name="FlexioDmaChannelRef"/>
+                                    <setting name="DesireBaudrate" value="FLEXIO_UART_BAUDRATE_9600"/>
+                                    <setting name="CustomTimerDecrement" value="FLEXIO_TIMER_DECREMENT_FXIO_CLK_SHIFT_TMR"/>
+                                    <setting name="CustomBaudrateDivider" value="0"/>
+                                    <setting name="bitCount" value="FLEXIO_UART_IP_8_BITS_PER_CHAR"/>
+                                    <setting name="driverDirection" value="FLEXIO_UART_IP_DIRECTION_TX"/>
+                                 </struct>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="CommonPublishedInformation" quick_selection="Default">
+                           <setting name="Name" value="CommonPublishedInformation"/>
+                           <setting name="ModuleId" value="255"/>
+                           <setting name="VendorId" value="43"/>
+                           <setting name="VendorApiInfix" value=""/>
+                           <setting name="ArReleaseMajorVersion" value="4"/>
+                           <setting name="ArReleaseMinorVersion" value="7"/>
+                           <setting name="ArReleaseRevisionVersion" value="0"/>
+                           <setting name="SwMajorVersion" value="4"/>
+                           <setting name="SwMinorVersion" value="0"/>
+                           <setting name="SwPatchVersion" value="0"/>
                         </struct>
                      </config_set>
                   </instance>

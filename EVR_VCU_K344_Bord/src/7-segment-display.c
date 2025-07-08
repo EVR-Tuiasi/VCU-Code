@@ -34,16 +34,18 @@ extern "C" {
 
 // -- Definire Grupuri de segmente si ce segmente se afla in ele
 
-uint8 ref0[4] = {1, 2, 3, 4};
-uint8 ref1[2] = {3, 4};
+uint8 ref0[2] = {1, 2};
+uint8 ref1[3] = {3, 4, 5};
+uint8 ref2[3] = {6, 7, 8};
 
 // -- Definite Structura de Grupuri, ce are buffer ul de Segmente si cate elemente se afla in fiecare grup
 
-SevenSegmentGroup grupuri[2] = {
-		{ref0, 4},
-		{ref1, 2}
+SevenSegmentGroup grupuri[3] = {
+		{ref0, 2},
+		{ref1, 3},
+		{ref2, 3}
 };
-SevenSegmentDriver SevenSegmentDriverInstance = {0, 0, grupuri, 2}; // -- {Canal I2C folosit, Adresa Slave, Structura de grupuri de segmente, numarul de grupuri de segmente}
+SevenSegmentDriver SevenSegmentDriverInstance = {0, 0, grupuri, 3}; // -- {Canal I2C folosit, Adresa Slave, Structura de grupuri de segmente, numarul de grupuri de segmente}
 
 
 uint8 LuminozitateGlobala[2] = {0x0a, 0x0f}; // -- Buffer Luminozitate Globala maxima
@@ -90,7 +92,7 @@ void SevenSegmentInit(void){
 		SevSegInitBuf[0]++;
 	}
 
-	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x03; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
+	SevSegInitBuf[0] = 0x0b, SevSegInitBuf[1] = 0x07; // -- Seteaza cati pini folosim de la dig0 pana la dig7 [ex: 0x00 - dig0 | 0x03 - dig0 -> dig3]
 	I2c_RequestType setpins = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &setpins);
 
@@ -101,6 +103,49 @@ void SevenSegmentInit(void){
 	SevSegInitBuf[0] = 0x0c, SevSegInitBuf[1] = 0x81; // -- Seteaza Normal Mode fara modificari la Feature Register
 	I2c_RequestType normalmode = {0, false, false, false, false, 2, I2C_SEND_DATA, SevSegInitBuf};
 	I2c_SyncTransmit(SevenSegmentDriverInstance.I2c_used_channel, &normalmode);
+}
+
+void SevenSegmentTest(void){
+	uint16 rpm = 0, tensiune = 0, temperatura = 0, procentaj = 0, viteza;
+	volatile uint32 delei;
+	while(1){
+		delei = 2000000;
+		while(delei--);
+
+		tensiune++;
+		rpm+=5;
+		temperatura++;
+		tensiune %= 150;
+		rpm %= 6000;
+		temperatura %= 99;
+        //calcul procentaj baterie
+        if(tensiune < 60U){
+            procentaj = 0;
+        }
+        else if(tensiune > 100){
+        	procentaj = 1000U;//procentaj calculat cu o virgula
+        }
+        else{
+        	procentaj = (uint16)(tensiune - 60U) * 25U;//procentaj calculat cu o virgula
+        }
+        if(procentaj < 1000U){
+            SevenSegmentDisplayDecimalValue(2, procentaj, 1);
+        }
+        else{
+            SevenSegmentDisplayDecimalValue(2, procentaj/10U, 0);
+        }
+        SevenSegmentDisplayDecimalValue(0, temperatura, 0);
+        viteza = 0;
+        if(rpm != 0){
+        	viteza = (rpm * 84807U) / 312500U;
+        }
+        if(viteza < 1000U){
+            SevenSegmentDisplayDecimalValue(1, viteza, 1);
+        }
+        else{
+            SevenSegmentDisplayDecimalValue(1, viteza/10U, 0);
+        }
+	}
 }
 
 void SevSegGrTest(uint8 GroupIndex){

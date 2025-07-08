@@ -25,6 +25,12 @@ extern "C" {
 #include "Mcl.h"
 #include "CDD_I2c.h"
 #include "Adc.h"
+#include "Pwm.h"
+#include "Can_GeneralTypes.h"
+#include "Can_43_FLEXCAN.h"
+#include "CanIf.h"
+#include "SchM_Can_43_FLEXCAN.h"
+#include "CDD_Uart.h"
 
 #include "display.h"
 #include "FT81_misc.h"
@@ -33,6 +39,9 @@ extern "C" {
 #include "FT81_touch.h"
 #include "7-segment-display.h"
 #include "pedals.h"
+#include "Dac.h"
+#include "invertor.h"
+#include "usb_monitoring.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -72,31 +81,11 @@ extern "C" {
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
-void I2c_Callback(uint8 Event, uint8 Channel){
-	;
-}
 
-void I2c_ErrorCallback(uint8 Event, uint8 Channel){
-	;
-}
 
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
-
-
-
-void TestDelay(uint32 delay);
-void TestDelay(uint32 delay)
-{
-    static volatile uint32 DelayTimer = 0;
-    while(DelayTimer < delay)
-    {
-        DelayTimer++;
-    }
-    DelayTimer = 0;
-}
-
 /**
 * @brief        Main function of the example
 * @details      Initialize the used drivers and uses the Icu
@@ -104,38 +93,25 @@ void TestDelay(uint32 delay)
 */
 int main(void)
 {
-    /* Initialize the Mcu driver */
     Mcu_Init(NULL_PTR);
-
-    /* Initialize the clock tree and apply PLL as system clock */
     Mcu_InitClock(McuClockSettingConfig_0);
-
     while(MCU_PLL_LOCKED != Mcu_GetPllStatus())
     {
     	;
     }
     Mcu_DistributePllClock();
-    /* Apply a mode configuration */
     Mcu_SetMode(McuModeSettingConf_0);
-
-    /* Platform initialization */
     Platform_Init(NULL_PTR);
-
-    /* Port initialization */
     Port_Init(NULL_PTR);
-
     Mcl_Init(NULL_PTR);
-
-    /* GPT initialization */
     Gpt_Init(NULL_PTR);
-
-    /* SPI initialization */
     Spi_Init(NULL_PTR);
-
-    /*I2c initialization */
     I2c_Init(NULL_PTR);
-
     Adc_Init(NULL_PTR);
+    Pwm_Init(NULL_PTR);
+    Uart_Init(NULL_PTR);
+	Can_43_FLEXCAN_Init(NULL_PTR);
+	CanIf_Init(NULL_PTR);
 
     /* Wdg_43_fs26 initialization */
     volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
@@ -153,19 +129,94 @@ int main(void)
     	Dio_WriteChannel(142, 0);
     }
 
-    //SevenSegmentInit();
-    //SevSegGrTest(0);
+    SevenSegmentInit();
+    //SevenSegmentTest();
 	DisplayInit();
 	PedalsInit();
+	DacInit();
+    InverterInit();
+    USBInit(0);
+	DacEnable();
 	//DisplayTest();
 	//DashboardTest();
 	//VladTest();
-	//VladTest();
 	//SoundTest();
+	volatile uint32 frana = 0, acceleratie = 0, rpm = 0, tensiune = 0, curent = 0, tempController = 0, tempMotor = 0, putere = 0, procentaj = 0, tempMaxim = 0, viteza = 0, throttle = 0;
+    Can_43_FLEXCAN_SetControllerMode(Can_43_FLEXCANConf_CanController_CanController_0, CAN_CS_STARTED);
+    Can_43_FLEXCAN_EnableControllerInterrupts(0);
 	while(1){
-		volatile uint16 frana = PedalsGetBrakePercent();
-		volatile uint16 acceleratie = PedalsGetAccelerationPercent();
-		DashboardUpdate(0, 0, 0, 0, 0, 0, frana, acceleratie);
+		//citire valori senzori frana
+		frana = PedalsGetBrakePercent();
+		acceleratie = PedalsGetAccelerationPercent();
+
+		//TODO implementare BSPD
+
+		//modificare output comanda de cuplu
+		DacSetOutput(0, acceleratie);
+		DacSetOutput(1, acceleratie);
+
+		//citire date de la invertor
+        Can_43_FLEXCAN_MainFunction_Read();
+        rpm = InverterGetRpm(0);
+        curent = InverterGetCurrent(0);//curent returnat cu o virgula
+        tensiune = InverterGetVoltage(0);//tensiune returnata cu o virgula
+        tempController = InverterGetControllerTemperature(0);
+        tempMotor = InverterGetMotorTemperature(0);
+        throttle = InverterGetThrottle(0);
+
+        //calcul putere instantanee
+        if(curent != 0 && tensiune != 0){
+            putere = (((uint32)curent/10U) * ((uint32)tensiune/10U));
+        }
+        else{
+        	putere = 0U;
+        }
+
+		//actualizare afisaje segmente
+        //calcul procentaj baterie
+        if(tensiune < 600U){
+            procentaj = 0;
+        }
+        else if(tensiune > 1000U){
+        	procentaj = 1000U;//procentaj calculat cu o virgula
+        }
+        else{
+        	procentaj = (uint16)(tensiune - 600U) * 5U / 2U;//procentaj calculat cu o virgula
+        }
+        if(procentaj < 1000U){
+            SevenSegmentDisplayDecimalValue(2, procentaj, 1);
+        }
+        else{
+            SevenSegmentDisplayDecimalValue(2, procentaj/10U, 0);
+        }
+        tempMaxim = 0;
+        if(tempController > tempMotor){
+        	tempMaxim = tempController;
+        }
+        else{
+        	tempMaxim = tempMotor;
+        }
+        SevenSegmentDisplayDecimalValue(0, tempMaxim, 0);
+        viteza = 0;
+        if(rpm != 0){
+        	viteza = (rpm * 84807U) / 312500U;
+        }
+        if(viteza < 1000U){
+            SevenSegmentDisplayDecimalValue(1, viteza, 1);
+        }
+        else{
+            SevenSegmentDisplayDecimalValue(1, viteza/10U, 0);
+        }
+		//actualizare interfata display
+		//TODO martori de bord
+        DashboardUpdate(rpm, putere, tensiune/10U, procentaj/10U, tempMotor, tempController, frana, acceleratie);
+        //trimitere date pe uart
+        USBSendAcceleratorPedals(PedalsGetAccelerationPercentSensor1(), PedalsGetAccelerationPercentSensor2());
+        USBSendBrakePedal(frana);
+        USBSendInverterRPM(rpm, 0);
+        USBSendInverterVoltage(tensiune,0);
+        USBSendInverterCurrent(curent, 0);
+        USBSendInverterThrottle(throttle, 0);
 	}
 
 	while(1);

@@ -64,6 +64,17 @@ void PedalsInit(void)
 	Adc_SetupResultBuffer(Pedalsinstance.BrakeAdcGroup, &Pedalsinstance.BrakeValue);
 }
 
+uint16 PedalsGetAccelerationPercentSensor1(void){
+	uint16 pedalPercent = (((uint32)(Pedalsinstance.AccelerationValue1 - ACCEL_1_START_VALID)) * 100U) / (ACCEL_1_END_VALID - ACCEL_1_START_VALID);
+	return pedalPercent;
+}
+
+uint16 PedalsGetAccelerationPercentSensor2(void){
+	uint16 pedalPercent = (((uint32)(Pedalsinstance.AccelerationValue2 - ACCEL_2_START_VALID)) * 100U) / (ACCEL_2_END_VALID - ACCEL_2_START_VALID);
+	return pedalPercent;
+}
+
+
 uint16 PedalsGetAccelerationPercent(void)
 {
 	uint16 pedalPercent1 = 0, pedalPercent2 = 0, pedalValue1 = 0, pedalValue2 = 0;
@@ -92,6 +103,7 @@ uint16 PedalsGetAccelerationPercent(void)
 			pedalValue1 = Pedalsinstance.AccelerationValue1;
 		}
 	}
+	Pedalsinstance.AccelerationValue1 = pedalValue1;
 	//teste limite senzor 2
 	pedalValue2 = Pedalsinstance.AccelerationValue2;
 	if((pedalValue2 < ACCEL_2_START_LIMIT) || (pedalValue2 > ACCEL_2_END_LIMIT)){
@@ -110,6 +122,7 @@ uint16 PedalsGetAccelerationPercent(void)
 	}
 	//inversare valoare
 	pedalValue2 = ACCEL_2_START_VALID + (ACCEL_2_END_VALID - pedalValue2);
+	Pedalsinstance.AccelerationValue2 = pedalValue2;
 	//calculare valoare procentuala
 	pedalPercent1 = (((uint32)(pedalValue1 - ACCEL_1_START_VALID)) * 100U) / (ACCEL_1_END_VALID - ACCEL_1_START_VALID);
 	pedalPercent2 = (((uint32)(pedalValue2 - ACCEL_2_START_VALID)) * 100U) / (ACCEL_2_END_VALID - ACCEL_2_START_VALID);
