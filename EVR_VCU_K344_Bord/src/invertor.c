@@ -85,10 +85,13 @@ void InverterInit(void){
 
 uint16 InverterGetRpm(uint8 InverterIndex){
 	if(InverterIndex < 2U){
-		return InverterInstance[InverterIndex].rpm;
+		//return InverterInstance[InverterIndex].rpm;
 
 		if(InverterInstance[InverterIndex].rpm > 6000U){
 			return 6000U;
+		}
+		else if(InverterInstance[InverterIndex].rpm < 35U){
+			return 0U;
 		}
 		else{
 			return InverterInstance[InverterIndex].rpm;
@@ -101,7 +104,7 @@ uint16 InverterGetRpm(uint8 InverterIndex){
 
 uint16 InverterGetCurrent(uint8 InverterIndex){
 	if(InverterIndex < 2U){
-		return InverterInstance[InverterIndex].current;
+		//return InverterInstance[InverterIndex].current;
 
 		if(InverterInstance[InverterIndex].current > 4000U){
 			return 4000U;
@@ -117,7 +120,7 @@ uint16 InverterGetCurrent(uint8 InverterIndex){
 
 uint16 InverterGetVoltage(uint8 InverterIndex){
 	if(InverterIndex < 2U){
-		return InverterInstance[InverterIndex].voltage;
+		//return InverterInstance[InverterIndex].voltage;
 
 		if(InverterInstance[InverterIndex].voltage > 1800U){
 			return 1800U;

@@ -118,6 +118,17 @@ extern "C"{
 #define POWERMETER_INDICES_NUM 10
 #define POWERMETER_START_ANGLE 20
 #define POWERMETER_END_ANGLE 340
+//BSPD indicator graphical properties
+#define BSPD_X 250
+#define BSPD_Y 200
+#define BSPD_WIDTH 300
+#define BSPD_HEIGHT 150
+#define BSPD_THICKNESS 4
+#define BSPD_FONT 18
+#define BSPD_FONT_WIDTH 8
+#define BSPD_FONT_HEIGHT 16
+#define BSPD_FONT_SCALE 7
+
 /*==================================================================================================
 *                                             ENUMS
 ==================================================================================================*/
@@ -138,11 +149,11 @@ typedef struct{
 ==================================================================================================*/
 void DisplayInit(void);
 void DisplayTest(void);
-void VladTest(void);
+void ImageTest(void);
 void SoundTest(void);
 void DashboardTest(void);
 void DashboardInit(void);
-void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp, uint32 brake, uint32 acceleration);
+void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp, uint32 brake, uint32 acceleration, boolean BSPD);
 
 #ifdef __cplusplus
 }

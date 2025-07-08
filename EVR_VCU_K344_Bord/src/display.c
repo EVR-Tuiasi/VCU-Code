@@ -165,7 +165,7 @@ void DashboardTest(void){
 	while(1){
 		delay = 100000;
 		while(delay--);
-		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2, brake, acceleration);
+		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2, brake, acceleration, false);
 		battery_percent++;
 		speed+=15;
 		power+=4;
@@ -189,7 +189,7 @@ void DashboardInit(void){
 
 }
 
-void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp, uint32 brake, uint32 acceleration){
+void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 battery_percent, uint32 battery_temp, uint32 inverter_temp, uint32 brake, uint32 acceleration, boolean BSPD){
 	uint32 index = 0;
 	uint8 color_red = 0, color_blue = 0, color_green = 0, text_offset = 0;
 	uint16 height_offset, width_offset;
@@ -436,7 +436,7 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), point_size(SPEEDOMETER_RADIUS * 16 - SPEEDOMETER_THICKNESS * 16 * 2));
 		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS));
 		//inner circle
-		wr32(RAM_DL + (index+=4), color_rgb(230U, 230U, 0U)); // change color to yellow
+		wr32(RAM_DL + (index+=4), color_rgb(230, 230, 0)); // change color to yellow
 		wr32(RAM_DL + (index+=4), point_size(SPEEDOMETER_INNER_RADIUS * 16));
 		wr32(RAM_DL + (index+=4), vertex2f(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS));
 		//lower rectangle
@@ -468,7 +468,7 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256));
 		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, SPEEDOMETER_FONT_WIDTH, SPEEDOMETER_FONT_HEIGHT));
 		//indices numbers
-		wr32(RAM_DL + (index+=4), color_rgb(230U, 230U, 0U)); // change color to yellow
+		wr32(RAM_DL + (index+=4), color_rgb(230, 230, 0)); // change color to yellow
 		for(uint16 i = 0; i <= SPEEDOMETER_INDICES_NUM; i++){
 			uint16 angle = (SPEEDOMETER_END_ANGLE - SPEEDOMETER_START_ANGLE) - i * (SPEEDOMETER_END_ANGLE - SPEEDOMETER_START_ANGLE) / SPEEDOMETER_INDICES_NUM + SPEEDOMETER_START_ANGLE, value = i * SPEEDOMETER_MAX_VALUE / SPEEDOMETER_INDICES_NUM;
 			sint32 x = sin(angle * 0.0175) * (SPEEDOMETER_INNER_RADIUS + SPEEDOMETER_RADIUS) / 2, y = cos(angle * 0.0175) * (SPEEDOMETER_INNER_RADIUS + SPEEDOMETER_RADIUS) / 2;
@@ -613,12 +613,39 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), restore_context());
 		//POWERMETER END
 
+		//BSPD
+		if(BSPD){
+			wr32(RAM_DL + (index+=4), save_context());
+			wr32(RAM_DL + (index+=4), color_rgb(0U, 0U, 0U)); // change color to black
+			wr32(RAM_DL + (index+=4), begin(RECTS));
+			wr32(RAM_DL + (index+=4), vertex2f(BSPD_X, BSPD_Y));
+			wr32(RAM_DL + (index+=4), vertex2f(BSPD_X + BSPD_WIDTH, BSPD_Y + BSPD_HEIGHT));
+			wr32(RAM_DL + (index+=4), color_rgb(230U, 230U, 0U)); // change color to yellow
+			wr32(RAM_DL + (index+=4), vertex2f(BSPD_X + BSPD_THICKNESS, BSPD_Y + BSPD_THICKNESS));
+			wr32(RAM_DL + (index+=4), vertex2f(BSPD_X + BSPD_WIDTH - BSPD_THICKNESS, BSPD_Y + BSPD_HEIGHT - BSPD_THICKNESS));
+			//text bspd
+			wr32(RAM_DL + (index+=4), begin(BITMAPS));
+			wr32(RAM_DL + (index+=4), bitmap_handle(BSPD_FONT));
+			wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, BSPD_FONT_WIDTH*BSPD_FONT_SCALE, BSPD_FONT_HEIGHT*BSPD_FONT_SCALE));
+			wr32(RAM_DL + (index+=4), bitmap_transform_a(256/BSPD_FONT_SCALE));
+			wr32(RAM_DL + (index+=4), bitmap_transform_e(256/BSPD_FONT_SCALE));
+			wr32(RAM_DL + (index+=4), color_rgb(0U, 0U, 0U)); // change color to black
+			char bspd_text[] = "BSPD";
+			for(int i=0; i<4; i++){
+				//wr32(RAM_DL + (index+=4), vertex2ii(BATTERY_TEMP_TEXT_X - 90U + battery_horizontal_offsets[i], BATTERY_TEMP_TEXT_Y - BATTERY_TEMP_FONT_HEIGHT - 10U, BATTERY_TEMP_FONT, battery_text[i]));
+				wr32(RAM_DL + (index+=4), vertex2ii(BSPD_X + BSPD_WIDTH/2 - BSPD_FONT_WIDTH * 2 * BSPD_FONT_SCALE + BSPD_FONT_WIDTH * BSPD_FONT_SCALE * i, BSPD_Y + BSPD_HEIGHT/2 - BSPD_FONT_HEIGHT * BSPD_FONT_SCALE/2, BSPD_FONT, bspd_text[i]));
+			}
+			wr32(RAM_DL + (index+=4), restore_context());
+		}
+
+		//BSPD END
+
 		wr32(RAM_DL + (index+=4), display()); // display the image
 		wr8(REG_DLSWAP,DLSWAP_FRAME); //display list swap
 	}
 }
 
-void VladTest(void){
+void ImageTest(void){
 	uint32 index;
 	uint32 unghi = 0;
 	//float x, y;

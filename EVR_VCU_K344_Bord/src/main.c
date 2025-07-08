@@ -140,22 +140,26 @@ int main(void)
 	//DisplayTest();
 	//DashboardTest();
 	//SoundTest();
+	boolean bspd = false;
 	volatile uint32 frana = 0, acceleratie = 0, rpm = 0, tensiune = 0, curent = 0, tempController = 0, tempMotor = 0, putere = 0, procentaj = 0, tempMaxim = 0, viteza = 0, throttle = 0;
 	while(1){
 		//citire valori senzori frana
 		frana = PedalsGetBrakePercent();
 		acceleratie = PedalsGetAccelerationPercent();
 
-		//TODO implementare BSPD
-
-		//modificare output comanda de cuplu
-		DacSetOutput(0, acceleratie);
-		DacSetOutput(1, acceleratie);
+		//implementare BSPD
+		if((frana >= 10U) && (acceleratie != 0U)){
+			DacSetOutput(0, 0);
+			DacSetOutput(1, 0);
+			bspd = true;
+		}
+		else{
+			DacSetOutput(0, acceleratie);
+			DacSetOutput(1, acceleratie);
+			bspd = false;
+		}
 
 		//citire date de la invertor
-		//InverterUpdate();
-	    //Can_43_FLEXCAN_MainFunction_Read();
-	    //Can_43_FLEXCAN_MainFunction_Read();
         rpm = InverterGetRpm(0);
         curent = InverterGetCurrent(0);//curent returnat cu o virgula
         tensiune = InverterGetVoltage(0);//tensiune returnata cu o virgula
@@ -208,7 +212,7 @@ int main(void)
         }
 		//actualizare interfata display
 		//TODO martori de bord
-        DashboardUpdate(rpm, putere, tensiune/10U, procentaj/10U, tempMotor, tempController, frana, acceleratie);
+        DashboardUpdate(rpm, putere, tensiune/10U, procentaj/10U, tempMotor, tempController, frana, acceleratie, bspd);
         //trimitere date pe uart
         USBSendAcceleratorPedals(PedalsGetAccelerationPercentSensor1(), PedalsGetAccelerationPercentSensor2());
         USBSendBrakePedal(frana);
