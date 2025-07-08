@@ -169,7 +169,7 @@ int main(void)
 
         //calcul putere instantanee
         if(curent != 0 && tensiune != 0){
-            putere = (((uint32)curent/10U) * ((uint32)tensiune/10U));
+            putere = (((uint64)curent) * ((uint64)tensiune))/100U;
         }
         else{
         	putere = 0U;

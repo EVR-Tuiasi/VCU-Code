@@ -2864,6 +2864,21 @@
                                  <array name="GptChannelEcucPartitionRef"/>
                                  <array name="GptWakeupConfiguration"/>
                               </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="Gpt_Pedale"/>
+                                 <setting name="GptChannelId" value="1"/>
+                                 <setting name="GptHwIp" value="EMIOS"/>
+                                 <setting name="GptModuleRef" value="/Gpt/Gpt/GptChannelConfigSet/Emios0/EmiosChannel_1"/>
+                                 <setting name="GptChannelMode" value="GPT_CH_MODE_CONTINUOUS"/>
+                                 <setting name="GptChannelClkSrcRef" value="/Gpt/Gpt/GptDriverConfiguration/GptClockReferencePoint_0"/>
+                                 <setting name="GptChannelTickValueMax" value="65535"/>
+                                 <setting name="GptEnableWakeup" value="false"/>
+                                 <array name="GptNotification">
+                                    <setting name="0" value="Gpt_Pedals"/>
+                                 </array>
+                                 <array name="GptChannelEcucPartitionRef"/>
+                                 <array name="GptWakeupConfiguration"/>
+                              </struct>
                            </array>
                            <array name="GptPit"/>
                            <array name="GptStm"/>
@@ -2877,6 +2892,13 @@
                                        <setting name="Name" value="EmiosChannel_0"/>
                                        <setting name="GptEmiosChannel" value="CH_4"/>
                                        <setting name="GptEmiosPrescaler" value="1"/>
+                                       <setting name="GptEmiosAlternatePrescaler" value="1"/>
+                                       <setting name="EmiosFreezeEnable" value="false"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="EmiosChannel_1"/>
+                                       <setting name="GptEmiosChannel" value="CH_5"/>
+                                       <setting name="GptEmiosPrescaler" value="2"/>
                                        <setting name="GptEmiosAlternatePrescaler" value="1"/>
                                        <setting name="EmiosFreezeEnable" value="false"/>
                                     </struct>
@@ -3044,8 +3066,8 @@
                            <struct name="26">
                               <setting name="Name" value="GptHwConfiguration_26"/>
                               <setting name="GptIsrHwId" value="EMIOS_0_CH_5"/>
-                              <setting name="GptIsrEnable" value="false"/>
-                              <setting name="GptChannelIsUsed" value="false"/>
+                              <setting name="GptIsrEnable" value="true"/>
+                              <setting name="GptChannelIsUsed" value="true"/>
                            </struct>
                            <struct name="27">
                               <setting name="Name" value="GptHwConfiguration_27"/>
@@ -3305,6 +3327,13 @@
                                     <setting name="IsrEnabled" value="true"/>
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="CAN0_ORED_32_63_MB_IRQHandler"/>
+                                 </struct>
+                                 <struct name="6">
+                                    <setting name="Name" value="GptPedale"/>
+                                    <setting name="IsrName" value="EMIOS0_4_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="EMIOS0_4_IRQ"/>
                                  </struct>
                               </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
@@ -4371,7 +4400,7 @@
                                        <array name="AdcHwTrigSignal"/>
                                        <array name="AdcHwTrigTimer"/>
                                        <array name="AdcNotification">
-                                          <setting name="0" value="NULL_PTR"/>
+                                          <setting name="0" value="Adc_Frana"/>
                                        </array>
                                        <setting name="AdcExtraNotification" value="NULL_PTR"/>
                                        <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>

@@ -11,7 +11,7 @@ extern "C" {
 ==================================================================================================*/
 #include"Mcu.h"
 #include"pedals.h"
-
+#include"Gpt.h"
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
@@ -33,6 +33,8 @@ Pedals Pedalsinstance = {
 	0,1,2,  //grupuri
 	0,0,0,  //valori
 };
+uint16 brakeDebounceBuffer[BRAKE_DEBOUNCE_BUFFER_SIZE] = {0U};
+uint8 brakeDebounceIndex = 0U;
 
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
@@ -52,8 +54,41 @@ Pedals Pedalsinstance = {
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
 ==================================================================================================*/
+void Gpt_Pedals(void){
+	if(Adc_GetGroupStatus(Pedalsinstance.BrakeAdcGroup) != ADC_BUSY){
+		Adc_StartGroupConversion(Pedalsinstance.BrakeAdcGroup);
+	}
+}
 
-
+void Adc_Frana(void){
+	uint16 pedalValue = Pedalsinstance.BrakeValue;
+	uint64 mean = 0;
+	//teste limite
+	if((pedalValue < BRAKE_START_LIMIT) || (pedalValue > BRAKE_END_LIMIT)){
+		pedalValue = BRAKE_START_VALID;
+	}
+	else{
+		if((pedalValue >= BRAKE_START_LIMIT) && (pedalValue <= BRAKE_START_VALID)){
+			pedalValue = BRAKE_START_VALID;
+		}
+		else if((pedalValue >= BRAKE_END_VALID) && (pedalValue <= BRAKE_END_LIMIT)){
+			pedalValue = BRAKE_END_VALID;
+		}
+		else{
+			pedalValue = Pedalsinstance.BrakeValue;
+		}
+	}
+	//inversare valoare
+	pedalValue = BRAKE_START_VALID + (BRAKE_END_VALID - pedalValue);
+	//debounce
+	brakeDebounceBuffer[brakeDebounceIndex] = pedalValue;
+	brakeDebounceIndex = (brakeDebounceIndex + 1) % BRAKE_DEBOUNCE_BUFFER_SIZE;
+	for(uint8 i=0; i<BRAKE_DEBOUNCE_BUFFER_SIZE; i++){
+		mean += brakeDebounceBuffer[i];
+	}
+	mean /= BRAKE_DEBOUNCE_BUFFER_SIZE;
+	Pedalsinstance.BrakeValue = mean;
+}
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
@@ -62,6 +97,9 @@ void PedalsInit(void)
 	Adc_SetupResultBuffer(Pedalsinstance.AccelerationAdcGroup1, &Pedalsinstance.AccelerationValue1);
 	Adc_SetupResultBuffer(Pedalsinstance.AccelerationAdcGroup2, &Pedalsinstance.AccelerationValue2);
 	Adc_SetupResultBuffer(Pedalsinstance.BrakeAdcGroup, &Pedalsinstance.BrakeValue);
+	Adc_EnableGroupNotification(2U);
+	Gpt_EnableNotification(1U);
+	Gpt_StartTimer(1U, 40000U);
 }
 
 uint16 PedalsGetAccelerationPercentSensor1(void){
@@ -130,32 +168,11 @@ uint16 PedalsGetAccelerationPercent(void)
 }
 
 uint16 PedalsGetBrakePercent(void){
-	uint16 pedalPercent = 0, pedalValue = 0;
-	Adc_StartGroupConversion(Pedalsinstance.BrakeAdcGroup);
-	volatile Adc_StatusType statusAdc;
-	do{
-		statusAdc = Adc_GetGroupStatus(Pedalsinstance.BrakeAdcGroup);
-	}while(statusAdc != ADC_STREAM_COMPLETED);
-	pedalValue = Pedalsinstance.BrakeValue;
-	//teste limite
-	if((pedalValue < BRAKE_START_LIMIT) || (pedalValue > BRAKE_END_LIMIT)){
-		pedalValue = BRAKE_START_VALID;
-	}
-	else{
-		if((pedalValue >= BRAKE_START_LIMIT) && (pedalValue <= BRAKE_START_VALID)){
-			pedalValue = BRAKE_START_VALID;
-		}
-		else if((pedalValue >= BRAKE_END_VALID) && (pedalValue <= BRAKE_END_LIMIT)){
-			pedalValue = BRAKE_END_VALID;
-		}
-		else{
-			pedalValue = Pedalsinstance.BrakeValue;
-		}
-	}
-	//inversare valoare
-	pedalValue = BRAKE_START_VALID + (BRAKE_END_VALID - pedalValue);
+	uint16 pedalPercent = 0;
 	//calcul procent
-	pedalPercent = (((uint32)(pedalValue - BRAKE_START_VALID)) * 100U) / (BRAKE_END_VALID - BRAKE_START_VALID);
+	Adc_DisableGroupNotification(2U);
+	pedalPercent = (((uint32)(Pedalsinstance.BrakeValue - BRAKE_START_VALID)) * 100U) / (BRAKE_END_VALID - BRAKE_START_VALID);
+	Adc_EnableGroupNotification(2U);
 	return pedalPercent;
 }
 
