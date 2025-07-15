@@ -160,7 +160,7 @@ void transmisieCMD(void)
 	#if 0
 	    	Dio_WriteChannel(37, 1);
 	#endif
-	    	delei = 300000;
+	    	delei = DELAY_COMENZI;
 	    	while(delei){
 	    		delei--;
 	    	}
@@ -293,17 +293,20 @@ void readBieMieSe()
 
         populeazaCMD(0,pachete[i]);
         transmisieCMD();
+        for(int j=0;j<NUMARUL_DE_MONITOARE;j++)
+        {
+            icBaterie.cellVoltage[j*12+0+i*3]=15 * (buffPrimire[5+8*j] * 256 + buffPrimire[4+8*j]) + 150000;
+            icBaterie.cellVoltage[j*12+1+i*3]=15 * (buffPrimire[7+8*j] * 256 + buffPrimire[6+8*j]) + 150000;
+            icBaterie.cellVoltage[j*12+2+i*3]=15 * (buffPrimire[9+8*j] * 256 + buffPrimire[8+8*j]) + 150000;
+        }
 
-        icBaterie.cellVoltage[0+i*3]=15 * (buffPrimire[5] * 256 + buffPrimire[4]) + 150000;
-        icBaterie.cellVoltage[1+i*3]=15 * (buffPrimire[7] * 256 + buffPrimire[6]) + 150000;
-        icBaterie.cellVoltage[2+i*3]=15 * (buffPrimire[9] * 256 + buffPrimire[8]) + 150000;
 
         if (i == 0) {
-            icBaterie.packCurrent = ((buffPrimire[17] << 16) + (buffPrimire[16] << 8) + (buffPrimire[15]))*5;
+            icBaterie.packCurrent = ((buffPrimire[5+4+8*NUMARUL_DE_MONITOARE] << 16) + (buffPrimire[4+4+8*NUMARUL_DE_MONITOARE] << 8) + (buffPrimire[3+4+8*NUMARUL_DE_MONITOARE]))*5;
 
         }
         else if (i == 1) {
-        	icBaterie.packVoltage = (buffPrimire[14] << 16) | (buffPrimire[13] << 8) | buffPrimire[12];
+        	icBaterie.packVoltage = (buffPrimire[2+4+8*NUMARUL_DE_MONITOARE] << 16) | (buffPrimire[1+4+8*NUMARUL_DE_MONITOARE] << 8) | buffPrimire[4+8*NUMARUL_DE_MONITOARE];
             if (icBaterie.packVoltage & 0x800000) {
             	icBaterie.packVoltage |= 0xFF000000;  // Set upper 8 bits to 1
             } else {

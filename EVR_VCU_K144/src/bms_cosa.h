@@ -9,11 +9,13 @@
 #define BMS_COSA_H_
 #define BATTERY_CELLS 24
 #define BOARDS_NUMBER 5
-#define NUMARUL_DE_MONITOARE 1
+#define NUMARUL_DE_MONITOARE 2
 #define NUMARUL_DE_SUNTURI 1
 #define CRC_DARIUS 0x8D
-#define MARELE_DELAY 30000
-
+#define MARELE_DELAY 10000
+//30000 mergea binex
+#define DELAY_COMENZI 10000
+//300000 initial
 struct biemese
 {
 	int packCurrent;
