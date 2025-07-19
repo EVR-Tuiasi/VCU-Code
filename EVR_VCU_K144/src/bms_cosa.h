@@ -5,6 +5,7 @@
  *      Author: cosaa
  */
 
+#include "Mcu.h"
 #ifndef BMS_COSA_H_
 #define BMS_COSA_H_
 #define BATTERY_CELLS 24
@@ -65,6 +66,7 @@ int getVoltagePachet(void);
 int CFGAok(void);
 void bmsInit(void);
 void sendEroareUnitate(int index);
+int CRCok(uint8 *pointer);
 
 
 #endif /* BMS_COSA_H_ */

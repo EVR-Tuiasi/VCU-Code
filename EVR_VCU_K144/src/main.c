@@ -163,11 +163,11 @@ int main(void)
     bmsInit();
 
     while (1) {
-        //if(!CFGAok())
-        //	bmsInit();
+        if(!CFGAok())
+        	bmsInit();
     	readBieMieSe();
     	sendAllUart();
-    	sendAMS(); //verifcare CRC read
+    	sendAMS();
     	sendErori();
     	//daca eroare register basicaly reset
     	//daca eroare CRC forget

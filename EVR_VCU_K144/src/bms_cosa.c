@@ -294,12 +294,15 @@ void readBieMieSe()
 
         populeazaCMD(0,pachete[i]);
         transmisieCMD();
+
+
+
         for(int j=0;j<NUMARUL_DE_MONITOARE;j++)
         {
-            icBaterie.cellVoltage[j*12+0+i*3]=15 * (buffPrimire[5+8*j] * 256 + buffPrimire[4+8*j]) + 150000;
-            icBaterie.cellVoltage[j*12+1+i*3]=15 * (buffPrimire[7+8*j] * 256 + buffPrimire[6+8*j]) + 150000;
-            icBaterie.cellVoltage[j*12+2+i*3]=15 * (buffPrimire[9+8*j] * 256 + buffPrimire[8+8*j]) + 150000;
-        }
+        	icBaterie.cellVoltage[j*12+0+i*3]=15 * (buffPrimire[5+8*j] * 256 + buffPrimire[4+8*j]) + 150000;
+        	icBaterie.cellVoltage[j*12+1+i*3]=15 * (buffPrimire[7+8*j] * 256 + buffPrimire[6+8*j]) + 150000;
+        	icBaterie.cellVoltage[j*12+2+i*3]=15 * (buffPrimire[9+8*j] * 256 + buffPrimire[8+8*j]) + 150000;
+		}
 
 
         if (i == 0) {
@@ -403,34 +406,34 @@ int CFGAok(void) // returneaza TRUE daca TOTI registrii din serie sunt conform c
     int offset;
     for(int i = 0; i < NUMARUL_DE_SUNTURI; i++)
     {
-        if(buffTrimitere[4 + 8*i] != 0x00)        // default
+        if(buffPrimire[4 + 8*i] != 0x00)        // default
             return false;
-        if(buffTrimitere[5 + 8*i] != 0x00)        // CFGAR1
+        if(buffPrimire[5 + 8*i] != 0x00)        // CFGAR1
             return false;
-        if(buffTrimitere[6 + 8*i] != 0x00)        // CFGAR2
+        if(buffPrimire[6 + 8*i] != 0x00)        // CFGAR2
             return false;
-        if(buffTrimitere[7 + 8*i] != 0x5F)        // porneste GPIO
+        if(buffPrimire[7 + 8*i] != 0x5F)        // porneste GPIO
             return false;
-        if(buffTrimitere[8 + 8*i] != 0x00)
+        if(buffPrimire[8 + 8*i] != 0x00)
             return false;
-        if(buffTrimitere[9 + 8*i] != 0x10)
+        if(buffPrimire[9 + 8*i] != 0x10)
             return false;
     }
 
     for(int i = 0; i < NUMARUL_DE_MONITOARE; i++)
     {
         offset = 4 + 8*NUMARUL_DE_SUNTURI + 8*i;
-        if(buffTrimitere[offset + 0] != 0x81)      // default
+        if(buffPrimire[offset + 0] != 0x81)      // default
             return false;
-        if(buffTrimitere[offset + 1] != 0x00)      // CFGAR1
+        if(buffPrimire[offset + 1] != 0x00)      // CFGAR1
             return false;
-        if(buffTrimitere[offset + 2] != 0x00)      // CFGAR2
+        if(buffPrimire[offset + 2] != 0x00)      // CFGAR2
             return false;
-        if(buffTrimitere[offset + 3] != 0xFF)      // porneste GPIO
+        if(buffPrimire[offset + 3] != 0xFF)      // porneste GPIO
             return false;
-        if(buffTrimitere[offset + 4] != 0x03)
+        if(buffPrimire[offset + 4] != 0x03)
             return false;
-        if(buffTrimitere[offset + 5] != 0x10)
+        if(buffPrimire[offset + 5] != 0x10)
             return false;
     }
 
@@ -449,4 +452,11 @@ void sendEroareUnitate(int index)
 //trimite eroare ca modulul index este bulit
 {
 	buffer[0]=index;
+}
+
+int CRCok(uint8 *pointer) //nu merge
+{
+	uint16 peculCalculat=pec10_calc(true,6U, pointer);
+	uint16 pecPrimit= (pointer[7]<<8)|pointer[6];
+	return peculCalculat==pecPrimit;
 }
