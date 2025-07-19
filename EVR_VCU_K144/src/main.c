@@ -79,7 +79,7 @@ volatile int32_t value24;
 volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 uint16 dpec;
 
-struct biemese icBaterie;
+extern struct biemese icBaterie;
 
 int numarulDeDispozitive = NUMARUL_DE_MONITOARE + NUMARUL_DE_SUNTURI;
 
@@ -165,7 +165,7 @@ int main(void)
     RDCFGA();
     flushTX();
 
-    parametriiADC();
+    parametriiADC(); //bmsINIT
     flushTX();
 
     RDCFGA();
@@ -178,7 +178,10 @@ int main(void)
 
     while (1) {
     	readBieMieSe();
-    	sendAllUart();
+    	sendAllUart(); //read din struct getWhatever
+    	sendAMS(); //verifcare CRC read
+    	sendErori(); //10 citiri
+    	//if CFGA cum trebe go on, else WRCFGA
     }
    }
 

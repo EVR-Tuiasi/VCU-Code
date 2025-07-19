@@ -16,6 +16,13 @@
 //30000 mergea binex
 #define DELAY_COMENZI 10000
 //300000 initial
+
+#define CURENT_MAX 2000
+//in MILIAMPERI te rog
+#define UNDERVOLTAGE_CELL 1000
+//in MILIVOLTI te implor
+#define OVERVOLTAGE_CELL 3000
+
 struct biemese
 {
 	int packCurrent;
@@ -47,7 +54,9 @@ void CLRFLG(void);
 void ADCV(void);
 void readBieMieSe(void);
 void sendAllUart(void);
+void sendAMS(void);
+void sendErori(void);
 
-
+int getCelula(int index);
 
 #endif /* BMS_COSA_H_ */

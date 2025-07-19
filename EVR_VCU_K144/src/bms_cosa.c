@@ -18,11 +18,12 @@
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
 #include "bms.h"
+///aici normal
 
 extern uint8 buffTrimitere[64];
 extern uint8 buffPrimire[64];
 extern volatile int delei;
-extern struct biemese icBaterie;
+struct biemese icBaterie;
 extern uint8 buffer[10];
 
 extern uint8 pachete[6];
@@ -349,4 +350,29 @@ void sendAllUart()
 		buffer[7] = CRC_DARIUS;
 		Uart_SyncSend(0, buffer, 8, 10000000);
     }
+}
+
+void sendAMS(void)
+{
+	if(icBaterie.packCurrent > CURENT_MAX)
+	{
+		buffer[0] = 11; //cevaEroare
+	}
+}
+
+void sendErori(void)
+{
+	for(int i=0;i<BATTERY_CELLS;i++)
+	{
+		if(icBaterie.cellVoltage[i]<UNDERVOLTAGE_CELL)
+		{
+			buffer[0] = 11; //cevaEroare
+			buffer[0] = i;  //unde crapa
+		}
+		else if(icBaterie.cellVoltage[i]>OVERVOLTAGE_CELL)
+		{
+			buffer[0] = 11; //cevaEroare
+			buffer[0] = i;  //unde crapa
+		}
+	}
 }
