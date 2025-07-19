@@ -376,3 +376,77 @@ void sendErori(void)
 		}
 	}
 }
+
+int getCelula(int index) //returneaza tensiunea celulei X
+{
+	if(index<BATTERY_CELLS)
+	{
+		return icBaterie.cellVoltage[index];
+
+	}
+	return 0;
+}
+
+int getCurent(void)
+{
+	return icBaterie.packCurrent;
+}
+
+int getVoltagePachet(void)
+{
+	return icBaterie.packVoltage;
+}
+
+int CFGAok(void) // returneaza TRUE daca TOTI registrii din serie sunt conform configuratiei
+{
+    RDCFGA();
+    int offset;
+    for(int i = 0; i < NUMARUL_DE_SUNTURI; i++)
+    {
+        if(buffTrimitere[4 + 8*i] != 0x00)        // default
+            return false;
+        if(buffTrimitere[5 + 8*i] != 0x00)        // CFGAR1
+            return false;
+        if(buffTrimitere[6 + 8*i] != 0x00)        // CFGAR2
+            return false;
+        if(buffTrimitere[7 + 8*i] != 0x5F)        // porneste GPIO
+            return false;
+        if(buffTrimitere[8 + 8*i] != 0x00)
+            return false;
+        if(buffTrimitere[9 + 8*i] != 0x10)
+            return false;
+    }
+
+    for(int i = 0; i < NUMARUL_DE_MONITOARE; i++)
+    {
+        offset = 4 + 8*NUMARUL_DE_SUNTURI + 8*i;
+        if(buffTrimitere[offset + 0] != 0x81)      // default
+            return false;
+        if(buffTrimitere[offset + 1] != 0x00)      // CFGAR1
+            return false;
+        if(buffTrimitere[offset + 2] != 0x00)      // CFGAR2
+            return false;
+        if(buffTrimitere[offset + 3] != 0xFF)      // porneste GPIO
+            return false;
+        if(buffTrimitere[offset + 4] != 0x03)
+            return false;
+        if(buffTrimitere[offset + 5] != 0x10)
+            return false;
+    }
+
+    return true;
+}
+
+void bmsInit(void)
+{
+
+    parametriiADC(); //bmsINIT
+    ADCV();
+    flushTX();
+}
+
+void sendEroareUnitate(int index)
+//trimite eroare ca modulul index este bulit
+{
+	buffer[0]=index;
+}

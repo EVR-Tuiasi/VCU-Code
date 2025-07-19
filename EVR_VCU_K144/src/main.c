@@ -157,31 +157,21 @@ int main(void)
 
     //alt branch
 
-    SRST();
-
-    RDSID();
-    flushTX();
-
-    RDCFGA();
-    flushTX();
-
-    parametriiADC(); //bmsINIT
-    flushTX();
-
-    RDCFGA();
-    flushTX();
-
     USBInit(0);
 
-    ADCV();
 
+    bmsInit();
 
     while (1) {
+        //if(!CFGAok())
+        //	bmsInit();
     	readBieMieSe();
-    	sendAllUart(); //read din struct getWhatever
+    	sendAllUart();
     	sendAMS(); //verifcare CRC read
-    	sendErori(); //10 citiri
-    	//if CFGA cum trebe go on, else WRCFGA
+    	sendErori();
+    	//daca eroare register basicaly reset
+    	//daca eroare CRC forget
+    	//daca eroare valoare stupida then ZERO
     }
    }
 

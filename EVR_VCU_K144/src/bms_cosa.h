@@ -22,6 +22,8 @@
 #define UNDERVOLTAGE_CELL 1000
 //in MILIVOLTI te implor
 #define OVERVOLTAGE_CELL 3000
+#define CURENT_STUPID 1000000
+#define TENSIUNE_STUPID 10000
 
 struct biemese
 {
@@ -58,5 +60,11 @@ void sendAMS(void);
 void sendErori(void);
 
 int getCelula(int index);
+int getCurent(void);
+int getVoltagePachet(void);
+int CFGAok(void);
+void bmsInit(void);
+void sendEroareUnitate(int index);
+
 
 #endif /* BMS_COSA_H_ */
