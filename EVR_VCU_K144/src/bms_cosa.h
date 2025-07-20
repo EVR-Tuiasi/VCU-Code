@@ -24,7 +24,9 @@
 //in MILIVOLTI te implor
 #define OVERVOLTAGE_CELL 3000
 #define CURENT_STUPID 1000000
-#define TENSIUNE_STUPID 10000
+#define TENSIUNE_STUPID 1000000
+#define CELULA_STUPID 1000000
+//100k e 10v
 
 struct biemese
 {

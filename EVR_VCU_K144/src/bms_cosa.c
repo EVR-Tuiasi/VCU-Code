@@ -302,11 +302,33 @@ void readBieMieSe()
         	icBaterie.cellVoltage[j*12+0+i*3]=15 * (buffPrimire[5+8*j] * 256 + buffPrimire[4+8*j]) + 150000;
         	icBaterie.cellVoltage[j*12+1+i*3]=15 * (buffPrimire[7+8*j] * 256 + buffPrimire[6+8*j]) + 150000;
         	icBaterie.cellVoltage[j*12+2+i*3]=15 * (buffPrimire[9+8*j] * 256 + buffPrimire[8+8*j]) + 150000;
+
+        	if(icBaterie.cellVoltage[j*12+0+i*3]>CELULA_STUPID)
+        	{
+        		icBaterie.cellVoltage[j*12+0+i*3]=0;
+        		sendEroareUnitate(j);
+        	}
+        	if(icBaterie.cellVoltage[j*12+1+i*3]>CELULA_STUPID)
+        	{
+        		icBaterie.cellVoltage[j*12+1+i*3]=0;
+        		sendEroareUnitate(j);
+        	}
+        	if(icBaterie.cellVoltage[j*12+2+i*3]>CELULA_STUPID)
+        	{
+        		icBaterie.cellVoltage[j*12+2+i*3]=0;
+        		sendEroareUnitate(j);
+        	}
 		}
 
 
         if (i == 0) {
             icBaterie.packCurrent = ((buffPrimire[5+4+8*NUMARUL_DE_MONITOARE] << 16) + (buffPrimire[4+4+8*NUMARUL_DE_MONITOARE] << 8) + (buffPrimire[3+4+8*NUMARUL_DE_MONITOARE]))*5;
+            if(icBaterie.packCurrent>CURENT_STUPID)
+            {
+            	icBaterie.packCurrent=0;
+            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            }
+
 
         }
         else if (i == 1) {
@@ -316,6 +338,13 @@ void readBieMieSe()
             } else {
             	icBaterie.packVoltage &= 0x00FFFFFF;  // Clear upper 8 bits
             }
+
+            if(icBaterie.packVoltage>TENSIUNE_STUPID)
+            {
+            	icBaterie.packVoltage=0;
+            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            }
+
 
         }
 
