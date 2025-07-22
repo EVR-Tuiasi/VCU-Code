@@ -13,9 +13,9 @@
 #define NUMARUL_DE_MONITOARE 2
 #define NUMARUL_DE_SUNTURI 1
 #define CRC_DARIUS 0x8D
-#define MARELE_DELAY 10000
+#define MARELE_DELAY 30000
 //30000 mergea binex
-#define DELAY_COMENZI 10000
+#define DELAY_COMENZI 30000
 //300000 initial
 
 #define CURENT_MAX 2000
@@ -69,6 +69,8 @@ int CFGAok(void);
 void bmsInit(void);
 void sendEroareUnitate(int index);
 int CRCok(uint8 *pointer);
+
+uint8 CRC_calculate(uint8 length);
 
 
 #endif /* BMS_COSA_H_ */

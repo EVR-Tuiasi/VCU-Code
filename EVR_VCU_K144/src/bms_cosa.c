@@ -358,7 +358,7 @@ void sendAllUart()
     buffer[2] = (icBaterie.packCurrent >> 16) % 256;
     buffer[3] = (icBaterie.packCurrent >> 8)  % 256;
     buffer[4] = icBaterie.packCurrent % 256;
-    buffer[5] = CRC_DARIUS;
+    buffer[5] = CRC_calculate(6);
     Uart_SyncSend(0, buffer, 6, 10000000);
 
     buffer[0] = 12;
@@ -366,7 +366,7 @@ void sendAllUart()
     buffer[2] = (icBaterie.packVoltage >> 16) % 256;
     buffer[3] = (icBaterie.packVoltage >> 8)  % 256;
     buffer[4] = icBaterie.packVoltage % 256;
-    buffer[5] = CRC_DARIUS;
+    buffer[5] = CRC_calculate(6);
     Uart_SyncSend(0, buffer, 6, 10000000);
 
 
@@ -379,7 +379,7 @@ void sendAllUart()
 		buffer[4] = (icBaterie.cellVoltage[i] >> 16) % 256;
 		buffer[5] = (icBaterie.cellVoltage[i] >> 8)  % 256;
 		buffer[6] = icBaterie.cellVoltage[i] % 256;
-		buffer[7] = CRC_DARIUS;
+		buffer[7] = CRC_calculate(8);
 		Uart_SyncSend(0, buffer, 8, 10000000);
     }
 }
@@ -407,6 +407,37 @@ void sendErori(void)
 			buffer[0] = i;  //unde crapa
 		}
 	}
+}
+
+uint8 CRC_calculate(uint8 length){
+	uint8 crc=0, message[length];
+	uint16 divisor = 0x8D, dividend;
+	int i, j;
+
+	for(i=0; i<length-1; i++)
+	{
+		message[i] = buffer[i];
+	}
+
+	message[length-1]=0;
+
+	dividend = (message[0] << 8) | message[1];
+	for(j=15; j>=8; j--)
+		if(dividend & (1 << j))
+			dividend ^= divisor << (j-8);
+
+	for(i=2; i<length; i++)
+		{
+			dividend = (dividend << 8) | message[i];
+
+			for(j=15; j>=8; j--)
+				if(dividend & (1 << j))
+					dividend ^= divisor << (j-8);
+		}
+
+	crc = (dividend % 256);
+
+	return crc;
 }
 
 int getCelula(int index) //returneaza tensiunea celulei X
