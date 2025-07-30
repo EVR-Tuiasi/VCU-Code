@@ -23,6 +23,7 @@ extern "C" {
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
 #include "bms_cosa.h"
+#include "thermistor_mux.h"
 
 
 /*==================================================================================================
@@ -162,15 +163,22 @@ int main(void)
 
 
     bmsInit();
+    TempSensorInit();
 
     while (1) {
         if(!CFGAok())
         	bmsInit();
     	readBieMieSe();
     	readBieMieSeOW();
+
+    	for(int i = 0; i < THERMISTOR_BANKS; i++){
+    	    	GetTemp((uint16)i);
+    	    }
+
     	sendAllUart();
     	sendAMS();
     	sendErori();
+
     	//daca eroare register basicaly reset
     	//daca eroare CRC forget
     	//daca eroare valoare stupida then ZERO
