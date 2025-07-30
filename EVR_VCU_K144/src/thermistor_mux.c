@@ -38,8 +38,8 @@ Thermistors Thermistors_Data;
 
 // Nume temporare pt buffere
 
-uint16 bankselpins[THERMISTOR_BANKS] = {64, 65, 80,81, 79, 78, 33,32},// [(nr litera - 1)× 32 + cifra]
-		bankselpinsid[THERMISTOR_BANKS] = {6, 7, 8},
+uint16 bankselpins[THERMISTOR_BANKS] = {6,7,15,16,32+6,32+7,32+12,32+13,32+14,32+15,32+16,64+2,64+4,96+2,96+3,96+4},// [(nr litera - 1)× 32 + cifra]
+		bankselpinsid[THERMISTOR_BANKS] = {57,56,82,81,15,14,67,65,64,63,29,95,70,69,68},
 		adcreadchannels[THERMISTORS_PER_BANK] = {8,9,14,15,13,12,5,4};
 
 
