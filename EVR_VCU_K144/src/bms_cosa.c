@@ -326,7 +326,7 @@ void readBieMieSe()
 
         if (i == 0) {
             icBaterie.packCurrent = ((buffPrimire[5+4+8*NUMARUL_DE_MONITOARE] << 16) + (buffPrimire[4+4+8*NUMARUL_DE_MONITOARE] << 8) + (buffPrimire[3+4+8*NUMARUL_DE_MONITOARE]))*5;
-            if(icBaterie.packCurrent>CURENT_STUPID)
+            if(icBaterie.packCurrent>CURENT_STUPID || icBaterie.packCurrent < 0)
             {
             	icBaterie.packCurrent=0;
             	//sendEroareUnitate(NUMARUL_DE_MONITOARE);
@@ -342,9 +342,10 @@ void readBieMieSe()
             	icBaterie.packVoltage &= 0x00FFFFFF;  // Clear upper 8 bits
             }
 
-            if(icBaterie.packVoltage>TENSIUNE_STUPID)
+            if(icBaterie.packVoltage>TENSIUNE_STUPID || icBaterie.packVoltage<10)
             {
             	icBaterie.packVoltage=0;
+            	icBaterie.packCurrent=0;
             	//sendEroareUnitate(NUMARUL_DE_MONITOARE);
             }
 
@@ -394,34 +395,6 @@ void readBieMieSeOW()
         		sendEroareUnitate(j*12+2+i*3);
         	}
 		}
-
-
-        if (i == 0) {
-            icBaterie.packCurrent = ((buffPrimire[5+4+8*NUMARUL_DE_MONITOARE] << 16) + (buffPrimire[4+4+8*NUMARUL_DE_MONITOARE] << 8) + (buffPrimire[3+4+8*NUMARUL_DE_MONITOARE]))*5;
-            if(icBaterie.packCurrent>CURENT_STUPID)
-            {
-            	icBaterie.packCurrent=0;
-            	//sendEroareUnitate(NUMARUL_DE_MONITOARE);
-            }
-
-
-        }
-        else if (i == 1) {
-        	icBaterie.packVoltage = (buffPrimire[2+4+8*NUMARUL_DE_MONITOARE] << 16) | (buffPrimire[1+4+8*NUMARUL_DE_MONITOARE] << 8) | buffPrimire[4+8*NUMARUL_DE_MONITOARE];
-            if (icBaterie.packVoltage & 0x800000) {
-            	icBaterie.packVoltage |= 0xFF000000;  // Set upper 8 bits to 1
-            } else {
-            	icBaterie.packVoltage &= 0x00FFFFFF;  // Clear upper 8 bits
-            }
-
-            if(icBaterie.packVoltage>TENSIUNE_STUPID)
-            {
-            	icBaterie.packVoltage=0;
-            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
-            }
-
-
-        }
 
     }
 }
