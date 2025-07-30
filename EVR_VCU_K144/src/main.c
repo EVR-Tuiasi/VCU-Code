@@ -76,7 +76,7 @@ int curent1,curent2;
 volatile int i1,i2;
 volatile int v1,v2;
 volatile int32_t value24;
-volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
+
 uint16 dpec;
 
 extern struct biemese icBaterie;
@@ -89,6 +89,7 @@ uint8 buffPrimire[64] = {0};
 uint8 buffer[10];
 
 uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
+uint8 pacheteS[6]={0x03, 0x05, 0x07, 0x0D};
 
 
 /*==================================================================================================
@@ -166,6 +167,7 @@ int main(void)
         if(!CFGAok())
         	bmsInit();
     	readBieMieSe();
+    	readBieMieSeOW();
     	sendAllUart();
     	sendAMS();
     	sendErori();

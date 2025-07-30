@@ -27,11 +27,14 @@ struct biemese icBaterie;
 extern uint8 buffer[10];
 
 extern uint8 pachete[6];
+extern uint8 pacheteS[6];
 
 extern int numberOfSunturi;
 extern int numberOfMonitoare;
 extern int numberOfDevices;
 extern uint16 dpec;
+
+volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 
 void BmsInit(void)
 {
@@ -351,6 +354,78 @@ void readBieMieSe()
     }
 }
 
+void readBieMieSeOW()
+{
+	volatile int delayul;
+    for (int i = 0; i <= 3; i++) {
+        delayul = MARELE_DELAY;
+        while (delayul--) {
+            // wait
+        }
+
+        populeazaCMD(0x01, 0x6A); //69
+        transmisieCMD(); //ADSV OW par
+
+
+        populeazaCMD(0,pacheteS[i]);
+        transmisieCMD();
+
+
+
+        for(int j=0;j<NUMARUL_DE_MONITOARE;j++)
+        {
+        	tensiuneMILIvolti1=15 * (buffPrimire[5+8*j] * 256 + buffPrimire[4+8*j]) + 150000;
+        	tensiuneMILIvolti2=15 * (buffPrimire[7+8*j] * 256 + buffPrimire[6+8*j]) + 150000;
+        	tensiuneMILIvolti3=15 * (buffPrimire[9+8*j] * 256 + buffPrimire[8+8*j]) + 150000;
+
+        	if(tensiuneMILIvolti1>CELULA_STUPID)
+        	{
+        		icBaterie.cellVoltage[j*12+0+i*3]=0;
+        		sendEroareUnitate(j*12+0+i*3);
+        	}
+        	if(tensiuneMILIvolti2>CELULA_STUPID)
+        	{
+        		icBaterie.cellVoltage[j*12+1+i*3]=0;
+        		sendEroareUnitate(j*12+1+i*3);
+        	}
+        	if(tensiuneMILIvolti3>CELULA_STUPID)
+        	{
+        		icBaterie.cellVoltage[j*12+2+i*3]=0;
+        		sendEroareUnitate(j*12+2+i*3);
+        	}
+		}
+
+
+        if (i == 0) {
+            icBaterie.packCurrent = ((buffPrimire[5+4+8*NUMARUL_DE_MONITOARE] << 16) + (buffPrimire[4+4+8*NUMARUL_DE_MONITOARE] << 8) + (buffPrimire[3+4+8*NUMARUL_DE_MONITOARE]))*5;
+            if(icBaterie.packCurrent>CURENT_STUPID)
+            {
+            	icBaterie.packCurrent=0;
+            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            }
+
+
+        }
+        else if (i == 1) {
+        	icBaterie.packVoltage = (buffPrimire[2+4+8*NUMARUL_DE_MONITOARE] << 16) | (buffPrimire[1+4+8*NUMARUL_DE_MONITOARE] << 8) | buffPrimire[4+8*NUMARUL_DE_MONITOARE];
+            if (icBaterie.packVoltage & 0x800000) {
+            	icBaterie.packVoltage |= 0xFF000000;  // Set upper 8 bits to 1
+            } else {
+            	icBaterie.packVoltage &= 0x00FFFFFF;  // Clear upper 8 bits
+            }
+
+            if(icBaterie.packVoltage>TENSIUNE_STUPID)
+            {
+            	icBaterie.packVoltage=0;
+            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            }
+
+
+        }
+
+    }
+}
+
 void sendAllUart()
 {
     buffer[0] = 13;
@@ -511,7 +586,12 @@ void bmsInit(void)
 void sendEroareUnitate(int index)
 //trimite eroare ca modulul index este bulit
 {
-	buffer[0]=index;
+	buffer[0]=100;
+	buffer[1]=(index % (BATTERY_CELLS / NUMARUL_DE_MONITOARE))+0x08;
+	buffer[2]=index;
+	buffer[3]=CRC_calculate(4);
+	Uart_SyncSend(0, buffer, 4, 10000000);
+
 }
 
 int CRCok(uint8 *pointer) //nu merge

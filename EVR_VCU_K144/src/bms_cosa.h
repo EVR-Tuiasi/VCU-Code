@@ -25,7 +25,7 @@
 #define OVERVOLTAGE_CELL 3000
 #define CURENT_STUPID 1000000
 #define TENSIUNE_STUPID 1000000
-#define CELULA_STUPID 1000000
+#define CELULA_STUPID 500000
 //100k e 10v
 
 struct biemese
@@ -58,6 +58,7 @@ void RDCFGA(void);
 void CLRFLG(void);
 void ADCV(void);
 void readBieMieSe(void);
+void readBieMieSeOW(void);
 void sendAllUart(void);
 void sendAMS(void);
 void sendErori(void);
