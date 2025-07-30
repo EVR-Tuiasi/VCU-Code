@@ -306,21 +306,21 @@ void readBieMieSe()
         	icBaterie.cellVoltage[j*12+1+i*3]=15 * (buffPrimire[7+8*j] * 256 + buffPrimire[6+8*j]) + 150000;
         	icBaterie.cellVoltage[j*12+2+i*3]=15 * (buffPrimire[9+8*j] * 256 + buffPrimire[8+8*j]) + 150000;
 
-        	if(icBaterie.cellVoltage[j*12+0+i*3]>CELULA_STUPID)
+        	/*if(icBaterie.cellVoltage[j*12+0+i*3]>CELULA_STUPID)
         	{
         		icBaterie.cellVoltage[j*12+0+i*3]=0;
-        		sendEroareUnitate(j);
+        		//sendEroareUnitate(j);
         	}
         	if(icBaterie.cellVoltage[j*12+1+i*3]>CELULA_STUPID)
         	{
         		icBaterie.cellVoltage[j*12+1+i*3]=0;
-        		sendEroareUnitate(j);
+        		//sendEroareUnitate(j);
         	}
         	if(icBaterie.cellVoltage[j*12+2+i*3]>CELULA_STUPID)
         	{
         		icBaterie.cellVoltage[j*12+2+i*3]=0;
-        		sendEroareUnitate(j);
-        	}
+        		//sendEroareUnitate(j);
+        	}*/
 		}
 
 
@@ -329,7 +329,7 @@ void readBieMieSe()
             if(icBaterie.packCurrent>CURENT_STUPID)
             {
             	icBaterie.packCurrent=0;
-            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            	//sendEroareUnitate(NUMARUL_DE_MONITOARE);
             }
 
 
@@ -345,7 +345,7 @@ void readBieMieSe()
             if(icBaterie.packVoltage>TENSIUNE_STUPID)
             {
             	icBaterie.packVoltage=0;
-            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            	//sendEroareUnitate(NUMARUL_DE_MONITOARE);
             }
 
 
@@ -401,7 +401,7 @@ void readBieMieSeOW()
             if(icBaterie.packCurrent>CURENT_STUPID)
             {
             	icBaterie.packCurrent=0;
-            	sendEroareUnitate(NUMARUL_DE_MONITOARE);
+            	//sendEroareUnitate(NUMARUL_DE_MONITOARE);
             }
 
 
@@ -587,7 +587,7 @@ void sendEroareUnitate(int index)
 //trimite eroare ca modulul index este bulit
 {
 	buffer[0]=100;
-	buffer[1]=(index % (BATTERY_CELLS / NUMARUL_DE_MONITOARE))+0x08;
+	buffer[1]=(index / (BATTERY_CELLS / NUMARUL_DE_MONITOARE))+0x08;
 	buffer[2]=index;
 	buffer[3]=CRC_calculate(4);
 	Uart_SyncSend(0, buffer, 4, 10000000);
