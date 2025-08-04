@@ -430,6 +430,19 @@ void sendAllUart()
 		buffer[7] = CRC_calculate(8);
 		Uart_SyncSend(0, buffer, 8, 10000000);
     }
+
+    for(int i=0;i<128;i++)
+    {
+    	buffer[0] = 10;
+    	buffer[1] = 0;
+    	buffer[2] = i;
+    	buffer[3] = (i>>24) % 256;
+    	buffer[4] = (i >> 16) % 256;
+    	buffer[5] = (i >> 8)  % 256;
+    	buffer[6] = 1 + i % 256 ;
+    	buffer[7] = CRC_calculate(8);
+    	Uart_SyncSend(0, buffer, 8, 10000000);
+    }
 }
 
 void sendAMS(void)

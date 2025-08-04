@@ -207,9 +207,9 @@
 		<COND_TOOLCHAIN_CUSTOM_OPTION/>
 	</storageModule>
 	<storageModule moduleId="com.nxp.s32ds.cle.uct.internal.core.toolchainScriptProfile">
-		<COND_TOOLCHAIN_COMPONENTS_OPTION>COPY=platform.driver.dem;platform.driver.spi;platform.driver.icu;platform.driver.cdd_i2c;platform.driver.Platform;platform.driver.clock;platform.driver.mcu;platform.driver.osif;platform.driver.uart;platform.driver.port;platform.driver.dio</COND_TOOLCHAIN_COMPONENTS_OPTION>
+		<COND_TOOLCHAIN_COMPONENTS_OPTION/>
 	</storageModule>
 	<storageModule moduleId="com.nxp.s32ds.cle.uct.core">
-		<sdkComponents>platform.driver.dem;platform.driver.rte_dem;platform.driver.icu;platform.driver.rte_icu;platform.driver.det;platform.driver.cdd_i2c;platform.driver.rte_i2c;platform.driver.Platform;platform.driver.rte_platform;platform.driver.clock;platform.driver.rte_mcu;platform.driver.mcu;platform.driver.osif;platform.driver.uart;platform.driver.rte_uart;platform.driver.port;platform.driver.rte_port;platform.driver.dio;platform.driver.rte_dio;platform.driver.spi;platform.driver.rte_spi</sdkComponents>
+		<sdkComponents>platform.driver.dem;platform.driver.rte_dem;platform.driver.icu;platform.driver.rte_icu;platform.driver.det;platform.driver.cdd_i2c;platform.driver.rte_i2c;platform.driver.Platform;platform.driver.rte_platform;platform.driver.clock;platform.driver.rte_mcu;platform.driver.mcu;platform.driver.osif;platform.driver.uart;platform.driver.rte_uart;platform.driver.port;platform.driver.rte_port;platform.driver.dio;platform.driver.rte_dio;platform.driver.spi;platform.driver.rte_spi;platform.driver.adc;platform.driver.rte_adc</sdkComponents>
 	</storageModule>
 </cproject>

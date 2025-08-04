@@ -156,6 +156,7 @@ int main(void)
     Platform_Init(NULL_PTR);
     Uart_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
+    Adc_Init(NULL_PTR);
 
     //alt branch
 
