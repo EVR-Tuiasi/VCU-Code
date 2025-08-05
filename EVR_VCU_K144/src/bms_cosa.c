@@ -560,8 +560,8 @@ void sendEroareUnitate(int index)
 //trimite eroare ca modulul index este bulit
 {
 	buffer[0]=100;
-	buffer[1]=(index / (BATTERY_CELLS / NUMARUL_DE_MONITOARE))+0x08;
-	buffer[2]=index;
+	buffer[1]=0xF8;
+	buffer[2]=index+1;
 	buffer[3]=CRC_calculate(4);
 	Uart_SyncSend(0, buffer, 4, 10000000);
 
