@@ -383,16 +383,19 @@ void readBieMieSeOW()
         	{
         		icBaterie.cellVoltage[j*12+0+i*3]=0;
         		sendEroareUnitate(j*12+0+i*3);
+        		icBaterie.flag=true;
         	}
         	if(tensiuneMILIvolti2>CELULA_STUPID)
         	{
         		icBaterie.cellVoltage[j*12+1+i*3]=0;
         		sendEroareUnitate(j*12+1+i*3);
+        		icBaterie.flag=true;
         	}
         	if(tensiuneMILIvolti3>CELULA_STUPID)
         	{
         		icBaterie.cellVoltage[j*12+2+i*3]=0;
         		sendEroareUnitate(j*12+2+i*3);
+        		icBaterie.flag=true;
         	}
 		}
 
@@ -436,25 +439,57 @@ void sendAMS(void)
 {
 	if(icBaterie.packCurrent > CURENT_MAX)
 	{
-		buffer[0] = 11; //cevaEroare
+		icBaterie.flag=true; //cevaEroare
+		icBaterie.stateSHUNT=icBaterie.stateSHUNT|32;
+	}
+	if(icBaterie.packVoltage > TENSIUNE_MAX)
+		{
+			icBaterie.flag=true; //cevaEroare
+			icBaterie.stateSHUNT=icBaterie.stateSHUNT|4;
+		}
+	for(int i=0;i<BATTERY_CELLS;i++)
+	{
+		if(icBaterie.cellVoltage[i]<UNDERVOLTAGE_CELL)
+		{
+			icBaterie.flag=true; //cevaEroare
+			icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|8;
+		}
+		else if(icBaterie.cellVoltage[i]>OVERVOLTAGE_CELL)
+		{
+			icBaterie.flag=true; //cevaEroare
+			icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|4;
+		}
 	}
 }
 
 void sendErori(void)
 {
-	for(int i=0;i<BATTERY_CELLS;i++)
-	{
-		if(icBaterie.cellVoltage[i]<UNDERVOLTAGE_CELL)
-		{
-			buffer[0] = 11; //cevaEroare
-			buffer[0] = i;  //unde crapa
-		}
-		else if(icBaterie.cellVoltage[i]>OVERVOLTAGE_CELL)
-		{
-			buffer[0] = 11; //cevaEroare
-			buffer[0] = i;  //unde crapa
-		}
-	}
+	buffer[0]=100;
+	buffer[1]=0x07;
+	buffer[2]=icBaterie.stateSHUNT;
+	buffer[3]=CRC_calculate(4);
+	Uart_SyncSend(0, buffer, 4, 10000000);
+
+	buffer[0]=100;
+	buffer[1]=0x08;
+	buffer[2]=icBaterie.stateBMS[0];
+	buffer[3]=CRC_calculate(4);
+	Uart_SyncSend(0, buffer, 4, 10000000);
+
+	buffer[0]=100;
+	buffer[1]=0x09;
+	buffer[2]=icBaterie.stateBMS[1];
+	buffer[3]=CRC_calculate(4);
+	Uart_SyncSend(0, buffer, 4, 10000000);
+
+
+}
+
+void clearStates()
+{
+	for(int i=0;i<NUMARUL_DE_MONITOARE;i++)
+		icBaterie.stateBMS[i]=0;
+	icBaterie.stateSHUNT=0;
 }
 
 uint8 CRC_calculate(uint8 length){
@@ -554,6 +589,7 @@ void bmsInit(void)
     parametriiADC(); //bmsINIT
     ADCV();
     flushTX();
+    clearStates();
 }
 
 void sendEroareUnitate(int index)

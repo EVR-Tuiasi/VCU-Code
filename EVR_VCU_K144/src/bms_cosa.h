@@ -18,11 +18,12 @@
 #define DELAY_COMENZI 6000
 //300000 initial
 
-#define CURENT_MAX 2000
+#define CURENT_MAX 2000 //2A
 //in MILIAMPERI te rog
-#define UNDERVOLTAGE_CELL 1000
+#define UNDERVOLTAGE_CELL 200000 //2V pentru moment
 //in MILIVOLTI te implor
-#define OVERVOLTAGE_CELL 3000
+#define TENSIUNE_MAX 2000 //20V
+#define OVERVOLTAGE_CELL 250000 //2.5V pentru moment
 #define CURENT_STUPID 100000
 #define TENSIUNE_STUPID 100000
 #define CELULA_STUPID 500000
@@ -33,6 +34,9 @@ struct biemese
 	int packCurrent;
 	int packVoltage;
 	int cellVoltage[BATTERY_CELLS];
+	bool flag;
+	uint8 stateBMS[NUMARUL_DE_MONITOARE];
+	uint8 stateSHUNT;
 	//Spi_ChannelType bmsSpiChannel;
 };
 
@@ -70,6 +74,7 @@ int CFGAok(void);
 void bmsInit(void);
 void sendEroareUnitate(int index);
 int CRCok(uint8 *pointer);
+void clearStates(void);
 
 uint8 CRC_calculate(uint8 length);
 

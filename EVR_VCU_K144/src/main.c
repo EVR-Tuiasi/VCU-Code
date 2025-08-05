@@ -77,6 +77,7 @@ volatile int i1,i2;
 volatile int v1,v2;
 volatile int32_t value24;
 bool flag=true;
+int bomba=0;
 
 uint16 dpec;
 
@@ -161,11 +162,10 @@ int main(void)
 
     USBInit(0);
 
-
+    Dio_WriteChannel(79, 0);
     bmsInit();
 
     while (1) {
-    	Dio_WriteChannel(79, flag);
     	flag=!flag;
         if(!CFGAok())
         	bmsInit();
@@ -174,6 +174,15 @@ int main(void)
     	sendAllUart();
     	sendAMS();
     	sendErori();
+
+    	if(icBaterie.flag)
+    		bomba++;
+    	else
+    		bomba=0;
+    	if(bomba==3)
+    		Dio_WriteChannel(79, 1);
+    	clearStates();
+
     	//daca eroare register basicaly reset
     	//daca eroare CRC forget
     	//daca eroare valoare stupida then ZERO
