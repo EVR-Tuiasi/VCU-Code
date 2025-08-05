@@ -76,6 +76,7 @@ int curent1,curent2;
 volatile int i1,i2;
 volatile int v1,v2;
 volatile int32_t value24;
+bool flag=true;
 
 uint16 dpec;
 
@@ -164,6 +165,8 @@ int main(void)
     bmsInit();
 
     while (1) {
+    	Dio_WriteChannel(79, flag);
+    	flag=!flag;
         if(!CFGAok())
         	bmsInit();
     	readBieMieSe();

@@ -13,9 +13,9 @@
 #define NUMARUL_DE_MONITOARE 2
 #define NUMARUL_DE_SUNTURI 1
 #define CRC_DARIUS 0x8D
-#define MARELE_DELAY 10000
+#define MARELE_DELAY 6000
 //30000 mergea binex
-#define DELAY_COMENZI 10000
+#define DELAY_COMENZI 6000
 //300000 initial
 
 #define CURENT_MAX 2000
