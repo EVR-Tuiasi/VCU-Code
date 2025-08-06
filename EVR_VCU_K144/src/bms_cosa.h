@@ -13,9 +13,9 @@
 #define NUMARUL_DE_MONITOARE 2
 #define NUMARUL_DE_SUNTURI 1
 #define CRC_DARIUS 0x8D
-#define MARELE_DELAY 6000
+#define MARELE_DELAY 10000
 //30000 mergea binex
-#define DELAY_COMENZI 6000
+#define DELAY_COMENZI 10000
 //300000 initial
 
 #define CURENT_MAX 2000 //2A
@@ -23,6 +23,7 @@
 #define UNDERVOLTAGE_CELL 200000 //2V pentru moment
 //in MILIVOLTI te implor
 #define TENSIUNE_MAX 2000 //20V
+#define TENSIUNE_MIN 1000 //10V
 #define OVERVOLTAGE_CELL 250000 //2.5V pentru moment
 #define CURENT_STUPID 100000
 #define TENSIUNE_STUPID 100000
@@ -43,6 +44,7 @@ struct biemese
 void BmsInit(void);
 void BmsTest(void);
 void parametriiADC(void);
+void parametriiADCB(void);
 int BmsGetPackCurrent(void);
 int BmsGetPackVoltage(void);
 
@@ -59,6 +61,7 @@ void flushTX(void);
 void SRST(void);
 void RDSID(void);
 void RDCFGA(void);
+void RDCFGB(void);
 void CLRFLG(void);
 void ADCV(void);
 void readBieMieSe(void);
@@ -75,6 +78,7 @@ void bmsInit(void);
 void sendEroareUnitate(int index);
 int CRCok(uint8 *pointer);
 void clearStates(void);
+void readShuntOW(void);
 
 uint8 CRC_calculate(uint8 length);
 

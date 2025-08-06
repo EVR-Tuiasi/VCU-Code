@@ -241,7 +241,44 @@ void RDCFGA()
     transmisieCMD();     //RDCFGA
 }
 
+void RDCFGB()
+{
+    populeazaCMD(0x00,0x26);
+    transmisieCMD();     //RDCFGB
+}
+
 void parametriiADC()
+{
+    populeazaCMD(0x00, 0x01);
+    for(int i=0;i<NUMARUL_DE_SUNTURI;i++)
+    {
+        buffTrimitere[4+8*i]=0x0; //default
+        buffTrimitere[5+8*i]=0; //CFGAR1
+        buffTrimitere[6+8*i]=0; //CFGAR2
+        buffTrimitere[7+8*i]=0x5F; //porneste GPIO
+        buffTrimitere[8+8*i]=0x0;
+        buffTrimitere[9+8*i]=0x10;
+        dpec = pec10_calc(false,6U, buffTrimitere+4+8*i);
+        buffTrimitere[10+8*i] = dpec >> 8;
+        buffTrimitere[11+8*i] = dpec % 256;
+    }
+
+    for(int i=0;i<NUMARUL_DE_MONITOARE;i++)
+    {
+        buffTrimitere[4+8*NUMARUL_DE_SUNTURI+8*i]=0x81; //default
+        buffTrimitere[5+8*NUMARUL_DE_SUNTURI+8*i]=0; //CFGAR1
+        buffTrimitere[6+8*NUMARUL_DE_SUNTURI+8*i]=0; //CFGAR2
+        buffTrimitere[7+8*NUMARUL_DE_SUNTURI+8*i]=0xFF; //porneste GPIO
+        buffTrimitere[8+8*NUMARUL_DE_SUNTURI+8*i]=0x03;
+        buffTrimitere[9+8*NUMARUL_DE_SUNTURI+8*i]=0x10;
+        dpec = pec10_calc(false,6U, buffTrimitere+4+8*NUMARUL_DE_SUNTURI+8*i);
+        buffTrimitere[10+8*NUMARUL_DE_SUNTURI+8*i] = dpec >> 8;
+        buffTrimitere[11+8*NUMARUL_DE_SUNTURI+8*i] = dpec % 256;
+    }
+    transmisieWR48();     //WRCFGA
+}
+
+void parametriiADC_B()
 {
     populeazaCMD(0x00, 0x01);
     for(int i=0;i<NUMARUL_DE_SUNTURI;i++)
@@ -398,7 +435,6 @@ void readBieMieSeOW()
         		icBaterie.flag=true;
         	}
 		}
-
     }
 }
 
@@ -447,6 +483,12 @@ void sendAMS(void)
 			icBaterie.flag=true; //cevaEroare
 			icBaterie.stateSHUNT=icBaterie.stateSHUNT|4;
 		}
+	if(icBaterie.packVoltage < TENSIUNE_MIN)
+			{
+				icBaterie.flag=true; //cevaEroare
+				icBaterie.stateSHUNT=icBaterie.stateSHUNT|2;
+			}
+
 	for(int i=0;i<BATTERY_CELLS;i++)
 	{
 		if(icBaterie.cellVoltage[i]<UNDERVOLTAGE_CELL)
@@ -608,4 +650,16 @@ int CRCok(uint8 *pointer) //nu merge
 	uint16 peculCalculat=pec10_calc(true,6U, pointer);
 	uint16 pecPrimit= (pointer[7]<<8)|pointer[6];
 	return peculCalculat==pecPrimit;
+}
+
+void readShuntOW()
+{
+	volatile int delayul;
+	delayul = MARELE_DELAY;
+    while (delayul--) {}
+
+    populeazaCMD(0x01, 0xFA); //69
+    transmisieCMD(); //ADSV OW par
+
+
 }

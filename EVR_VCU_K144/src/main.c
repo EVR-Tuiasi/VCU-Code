@@ -164,6 +164,8 @@ int main(void)
 
     Dio_WriteChannel(79, 0);
     bmsInit();
+    RDCFGB();
+
 
     while (1) {
     	flag=!flag;
@@ -171,6 +173,7 @@ int main(void)
         	bmsInit();
     	readBieMieSe();
     	readBieMieSeOW();
+    	//readShuntOW();
     	sendAllUart();
     	sendAMS();
     	sendErori();
