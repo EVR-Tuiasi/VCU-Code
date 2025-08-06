@@ -278,37 +278,6 @@ void parametriiADC()
     transmisieWR48();     //WRCFGA
 }
 
-void parametriiADC_B()
-{
-    populeazaCMD(0x00, 0x01);
-    for(int i=0;i<NUMARUL_DE_SUNTURI;i++)
-    {
-        buffTrimitere[4+8*i]=0x0; //default
-        buffTrimitere[5+8*i]=0; //CFGAR1
-        buffTrimitere[6+8*i]=0; //CFGAR2
-        buffTrimitere[7+8*i]=0x5F; //porneste GPIO
-        buffTrimitere[8+8*i]=0x0;
-        buffTrimitere[9+8*i]=0x10;
-        dpec = pec10_calc(false,6U, buffTrimitere+4+8*i);
-        buffTrimitere[10+8*i] = dpec >> 8;
-        buffTrimitere[11+8*i] = dpec % 256;
-    }
-
-    for(int i=0;i<NUMARUL_DE_MONITOARE;i++)
-    {
-        buffTrimitere[4+8*NUMARUL_DE_SUNTURI+8*i]=0x81; //default
-        buffTrimitere[5+8*NUMARUL_DE_SUNTURI+8*i]=0; //CFGAR1
-        buffTrimitere[6+8*NUMARUL_DE_SUNTURI+8*i]=0; //CFGAR2
-        buffTrimitere[7+8*NUMARUL_DE_SUNTURI+8*i]=0xFF; //porneste GPIO
-        buffTrimitere[8+8*NUMARUL_DE_SUNTURI+8*i]=0x03;
-        buffTrimitere[9+8*NUMARUL_DE_SUNTURI+8*i]=0x10;
-        dpec = pec10_calc(false,6U, buffTrimitere+4+8*NUMARUL_DE_SUNTURI+8*i);
-        buffTrimitere[10+8*NUMARUL_DE_SUNTURI+8*i] = dpec >> 8;
-        buffTrimitere[11+8*NUMARUL_DE_SUNTURI+8*i] = dpec % 256;
-    }
-    transmisieWR48();     //WRCFGA
-}
-
 void CLRFLG()
 {
     populeazaCMD(0x17,0x07);

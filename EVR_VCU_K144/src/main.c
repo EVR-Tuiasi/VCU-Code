@@ -173,8 +173,7 @@ int main(void)
         	bmsInit();
     	readBieMieSe();
     	readBieMieSeOW();
-    	//readShuntOW();
-    	sendAllUart();
+
     	sendAMS();
     	sendErori();
 
@@ -182,9 +181,13 @@ int main(void)
     		bomba++;
     	else
     		bomba=0;
-    	if(bomba==3)
+    	if(bomba==2)
     		Dio_WriteChannel(79, 1);
+
+    	sendAllUart();
+
     	clearStates();
+
 
     	//daca eroare register basicaly reset
     	//daca eroare CRC forget
