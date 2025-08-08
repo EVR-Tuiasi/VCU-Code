@@ -23,6 +23,7 @@ extern "C" {
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
 #include "bms_cosa.h"
+#include "thermistor_mux.h"
 
 
 /*==================================================================================================
@@ -165,6 +166,12 @@ int main(void)
     Dio_WriteChannel(79, 0);
     bmsInit();
     RDCFGB();
+
+    TempSensorInit();
+
+        for(int i = 0; i < THERMISTOR_BANKS; i++){
+        	GetTemp((uint16)i);
+        }
 
 
     while (1) {
