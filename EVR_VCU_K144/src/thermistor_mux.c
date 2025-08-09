@@ -34,7 +34,7 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 
-Thermistors Thermistors_Data;
+volatile Thermistors Thermistors_Data;
 
 // Nume temporare pt buffere
 
