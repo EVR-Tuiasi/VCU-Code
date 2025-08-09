@@ -230,6 +230,11 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="PORTD" signal="port, 4" pin_num="69" pin_signal="PTD4">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -1158,7 +1163,7 @@
                                        <setting name="PortPinDirectionChangeable" value="true"/>
                                        <setting name="PortPinModeChangeable" value="true"/>
                                        <setting name="PortPinId" value="30"/>
-                                       <setting name="PortPinPcr" value="68"/>
+                                       <setting name="PortPinPcr" value="100"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
