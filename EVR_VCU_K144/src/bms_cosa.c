@@ -471,6 +471,8 @@ void sendAMS(void)
 			icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|4;
 		}
 	}
+
+
 }
 
 void sendErori(void)

@@ -94,6 +94,9 @@ uint8 buffer[10];
 uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
 uint8 pacheteS[6]={0x03, 0x05, 0x07, 0x0D};
 
+extern Thermistors Thermistors_Data;
+#define TEMP_MAX 60
+
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -169,10 +172,6 @@ int main(void)
 
     TempSensorInit();
 
-        for(int i = 0; i < THERMISTOR_BANKS; i++){
-        	GetTemp((uint16)i);
-        }
-
 
     while (1) {
     	flag=!flag;
@@ -181,8 +180,18 @@ int main(void)
     	readBieMieSe();
     	readBieMieSeOW();
 
+
     	sendAMS();
     	sendErori();
+
+    	for(int i=0;i<THERMISTOR_BANKS;i++)
+    	    	{
+    	    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
+    	    		{
+    	    			if(Thermistors_Data.ThermistorValues[i][j]>TEMP_MAX)
+    	    				icBaterie.flag=1;
+    	    		}
+    	    	}
 
     	if(icBaterie.flag)
     		bomba++;
@@ -191,7 +200,30 @@ int main(void)
     	if(bomba==2)
     		Dio_WriteChannel(79, 1);
 
+    	for(int i = 0; i < THERMISTOR_BANKS; i++){
+    	        	GetTemp((uint16)i);
+    	        }
+    	for(int i=0;i<THERMISTOR_BANKS;i++)
+    	{
+    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
+    		{
+    			buffer[0] = 10;
+    			buffer[1] = 0;
+    			buffer[2] = i;
+    			buffer[3] = 0;
+    			buffer[4] = 0;
+    			buffer[5] = (Thermistors_Data.ThermistorValues[i][j] >> 8)  % 256;
+    			buffer[6] = Thermistors_Data.ThermistorValues[i][j] % 256;
+    			buffer[7] = CRC_calculate(8);
+    			Uart_SyncSend(0, buffer, 8, 10000000);
+
+
+    		}
+    	}
+
     	sendAllUart();
+
+
 
     	clearStates();
 
