@@ -387,20 +387,20 @@ void readBieMieSeOW()
 
         	if(tensiuneMILIvolti1>CELULA_STUPID)
         	{
-        		icBaterie.cellVoltage[j*12+0+i*3]=0;
-        		sendEroareUnitate(j*12+0+i*3);
+        		icBaterie.cellVoltage[j*12+0+i*3]=icBaterie.cellVoltage[j*12+0+i*3]|(1<<32);
+        		//sendEroareUnitate(j*12+0+i*3);
         		icBaterie.flag=true;
         	}
         	if(tensiuneMILIvolti2>CELULA_STUPID)
         	{
-        		icBaterie.cellVoltage[j*12+1+i*3]=0;
-        		sendEroareUnitate(j*12+1+i*3);
+        		icBaterie.cellVoltage[j*12+1+i*3]=icBaterie.cellVoltage[j*12+1+i*3]|(1<<32);
+        		//sendEroareUnitate(j*12+1+i*3);
         		icBaterie.flag=true;
         	}
         	if(tensiuneMILIvolti3>CELULA_STUPID)
         	{
-        		icBaterie.cellVoltage[j*12+2+i*3]=0;
-        		sendEroareUnitate(j*12+2+i*3);
+        		icBaterie.cellVoltage[j*12+2+i*3]=icBaterie.cellVoltage[j*12+2+i*3]|(1<<32);
+        		//sendEroareUnitate(j*12+2+i*3);
         		icBaterie.flag=true;
         	}
 		}
