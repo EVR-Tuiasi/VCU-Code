@@ -40,7 +40,7 @@ volatile Thermistors Thermistors_Data;
 
 uint16 bankselpins[THERMISTOR_BANKS] =    {32,33,38,39,44,45,46,64,65,66,67,100,78,80,81,98},
 		bankselpinsid[THERMISTOR_BANKS] = {18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33},
-		adcreadchannels[THERMISTORS_PER_BANK] = {0, 1,2,3,4,5,6,7};
+		adcreadchannels[THERMISTORS_PER_BANK] = {8,9,2,3,4,5,6,7};
 
 
 /*==================================================================================================
@@ -96,9 +96,14 @@ sint32 GetTemp(uint16 TempSensorIndex){
 	for(int i = 0; i < THERMISTORS_PER_BANK; i++){
 		Adc_SetupResultBuffer(Thermistors_Data.BankReadChannels[i], &Thermistors_Data.ThermistorValues[TempSensorIndex][i]);
 		Adc_StartGroupConversion(Thermistors_Data.BankReadChannels[i]);
+		volatile Adc_StatusType temp;
+		do
+			{
+			temp=Adc_GetGroupStatus(Thermistors_Data.BankReadChannels[i]);
+			}
+		while(temp != ADC_STREAM_COMPLETED);
 
-		while(Adc_GetGroupStatus(Thermistors_Data.BankReadChannels[i]) != ADC_STREAM_COMPLETED);
-
+		//Adc_GetGroupStatus(Thermistors_Data.BankReadChannels[i])
 		Adc_ReadGroup(Thermistors_Data.BankReadChannels[i], &Thermistors_Data.ThermistorValues[TempSensorIndex][i]);
 	}
 

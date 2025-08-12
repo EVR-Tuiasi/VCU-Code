@@ -14,6 +14,7 @@ extern "C" {
 #include "Dio.h"
 #include "Icu.h"
 #include "Mcu.h"
+#include "Mcl.h"
 #include "Platform.h"
 #include "Port.h"
 #include "Spi.h"
@@ -157,10 +158,13 @@ int main(void)
     Mcu_SetMode(McuModeSettingConf_0);
 
     /* Initialize all pins using the Port driver */
+    Mcl_Init(NULL_PTR);
     Port_Init(NULL_PTR);
+
     Platform_Init(NULL_PTR);
     Uart_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
+    Adc_Init(NULL_PTR);
 
     //alt branch
 
@@ -184,14 +188,14 @@ int main(void)
     	sendAMS();
     	sendErori();
 
-    	for(int i=0;i<THERMISTOR_BANKS;i++)
+    	/*for(int i=0;i<THERMISTOR_BANKS;i++)
     	    	{
     	    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
     	    		{
     	    			if(Thermistors_Data.ThermistorValues[i][j]>TEMP_MAX)
     	    				icBaterie.flag=1;
     	    		}
-    	    	}
+    	    	}*/
 
     	if(icBaterie.flag)
     		bomba++;
@@ -203,13 +207,64 @@ int main(void)
     	for(int i = 0; i < THERMISTOR_BANKS; i++){
     	        	GetTemp((uint16)i);
     	        }
+
+    	for(int i=0;i<THERMISTOR_BANKS;i++)
+    	{
+    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
+    		{
+    			if(Thermistors_Data.ThermistorValues[i][j]<1040)
+    				Thermistors_Data.ThermistorValues[i][j]=1040;
+    			else if(Thermistors_Data.ThermistorValues[i][j]>2074)
+    				Thermistors_Data.ThermistorValues[i][j]=2074;
+
+    			if(Thermistors_Data.ThermistorValues[i][j]>=1140)
+    			{
+    				Thermistors_Data.ThermistorValues[i][j]=68400/Thermistors_Data.ThermistorValues[i][j];
+    				//60 65
+    			}
+    			else if(Thermistors_Data.ThermistorValues[i][j]>=1248)
+    			{
+    				//55 60
+    				Thermistors_Data.ThermistorValues[i][j]=68640/Thermistors_Data.ThermistorValues[i][j];
+    			}
+    			else if(Thermistors_Data.ThermistorValues[i][j]>=1399)
+    			{
+    			    				//55 50
+    				Thermistors_Data.ThermistorValues[i][j]=69950/Thermistors_Data.ThermistorValues[i][j];
+    			}
+    			else if(Thermistors_Data.ThermistorValues[i][j]>=1545)
+    			{
+    			    				//50 45
+    				Thermistors_Data.ThermistorValues[i][j]=69525/Thermistors_Data.ThermistorValues[i][j];
+    			}
+    			else if(Thermistors_Data.ThermistorValues[i][j]>=1708)
+    			{
+    			    				//45 40
+    				Thermistors_Data.ThermistorValues[i][j]=68325/Thermistors_Data.ThermistorValues[i][j];
+    			}
+    			else if(Thermistors_Data.ThermistorValues[i][j]>=1881)
+    			{
+    			    				//40 35
+    				Thermistors_Data.ThermistorValues[i][j]=65835/Thermistors_Data.ThermistorValues[i][j];
+    			}
+    			else
+    			{
+    			    				//35 30
+    				Thermistors_Data.ThermistorValues[i][j]=61410/Thermistors_Data.ThermistorValues[i][j];
+    			}
+    				//
+    		}
+
+    	}
+
+
     	for(int i=0;i<THERMISTOR_BANKS;i++)
     	{
     		for(int j=0;j<THERMISTORS_PER_BANK;j++)
     		{
     			buffer[0] = 10;
     			buffer[1] = 0;
-    			buffer[2] = i;
+    			buffer[2] = i*8+j;
     			buffer[3] = 0;
     			buffer[4] = 0;
     			buffer[5] = (Thermistors_Data.ThermistorValues[i][j] >> 8)  % 256;

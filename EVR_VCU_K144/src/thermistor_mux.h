@@ -12,15 +12,14 @@ extern "C"{
 #define THERMISTOR_BANKS 16
 #define THERMISTORS_PER_BANK 8
 
-
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
 ==================================================================================================*/
 
 typedef struct Thermistors{
-	uint16 ThermistorValues[THERMISTOR_BANKS][THERMISTORS_PER_BANK]; // Warning la functile Adc pentru setup si read daca folosesc uint32
+	uint32 ThermistorValues[THERMISTOR_BANKS][THERMISTORS_PER_BANK]; // Warning la functile Adc pentru setup si read daca folosesc uint32
 	Dio_ChannelType BankSelectPins[THERMISTOR_BANKS];
-	volatile uint16 BankSelectPinsID[THERMISTOR_BANKS];
+	uint16 BankSelectPinsID[THERMISTOR_BANKS];
 	Adc_GroupType BankReadChannels[THERMISTORS_PER_BANK];
 }Thermistors;
 

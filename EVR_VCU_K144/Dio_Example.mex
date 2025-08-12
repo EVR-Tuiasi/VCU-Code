@@ -239,6 +239,16 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="ADC1" signal="adc1_se10" pin_num="85" pin_signal="PTE2">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="ADC1" signal="adc1_se11" pin_num="84" pin_signal="PTE6">
+                     <pin_features>
+                        <pin_feature name="direction" value="INPUT"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -540,9 +550,14 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.mcl" description="mcl is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
-                  <data>true</data>
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.mcl" description="An unsupported version of the mcl in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
                </feature>
             </dependency>
          </dependencies>
@@ -561,9 +576,14 @@
             <file path="generate/include/CDD_I2c_Cfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_I2c_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/CDD_I2c_VS_0_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/CDD_Mcl_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/CDD_Mcl_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/CDD_Mcl_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Uart_Cfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Uart_Defines.h" update_enabled="true"/>
             <file path="generate/include/CDD_Uart_VS_0_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Cache_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Cache_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_VS_0_PBcfg.h" update_enabled="true"/>
@@ -572,9 +592,18 @@
             <file path="generate/include/Cmp_Ip_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Dem_IntErrId.h" update_enabled="true"/>
             <file path="generate/include/Dio_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Dma_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Dma_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Dma_Ip_Cfg_DeviceRegistersV2.h" update_enabled="true"/>
+            <file path="generate/include/Dma_Ip_Cfg_Devices.h" update_enabled="true"/>
+            <file path="generate/include/Dma_Ip_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_I2c_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_I2c_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_I2c_Ip_VS_0_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Mcl_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Mcl_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
+            <file path="generate/include/Flexio_Mcl_Ip_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Spi_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Spi_Ip_CfgDefines.h" update_enabled="true"/>
             <file path="generate/include/Flexio_Spi_Ip_VS_0_PBcfg.h" update_enabled="true"/>
@@ -585,6 +614,8 @@
             <file path="generate/include/Ftm_Icu_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Ftm_Icu_Ip_Defines.h" update_enabled="true"/>
             <file path="generate/include/Ftm_Icu_Ip_VS_0_PBcfg.h" update_enabled="true"/>
+            <file path="generate/include/Ftm_Mcl_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Ftm_Mcl_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
             <file path="generate/include/Gpio_Dio_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/I2c_Ipw_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Icu_Cfg.h" update_enabled="true"/>
@@ -639,6 +670,10 @@
             <file path="generate/include/Spi_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/System_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/System_Ip_CfgDefines.h" update_enabled="true"/>
+            <file path="generate/include/Trgmux_Ip_Cfg.h" update_enabled="true"/>
+            <file path="generate/include/Trgmux_Ip_Cfg_Defines.h" update_enabled="true"/>
+            <file path="generate/include/Trgmux_Ip_Cfg_DeviceRegisters.h" update_enabled="true"/>
+            <file path="generate/include/Trgmux_Ip_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Uart_Ipw_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Uart_Ipw_VS_0_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/modules.h" update_enabled="true"/>
@@ -648,12 +683,17 @@
             <file path="generate/src/Adc_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_I2c_Cfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_I2c_VS_0_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/CDD_Mcl_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/CDD_Mcl_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Uart_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Clock_Ip_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Clock_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Cmp_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Dio_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/Dma_Ip_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/Dma_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_I2c_Ip_VS_0_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Flexio_Mcl_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Spi_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Flexio_Uart_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Ftm_Icu_Ip_VS_0_PBcfg.c" update_enabled="true"/>
@@ -685,6 +725,8 @@
             <file path="generate/src/Ram_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Spi_Ipw_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Spi_VS_0_PBcfg.c" update_enabled="true"/>
+            <file path="generate/src/Trgmux_Ip_Cfg.c" update_enabled="true"/>
+            <file path="generate/src/Trgmux_Ip_VS_0_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Uart_Ipw_VS_0_PBcfg.c" update_enabled="true"/>
          </generated_project_files>
          <peripherals_profile>
@@ -705,7 +747,7 @@
                         </struct>
                         <struct name="DioGeneral">
                            <setting name="Name" value="DioGeneral"/>
-                           <setting name="DioDevErrorDetect" value="false"/>
+                           <setting name="DioDevErrorDetect" value="true"/>
                            <setting name="GPIODioIPDevErrorDetect" value="false"/>
                            <setting name="DioVersionInfoApi" value="false"/>
                            <setting name="DioReversePortBits" value="false"/>
@@ -938,7 +980,7 @@
                                        <setting name="PortPinDirectionChangeable" value="true"/>
                                        <setting name="PortPinModeChangeable" value="true"/>
                                        <setting name="PortPinId" value="11"/>
-                                       <setting name="PortPinPcr" value="0"/>
+                                       <setting name="PortPinPcr" value="130"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
@@ -950,7 +992,7 @@
                                        <setting name="PortPinDirectionChangeable" value="true"/>
                                        <setting name="PortPinModeChangeable" value="true"/>
                                        <setting name="PortPinId" value="12"/>
-                                       <setting name="PortPinPcr" value="1"/>
+                                       <setting name="PortPinPcr" value="134"/>
                                        <setting name="PortPinInitialMode" value="PORT_GPIO_MODE"/>
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
@@ -2114,6 +2156,20 @@
                                     <setting name="IsrPriority" value="0"/>
                                     <setting name="IsrHandler" value="PORT_CI_ICU_IP_C_EXT_IRQ_ISR"/>
                                  </struct>
+                                 <struct name="3">
+                                    <setting name="Name" value="PlatformIsrConfig_3"/>
+                                    <setting name="IsrName" value="ADC0_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="Adc_0_Isr"/>
+                                 </struct>
+                                 <struct name="4">
+                                    <setting name="Name" value="PlatformIsrConfig_4"/>
+                                    <setting name="IsrName" value="ADC1_IRQn"/>
+                                    <setting name="IsrEnabled" value="true"/>
+                                    <setting name="IsrPriority" value="0"/>
+                                    <setting name="IsrHandler" value="Adc_1_Isr"/>
+                                 </struct>
                               </array>
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
@@ -2971,6 +3027,181 @@
                                  </array>
                                  <array name="AdcHwUnitEcucPartitionRef"/>
                               </struct>
+                              <struct name="1">
+                                 <setting name="Name" value="AdcHwUnit_1"/>
+                                 <setting name="AdcHwUnitId" value="ADC1"/>
+                                 <setting name="AdcLogicalUnitId" value="1"/>
+                                 <setting name="AdcTransferType" value="ADC_INTERRUPT"/>
+                                 <array name="AdcDmaChannelId"/>
+                                 <array name="AdcCountingDmaChannelId"/>
+                                 <array name="AdcClockSource"/>
+                                 <array name="AdcPrescale"/>
+                                 <setting name="AdcAltPrescale" value="2"/>
+                                 <setting name="AdcCalibrationPrescale" value="8"/>
+                                 <setting name="AdcHwUnitUsrOffset" value="0"/>
+                                 <setting name="AdcHwUnitUsrGain" value="4"/>
+                                 <setting name="AdcHwUnitResolution" value="RESOLUTION_12"/>
+                                 <array name="AdcNormalConvTimings">
+                                    <struct name="0">
+                                       <setting name="Name" value="AdcNormalConvTiming_1"/>
+                                       <setting name="AdcHardwareAverageEnable" value="false"/>
+                                       <setting name="AdcHardwareAverageSelect" value="SAMPLES_4"/>
+                                       <setting name="AdcSampleTimeDuration" value="12"/>
+                                    </struct>
+                                 </array>
+                                 <array name="AdcAlternateConvTimings">
+                                    <struct name="0">
+                                       <setting name="Name" value="AdcAlternateConvTiming_1"/>
+                                       <setting name="AdcHardwareAverageEnableAlternate" value="false"/>
+                                       <setting name="AdcHardwareAverageSelectAlternate" value="SAMPLES_4"/>
+                                       <setting name="AdcSampleTimeDurationAlternate" value="12"/>
+                                    </struct>
+                                 </array>
+                                 <struct name="PdbHwUnit">
+                                    <setting name="Name" value="PdbHwUnit"/>
+                                    <setting name="AdcPdbPrescalerDividerSelect" value="0"/>
+                                    <setting name="AdcPdbMultiplicationFactorSelect" value="0"/>
+                                    <setting name="AdcPdbCounterPeriod" value="65535"/>
+                                    <setting name="AdcPdbErrorNotification" value="NULL_PTR"/>
+                                 </struct>
+                                 <array name="AdcChannel">
+                                    <struct name="0">
+                                       <setting name="Name" value="AdcChannel_8"/>
+                                       <setting name="AdcLogicalChannelId" value="0"/>
+                                       <setting name="AdcChannelName" value="SE10_ADCH10"/>
+                                       <setting name="AdcChannelId" value="10"/>
+                                       <array name="AdcChannelConvTime"/>
+                                       <array name="AdcChannelLimitCheck"/>
+                                       <array name="AdcChannelHighLimit">
+                                          <setting name="0" value="4095"/>
+                                       </array>
+                                       <array name="AdcChannelLowLimit">
+                                          <setting name="0" value="0"/>
+                                       </array>
+                                       <array name="AdcChannelRangeSelect"/>
+                                       <array name="AdcChannelRefVoltsrcHigh"/>
+                                       <array name="AdcChannelRefVoltsrcLow"/>
+                                       <array name="AdcChannelResolution"/>
+                                       <array name="AdcChannelSampTime"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="AdcChannel_9"/>
+                                       <setting name="AdcLogicalChannelId" value="1"/>
+                                       <setting name="AdcChannelName" value="SE11_ADCH11"/>
+                                       <setting name="AdcChannelId" value="11"/>
+                                       <array name="AdcChannelConvTime"/>
+                                       <array name="AdcChannelLimitCheck"/>
+                                       <array name="AdcChannelHighLimit">
+                                          <setting name="0" value="4095"/>
+                                       </array>
+                                       <array name="AdcChannelLowLimit">
+                                          <setting name="0" value="0"/>
+                                       </array>
+                                       <array name="AdcChannelRangeSelect"/>
+                                       <array name="AdcChannelRefVoltsrcHigh"/>
+                                       <array name="AdcChannelRefVoltsrcLow"/>
+                                       <array name="AdcChannelResolution"/>
+                                       <array name="AdcChannelSampTime"/>
+                                    </struct>
+                                 </array>
+                                 <array name="AdcGroup">
+                                    <struct name="0">
+                                       <setting name="Name" value="AdcGroup_8"/>
+                                       <setting name="AdcGroupAccessMode" value="ADC_ACCESS_MODE_SINGLE"/>
+                                       <setting name="AdcGroupConversionMode" value="ADC_CONV_MODE_ONESHOT"/>
+                                       <setting name="AdcGroupConversionType" value="ADC_CONV_TYPE_NORMAL"/>
+                                       <setting name="AdcGroupId" value="8"/>
+                                       <array name="AdcGroupPriority"/>
+                                       <array name="AdcGroupReplacement"/>
+                                       <setting name="AdcGroupTriggSrc" value="ADC_TRIGG_SRC_SW"/>
+                                       <setting name="AdcGroupHwTriggerSource" value="/Adc/Adc/AdcConfigSet/AdcHwTrigger_0"/>
+                                       <array name="AdcHwTrigSignal"/>
+                                       <array name="AdcHwTrigTimer"/>
+                                       <array name="AdcNotification">
+                                          <setting name="0" value="NULL_PTR"/>
+                                       </array>
+                                       <setting name="AdcExtraNotification" value="NULL_PTR"/>
+                                       <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>
+                                       <setting name="AdcEnableOptimizeDmaStreamingGroups" value="false"/>
+                                       <setting name="AdcEnableHalfInterrupt" value="false"/>
+                                       <setting name="AdcStreamingNumSamples" value="1"/>
+                                       <setting name="AdcStreamResultGroup" value="false"/>
+                                       <setting name="AdcEnableChDisableChGroup" value="false"/>
+                                       <setting name="AdcWithoutInterrupts" value="false"/>
+                                       <setting name="AdcWithoutDma" value="false"/>
+                                       <setting name="AdcExtDMAChanEnable" value="false"/>
+                                       <setting name="AdcGroupInBacktoBackMode" value="true"/>
+                                       <setting name="AdcGroupUsesChannelDelays" value="false"/>
+                                       <setting name="AdcDelayNextPdb" value="0"/>
+                                       <setting name="AdcPdbPeriodContinuousMode" value="1000"/>
+                                       <array name="AdcChannelDelay"/>
+                                       <struct name="AdcGroupConversionConfiguration">
+                                          <setting name="Name" value="AdcGroupConversionConfiguration"/>
+                                          <setting name="AdcGroupHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcGroupSampleTimeDuration" value="1"/>
+                                       </struct>
+                                       <struct name="AdcAlternateGroupConvTimings">
+                                          <setting name="Name" value="AdcAlternateGroupConvTimings"/>
+                                          <setting name="AdcGroupAltHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupAltHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcGroupAltSampleTimeDuration" value="1"/>
+                                       </struct>
+                                       <array name="AdcGroupDefinition">
+                                          <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_1/AdcChannel_8"/>
+                                       </array>
+                                       <array name="AdcGroupEcucPartitionRef"/>
+                                    </struct>
+                                    <struct name="1">
+                                       <setting name="Name" value="AdcGroup_9"/>
+                                       <setting name="AdcGroupAccessMode" value="ADC_ACCESS_MODE_SINGLE"/>
+                                       <setting name="AdcGroupConversionMode" value="ADC_CONV_MODE_ONESHOT"/>
+                                       <setting name="AdcGroupConversionType" value="ADC_CONV_TYPE_NORMAL"/>
+                                       <setting name="AdcGroupId" value="9"/>
+                                       <array name="AdcGroupPriority"/>
+                                       <array name="AdcGroupReplacement"/>
+                                       <setting name="AdcGroupTriggSrc" value="ADC_TRIGG_SRC_SW"/>
+                                       <setting name="AdcGroupHwTriggerSource" value="/Adc/Adc/AdcConfigSet/AdcHwTrigger_0"/>
+                                       <array name="AdcHwTrigSignal"/>
+                                       <array name="AdcHwTrigTimer"/>
+                                       <array name="AdcNotification">
+                                          <setting name="0" value="NULL_PTR"/>
+                                       </array>
+                                       <setting name="AdcExtraNotification" value="NULL_PTR"/>
+                                       <setting name="AdcStreamingBufferMode" value="ADC_STREAM_BUFFER_LINEAR"/>
+                                       <setting name="AdcEnableOptimizeDmaStreamingGroups" value="false"/>
+                                       <setting name="AdcEnableHalfInterrupt" value="false"/>
+                                       <setting name="AdcStreamingNumSamples" value="1"/>
+                                       <setting name="AdcStreamResultGroup" value="false"/>
+                                       <setting name="AdcEnableChDisableChGroup" value="false"/>
+                                       <setting name="AdcWithoutInterrupts" value="false"/>
+                                       <setting name="AdcWithoutDma" value="false"/>
+                                       <setting name="AdcExtDMAChanEnable" value="false"/>
+                                       <setting name="AdcGroupInBacktoBackMode" value="true"/>
+                                       <setting name="AdcGroupUsesChannelDelays" value="false"/>
+                                       <setting name="AdcDelayNextPdb" value="0"/>
+                                       <setting name="AdcPdbPeriodContinuousMode" value="1000"/>
+                                       <array name="AdcChannelDelay"/>
+                                       <struct name="AdcGroupConversionConfiguration">
+                                          <setting name="Name" value="AdcGroupConversionConfiguration"/>
+                                          <setting name="AdcGroupHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcGroupSampleTimeDuration" value="1"/>
+                                       </struct>
+                                       <struct name="AdcAlternateGroupConvTimings">
+                                          <setting name="Name" value="AdcAlternateGroupConvTimings"/>
+                                          <setting name="AdcGroupAltHardwareAverageEnable" value="false"/>
+                                          <setting name="AdcGroupAltHardwareAverageSelect" value="SAMPLES_4"/>
+                                          <setting name="AdcGroupAltSampleTimeDuration" value="1"/>
+                                       </struct>
+                                       <array name="AdcGroupDefinition">
+                                          <setting name="0" value="/Adc/Adc/AdcConfigSet/AdcHwUnit_1/AdcChannel_9"/>
+                                       </array>
+                                       <array name="AdcGroupEcucPartitionRef"/>
+                                    </struct>
+                                 </array>
+                                 <array name="AdcHwUnitEcucPartitionRef"/>
+                              </struct>
                            </array>
                            <array name="AdcHwTrigger">
                               <struct name="0">
@@ -2982,7 +3213,7 @@
                         <struct name="AdcGeneral">
                            <setting name="Name" value="AdcGeneral"/>
                            <setting name="AdcDeInitApi" value="true"/>
-                           <setting name="AdcDevErrorDetect" value="false"/>
+                           <setting name="AdcDevErrorDetect" value="true"/>
                            <setting name="AdcEnableLimitCheck" value="true"/>
                            <setting name="AdcEnableQueuing" value="true"/>
                            <setting name="AdcPriorityQueueMaxDepth" value="1"/>
@@ -3003,6 +3234,11 @@
                            <struct name="0">
                               <setting name="Name" value="AdcInterrupt_0"/>
                               <setting name="AdcInterruptSource" value="ADC0_COCO"/>
+                              <setting name="AdcInterruptEnable" value="true"/>
+                           </struct>
+                           <struct name="1">
+                              <setting name="Name" value="AdcInterrupt_1"/>
+                              <setting name="AdcInterruptSource" value="ADC1_COCO"/>
                               <setting name="AdcInterruptEnable" value="true"/>
                            </struct>
                         </array>
@@ -3047,6 +3283,185 @@
                            <setting name="AdcEnableCalibration" value="false"/>
                            <setting name="AdcEnableReadRawDataApi" value="false"/>
                            <setting name="AdcEnableGroupStreamingResultReorder" value="false"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="Mcl" uuid="b3576c10-8380-4350-b342-391703ec9d86" type="Mcl" type_id="Mcl" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="Mcl">
+                        <setting name="Name" value="Mcl"/>
+                        <struct name="ConfigTimeSupport">
+                           <setting name="POST_BUILD_VARIANT_USED" value="false"/>
+                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
+                        </struct>
+                        <struct name="MclGeneral">
+                           <setting name="Name" value="MclGeneral"/>
+                           <setting name="MclEnableDemReportErrorStatus" value="false"/>
+                           <setting name="MclEnableDevErrorDetect" value="true"/>
+                           <setting name="Mcl_VersionInfoApi" value="false"/>
+                           <setting name="MclEnableUserModeSupport" value="false"/>
+                           <setting name="MclEnableVirtualAddressMappingSupport" value="false"/>
+                           <struct name="MclDma">
+                              <setting name="Name" value="MclDma"/>
+                              <setting name="MclEnableDma" value="false"/>
+                           </struct>
+                           <struct name="MclCache">
+                              <setting name="Name" value="MclCache"/>
+                              <setting name="MclEnableCache" value="false"/>
+                              <setting name="MclCacheTimeoutValue" value="0"/>
+                              <setting name="MclCacheTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
+                           </struct>
+                           <struct name="MclTrgMux">
+                              <setting name="Name" value="MclTrgMux"/>
+                              <setting name="MclEnableTrgMux" value="false"/>
+                           </struct>
+                           <struct name="MclFlexioCommon">
+                              <setting name="Name" value="MclFlexioCommon"/>
+                              <setting name="MclEnableFlexioCommon" value="false"/>
+                           </struct>
+                           <struct name="MclFtmCommon">
+                              <setting name="Name" value="MclFtmCommon"/>
+                              <setting name="Mcl_FtmCommonTimebase" value="false"/>
+                           </struct>
+                        </struct>
+                        <struct name="MclConfig">
+                           <setting name="Name" value="MclConfig"/>
+                           <array name="MclVirtualMemorySection">
+                              <struct name="0">
+                                 <setting name="Name" value="MclVirtualMemorySection_0"/>
+                                 <setting name="MclVirtualAddressStart" value="0"/>
+                                 <setting name="MclVirtualAddressEnd" value="0xFF"/>
+                                 <setting name="MclPhysicalAddressStart" value="0"/>
+                                 <setting name="MclPhysicalAddressEnd" value="0xFF"/>
+                              </struct>
+                           </array>
+                           <struct name="MclDemEventParameterRefs">
+                              <setting name="Name" value="MclDemEventParameterRefs"/>
+                              <setting name="MCL_E_TIMEOUT_FAILURE" value="/Dem/Dem/DemConfigSet/DemEventParameter_0"/>
+                           </struct>
+                           <array name="dmaLogicInstance_ConfigType">
+                              <struct name="0">
+                                 <setting name="Name" value="dmaLogicInstance_ConfigType_0"/>
+                                 <setting name="dmaLogicInstance_IdName" value="DMA_LOGIC_INST_0"/>
+                                 <setting name="dmaLogicInstance_hwId" value="DMA_IP_HW_INST_0"/>
+                                 <setting name="dmaLogicInstance_enDebug" value="false"/>
+                                 <setting name="dmaLogicInstance_enRoundRobin" value="false"/>
+                                 <setting name="dmaLogicInstance_enHaltAfterError" value="false"/>
+                                 <setting name="dmaLogicInstance_enChLinking" value="false"/>
+                              </struct>
+                           </array>
+                           <array name="dmaLogicChannel_Type">
+                              <struct name="0">
+                                 <setting name="Name" value="dmaLogicChannel_Type_0"/>
+                                 <setting name="dmaLogicChannel_LogicName" value="DMA_LOGIC_CH_0"/>
+                                 <setting name="dmaLogicChannel_HwInstId" value="DMA_IP_HW_INST_0"/>
+                                 <setting name="dmaLogicChannel_HwChId" value="DMA_IP_HW_CH_0"/>
+                                 <setting name="dmaLogicChannel_InterruptCallback" value="NULL_PTR"/>
+                                 <setting name="dmaLogicChannel_ErrorInterruptCallback" value="NULL_PTR"/>
+                                 <setting name="dmaLogicChannel_EnableGlobalConfig" value="false"/>
+                                 <setting name="dmaLogicChannel_EnableTransferConfig" value="false"/>
+                                 <setting name="dmaLogicChannel_EnableScatterGather" value="false"/>
+                                 <struct name="dmaLogicChannel_ConfigType">
+                                    <setting name="Name" value="dmaLogicChannel_ConfigType"/>
+                                    <struct name="dmaLogicChannel_GlobalConfigType">
+                                       <setting name="Name" value="dmaLogicChannel_GlobalConfigType"/>
+                                       <struct name="dmaLogicChannelConfig_GlobalRequestType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_GlobalRequestType"/>
+                                          <setting name="dmaGlobalRequest_enDmaRequest" value="false"/>
+                                       </struct>
+                                       <struct name="dmaLogicChannelConfig_GlobalInterruptType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_GlobalInterruptType"/>
+                                          <setting name="dmaGlobalInterrupt_enDmaErrorInterrupt" value="false"/>
+                                       </struct>
+                                       <struct name="dmaLogicChannelConfig_GlobalPriorityType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_GlobalPriorityType"/>
+                                          <setting name="dmaGlobalPriority_LevelPriority" value="DMA_IP_LEVEL_PRIO0"/>
+                                          <setting name="dmaGlobalPriority_enPreemption" value="false"/>
+                                          <setting name="dmaGlobalPriority_disPreempt" value="false"/>
+                                       </struct>
+                                    </struct>
+                                    <struct name="dmaLogicChannel_TransferConfigType">
+                                       <setting name="Name" value="dmaLogicChannel_TransferConfigType"/>
+                                       <struct name="dmaLogicChannelConfig_TransferControlType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_TransferControlType"/>
+                                          <setting name="dmaLogicChannelConfig_enDmaMajorInterrupt" value="false"/>
+                                          <setting name="dmaLogicChannelConfig_enDmaHalfMajorInterrupt" value="false"/>
+                                          <setting name="dmaLogicChannelConfig_disDmaAutoHwReq" value="false"/>
+                                          <setting name="dmaLogicChannelConfig_bandwidthControl" value="DMA_IP_BWC_ENGINE_NO_STALL"/>
+                                          <setting name="dmaLogicChannelConfig_DestinationStoreAddressType" value=""/>
+                                       </struct>
+                                       <struct name="dmaLogicChannelConfig_TransferSourceType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_TransferSourceType"/>
+                                          <setting name="dmaLogicChannelConfig_SourceSignedOffsetType" value="0"/>
+                                          <setting name="dmaLogicChannelConfig_SourceLastAddressAdjustmentType" value="0"/>
+                                          <setting name="dmaTransferConfig_TransferSizeType" value="DMA_IP_TRANSFER_SIZE_1_BYTE"/>
+                                          <setting name="dmaLogicChannelConfig_SourceModuloType" value="0"/>
+                                       </struct>
+                                       <struct name="dmaLogicChannelConfig_TransferDestinationType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_TransferDestinationType"/>
+                                          <setting name="dmaLogicChannelConfig_DestinationSignedOffsetType" value="0"/>
+                                          <setting name="dmaLogicChannelConfig_DestinationLastAddressAdjustmentType" value="0"/>
+                                          <setting name="dmaTransferConfig_TransferSizeType" value="DMA_IP_TRANSFER_SIZE_1_BYTE"/>
+                                          <setting name="dmaLogicChannelConfig_DestinationModuloType" value="0"/>
+                                       </struct>
+                                       <struct name="dmaLogicChannelConfig_TransferMinorLoopType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_TransferMinorLoopType"/>
+                                          <setting name="dmaLogicChannelConfig_enSourceOffset" value="false"/>
+                                          <setting name="dmaLogicChannelConfig_enDestinationOffset" value="false"/>
+                                          <setting name="dmaLogicChannelConfig_OffsetValueType" value="0"/>
+                                          <setting name="dmaLogicChannelConfig_enMinorLoopLinkCh" value="false"/>
+                                          <setting name="dynamic_dmaLogicChannelConfig_MinorLoopLinkChValueType" value="/Mcl/Mcl/MclConfig/dmaLogicChannel_Type_0"/>
+                                          <setting name="dmaLogicChannelConfig_MinorLoopSizeType" value="0"/>
+                                       </struct>
+                                       <struct name="dmaLogicChannelConfig_TransferMajorLoopType">
+                                          <setting name="Name" value="dmaLogicChannelConfig_TransferMajorLoopType"/>
+                                          <setting name="dmaLogicChannelConfig_enMajorLoopLinkCh" value="false"/>
+                                          <setting name="dynamic_dmaLogicChannelConfig_MajorLoopLinkChValueType" value="/Mcl/Mcl/MclConfig/dmaLogicChannel_Type_0"/>
+                                          <setting name="dmaLogicChannelConfig_MajorLoopCountType" value="0"/>
+                                       </struct>
+                                    </struct>
+                                    <struct name="dmaLogicChannel_ScatterGatherConfigType">
+                                       <setting name="Name" value="dmaLogicChannel_ScatterGatherConfigType"/>
+                                       <array name="dmaLogicChannelConfig_ScatterGatherArrayType"/>
+                                    </struct>
+                                 </struct>
+                              </struct>
+                           </array>
+                           <array name="trgmuxInstaceList">
+                              <struct name="0">
+                                 <setting name="Name" value="trgmuxInstaceList_0"/>
+                                 <setting name="trgmuxHardwareInstance" value="TRGMUX_IP_HW_INST_0"/>
+                              </struct>
+                           </array>
+                           <array name="trgmuxLogicGroup">
+                              <struct name="0">
+                                 <setting name="Name" value="trgmuxLogicGroup_0"/>
+                                 <setting name="trgmuxLogicGroupHardwareInstance" value="TRGMUX_IP_HW_INST_0"/>
+                                 <setting name="trgmuxLogicGroup_Name" value="TRGMUX_IP_DMA"/>
+                                 <setting name="trgmuxLogicGroup_Lock" value="false"/>
+                                 <array name="trgmuxLogicTrigger"/>
+                              </struct>
+                           </array>
+                           <array name="FlexioCommon">
+                              <struct name="0">
+                                 <setting name="Name" value="FlexioCommon_0"/>
+                                 <setting name="FlexioMclInstances" value="FLEXIO_0"/>
+                                 <setting name="FlexioDebugEnable" value="false"/>
+                                 <array name="FlexioMclLogicChannels">
+                                    <struct name="0">
+                                       <setting name="Name" value="FlexioMclLogicChannels_0"/>
+                                       <setting name="FlexioMclChannelId" value="CHANNEL_0"/>
+                                       <setting name="FlexioMclPinId" value="PIN_0"/>
+                                       <setting name="FlexioMclAddPinEnable" value="false"/>
+                                       <setting name="FlexioMclAddPinId" value="PIN_0"/>
+                                       <setting name="FlexioMclAddChannelEnable" value="false"/>
+                                       <setting name="FlexioMclAddChannelId" value="CHANNEL_0"/>
+                                    </struct>
+                                 </array>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="CommonPublishedInformation">
+                           <setting name="Name" value="CommonPublishedInformation"/>
                         </struct>
                      </config_set>
                   </instance>
