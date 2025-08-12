@@ -29,20 +29,20 @@ extern "C"{
 /*==================================================================================================
 *                                      DEFINES AND MACROS
 ==================================================================================================*/
-#define BRAKE_START_LIMIT 7993U
-#define BRAKE_START_VALID 8489U
-#define BRAKE_END_VALID 8737U
-#define BRAKE_END_LIMIT 9234U
+#define BRAKE_START_LIMIT 3319U
+#define BRAKE_START_VALID 3646U
+#define BRAKE_END_VALID 4577U
+#define BRAKE_END_LIMIT 5504U
 
-#define ACCEL_1_START_LIMIT 11567U
-#define ACCEL_1_START_VALID 12064U
-#define ACCEL_1_END_VALID 13603U
-#define ACCEL_1_END_LIMIT 14099U
+#define ACCEL_1_START_LIMIT 2342U
+#define ACCEL_1_START_VALID 2670U
+#define ACCEL_1_END_VALID 4267U
+#define ACCEL_1_END_LIMIT 4895U
 
-#define ACCEL_2_START_LIMIT 6503U
-#define ACCEL_2_START_VALID 7000U
-#define ACCEL_2_END_VALID 8092U
-#define ACCEL_2_END_LIMIT 8588U
+#define ACCEL_2_START_LIMIT 3417U
+#define ACCEL_2_START_VALID 3744U
+#define ACCEL_2_END_VALID 5677U
+#define ACCEL_2_END_LIMIT 7005U
 
 #define BRAKE_DEBOUNCE_BUFFER_SIZE 30U
 /*==================================================================================================

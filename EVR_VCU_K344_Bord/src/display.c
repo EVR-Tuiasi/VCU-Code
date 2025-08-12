@@ -167,16 +167,16 @@ void DashboardTest(void){
 		while(delay--);
 		DashboardUpdate(speed, power, battery_voltage, battery_percent, battery_temp*2/3, inverter_temp/2, brake, acceleration, false);
 		battery_percent++;
-		speed+=15;
-		power+=4;
+		speed++;
+		power+=500;
 		inverter_temp++;
 		battery_voltage++;
 		battery_temp++;
 		brake++;
 		acceleration++;
 		battery_percent %= 101;
-		speed %= 8001;
-		power %= 1201;
+		speed %= 200;
+		power %= 100000;
 		inverter_temp%=202;
 		battery_voltage%=150;
 		battery_temp%=152;
@@ -194,6 +194,7 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 	uint8 color_red = 0, color_blue = 0, color_green = 0, text_offset = 0;
 	uint16 height_offset, width_offset;
 	uint16 limited_temp;
+	uint32 power_kw;
 	//input value tests
 	if(battery_percent > 100U){
 		battery_percent = 100U;
@@ -213,9 +214,10 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 	if(acceleration > 100U){
 		acceleration = 100U;
 	}
-	if(power > 9999U){
-		power = 9999U;
+	if(power > 99999U){
+		power = 99999U;
 	}
+	power_kw = power / 1000U;
 
 	if(rd8(REG_DLSWAP) == 0){
 		wr32(RAM_DL + (index+=4), clear(1, 1, 1)); // clear screen
@@ -508,16 +510,17 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, SPEEDOMETER_SMALL_FONT_WIDTH*2, SPEEDOMETER_SMALL_FONT_HEIGHT*2));
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(128));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(128));//TODO change to save/restore context
-		/*
+
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*4, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'k'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'm'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, '/'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS + SPEEDOMETER_SMALL_FONT_WIDTH * 2, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'h'));
-		*/
+		/*
 		//temporary rpm
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH*3, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'R'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS - SPEEDOMETER_SMALL_FONT_WIDTH, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'P'));
 		wr32(RAM_DL + (index+=4), vertex2ii(SPEEDOMETER_X + SPEEDOMETER_RADIUS + SPEEDOMETER_SMALL_FONT_WIDTH, SPEEDOMETER_Y + SPEEDOMETER_RADIUS * 3/2 - SPEEDOMETER_SMALL_FONT_HEIGHT, SPEEDOMETER_SMALL_FONT, 'M'));
+		*/
 		wr32(RAM_DL + (index+=4), restore_context());
 		//SPEEDOMETER END
 
@@ -548,19 +551,19 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256/POWERMETER_FONT_SCALE));
 		wr32(RAM_DL + (index+=4), begin(BITMAPS)); //begin drawing text
 		text_offset = 0;
-		if(power >= 1000U){
-			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE*2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power / 1000U) + '0')); // print thousands
+		if(power_kw >= 1000U){
+			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE*2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power_kw / 1000U) + '0')); // print thousands
 			text_offset++;
 		}
-		if(power >= 100U){
-			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE*3/2 + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, ((power / 100U) % 10U) + '0')); // print hundreds
+		if(power_kw >= 100U){
+			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE*3/2 + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, ((power_kw / 100U) % 10U) + '0')); // print hundreds
 			text_offset++;
 		}
-		if(power >= 10U){
-			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power / 10U % 10U) + '0')); // print tens
+		if(power_kw >= 10U){
+			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power_kw / 10U % 10U) + '0')); // print tens
 			text_offset++;
 		}
-		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE/2 + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power % 10U) + '0')); // print units
+		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE/2 + POWERMETER_FONT_WIDTH*POWERMETER_FONT_SCALE * text_offset / 2, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_FONT_HEIGHT*POWERMETER_FONT_SCALE/2, POWERMETER_FONT, (power_kw % 10U) + '0')); // print units
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(256));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(256));
 		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, POWERMETER_FONT_WIDTH, POWERMETER_FONT_HEIGHT));
@@ -585,13 +588,14 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 			wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH/2 + POWERMETER_SMALL_FONT_WIDTH * text_offset / 2 + x, POWERMETER_Y + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_HEIGHT/2 + y, POWERMETER_SMALL_FONT, (value % 10U) + '0')); // print units
 		}
 		// moving line
-		if(power > POWERMETER_MAX_VALUE){
+		if(power_kw > POWERMETER_MAX_VALUE){
 			x = sin(POWERMETER_START_ANGLE * 0.0175) * (POWERMETER_RADIUS - POWERMETER_THICKNESS);
 			y = cos(POWERMETER_START_ANGLE * 0.0175) * (POWERMETER_RADIUS - POWERMETER_THICKNESS);
 		}
 		else{
-			x = sin(((POWERMETER_MAX_VALUE - power) * (POWERMETER_END_ANGLE - POWERMETER_START_ANGLE) / POWERMETER_MAX_VALUE + POWERMETER_START_ANGLE) * 0.0175) * (POWERMETER_RADIUS - POWERMETER_THICKNESS);
-			y = cos(((POWERMETER_MAX_VALUE - power) * (POWERMETER_END_ANGLE - POWERMETER_START_ANGLE) / POWERMETER_MAX_VALUE + POWERMETER_START_ANGLE) * 0.0175) * (POWERMETER_RADIUS - POWERMETER_THICKNESS);
+			//multiply by 10 for precision
+			x = sin(((POWERMETER_MAX_VALUE - power_kw) * (POWERMETER_END_ANGLE - POWERMETER_START_ANGLE) / POWERMETER_MAX_VALUE + POWERMETER_START_ANGLE) * 0.0175) * (POWERMETER_RADIUS - POWERMETER_THICKNESS);
+			y = cos(((POWERMETER_MAX_VALUE - power_kw) * (POWERMETER_END_ANGLE - POWERMETER_START_ANGLE) / POWERMETER_MAX_VALUE + POWERMETER_START_ANGLE) * 0.0175) * (POWERMETER_RADIUS - POWERMETER_THICKNESS);
 		}
 		wr32(RAM_DL + (index+=4), begin(LINES));
 		wr32(RAM_DL + (index+=4), line_width(POWERMETER_THICKNESS * 16));
@@ -604,12 +608,13 @@ void DashboardUpdate(uint32 speed, uint32 power, uint32 battery_voltage, uint32 
 		wr32(RAM_DL + (index+=4), bitmap_size(0, 0, 0, POWERMETER_SMALL_FONT_WIDTH*2, POWERMETER_SMALL_FONT_HEIGHT*2));
 		wr32(RAM_DL + (index+=4), bitmap_transform_a(128));
 		wr32(RAM_DL + (index+=4), bitmap_transform_e(128));//TODO change to save/restore context
-		/*
+
 		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH*2, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'k'));
 		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'W'));
-		*/
+		/*
 		//text temporar pentru watti
 		wr32(RAM_DL + (index+=4), vertex2ii(POWERMETER_X + POWERMETER_RADIUS - POWERMETER_SMALL_FONT_WIDTH/2, POWERMETER_Y + POWERMETER_RADIUS * 3/2 - POWERMETER_SMALL_FONT_HEIGHT, POWERMETER_SMALL_FONT, 'W'));
+		*/
 		wr32(RAM_DL + (index+=4), restore_context());
 		//POWERMETER END
 

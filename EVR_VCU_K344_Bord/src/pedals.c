@@ -159,12 +159,13 @@ uint16 PedalsGetAccelerationPercent(void)
 		}
 	}
 	//inversare valoare
-	pedalValue2 = ACCEL_2_START_VALID + (ACCEL_2_END_VALID - pedalValue2);
-	Pedalsinstance.AccelerationValue2 = pedalValue2;
+	pedalValue1 = ACCEL_1_START_VALID + (ACCEL_1_END_VALID - pedalValue1);
+	Pedalsinstance.AccelerationValue1 = pedalValue1;
 	//calculare valoare procentuala
 	pedalPercent1 = (((uint32)(pedalValue1 - ACCEL_1_START_VALID)) * 100U) / (ACCEL_1_END_VALID - ACCEL_1_START_VALID);
 	pedalPercent2 = (((uint32)(pedalValue2 - ACCEL_2_START_VALID)) * 100U) / (ACCEL_2_END_VALID - ACCEL_2_START_VALID);
 	return (pedalPercent1 + pedalPercent2) / 2U;
+	//return pedalPercent1;
 }
 
 uint16 PedalsGetBrakePercent(void){
