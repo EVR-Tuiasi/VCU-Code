@@ -136,17 +136,63 @@ int main(void)
 	DacInit();
     InverterInit();
     USBInit(0);
-	DacEnable();
+	DacDisable();
 	//DisplayTest();
 	//DashboardTest();
 	//SoundTest();
 	boolean bspd = false;
+
+	DacSetOutput(0, 0);
+	DacSetOutput(1, 0);
+
+	wr8(REG_VOL_SOUND,0xFF);
+	wr32(REG_GPIOX_DIR, 0x00008004);
+	wr32(REG_GPIOX, 0x00008000); // disable amp
+	wr8(REG_PLAY, 0);
+	wr16(REG_SOUND, 0x0);
+	wr8(REG_PLAY, 1);
+	//activation logic
+	/*Dio_WriteChannel(12, 1);
+	while(1){
+		if(Dio_ReadChannel(154) == STD_OFF){
+			break;
+		}
+	}
+	while(1){
+		if(Dio_ReadChannel(154) == STD_ON){
+			break;
+		}
+	}*/
+	//sound
+	wr32(REG_GPIOX, 0x00008004); // enable amp
+	wr16(REG_SOUND, (0x34<< 8) | 0x41);
+	wr8(REG_PLAY, 1);
+	volatile int dellei = 10000000;
+	while(dellei--);
+	wr8(REG_PLAY, 1);
+	dellei = 10000000;
+	while(dellei--);
+	wr8(REG_PLAY, 1);
+	dellei = 10000000;
+	while(dellei--);
+
+	wr32(REG_GPIOX, 0x00008000); // disable amp
+	wr8(REG_PLAY, 0);
+	wr16(REG_SOUND, 0x0);
+	wr8(REG_PLAY, 1);
+
 	volatile uint32 frana = 0, acceleratie = 0, rpm = 0, tensiune = 0, curent = 0, tempController = 0, tempMotor = 0, putere = 0, procentaj = 0, tempMaxim = 0, viteza = 0, throttle = 0;
 	while(1){
 		//citire valori senzori frana
 		frana = PedalsGetBrakePercent();
 		acceleratie = PedalsGetAccelerationPercent();
 
+		if(frana >= 10U){
+			DacEnable();
+		}
+		else{
+			DacDisable();
+		}
 		//implementare BSPD
 		if((frana >= 10U) && (acceleratie != 0U)){
 			DacSetOutput(0, 0);

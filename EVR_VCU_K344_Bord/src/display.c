@@ -152,10 +152,20 @@ static const uint8_t GUTA[]  = {
 void SoundTest(void){
 	while(1){
 		wr8(REG_VOL_SOUND,0xFF);
-		wr16(REG_SOUND, (0x6C<< 8) | 0x41);
-		wr8(REG_PLAY, 1);
-		while(rd8(REG_PLAY)){
-			;
+		wr32(REG_GPIOX_DIR, 0x00008004);
+		volatile uint32 delei;
+		while(1){
+			wr32(REG_GPIOX, 0x00008004); // enable amp
+			wr16(REG_SOUND, (0x6C<< 8) | 0x41);
+			wr8(REG_PLAY, 1);
+			delei = 10000000;
+			while(delei--);
+			wr32(REG_GPIOX, 0x00008000); // disable amp
+			wr8(REG_PLAY, 0);
+			wr16(REG_SOUND, 0x0);
+			wr8(REG_PLAY, 1);
+			delei = 10000000;
+			while(delei--);
 		}
 	}
 }
