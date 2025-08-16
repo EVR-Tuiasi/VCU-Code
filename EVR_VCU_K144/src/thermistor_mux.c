@@ -39,9 +39,11 @@ extern "C" {
 Thermistors Thermistors_Data;
 
 // Nume temporare pt buffere
+//uint16 bankselpins[THERMISTOR_BANKS] =    {32,33,38,39,44,45,46,64,65,66,67,100,78,80,81,98}, //alocare initiala
+uint16 bankselpins[THERMISTOR_BANKS] =    {39,38,100,46,44,32,33,64,67,78,45,65,66,80,81,98},   //alocare final
+//		bankselpinsid[THERMISTOR_BANKS] = {18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33},	//alocare init
+		bankselpinsid[THERMISTOR_BANKS] = {21,20,29,24,22,18,19,25,28,30,23,26,27,31,32,33},	//alocare finala
 
-uint16 bankselpins[THERMISTOR_BANKS] =    {32,33,38,39,44,45,46,64,65,66,67,100,78,80,81,98},
-		bankselpinsid[THERMISTOR_BANKS] = {18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33},
 		//adcreadchannels[THERMISTORS_PER_BANK] = {8,9,2,3,4,5,6,7}; //ordinea initiala
 		adcreadchannels[THERMISTORS_PER_BANK] = {4,2,3,8,9,6,7,5}; //ordine de oameni normali, verifica PINOUT !!!
 extern struct biemese icBaterie;
