@@ -95,8 +95,8 @@ uint8 buffer[10];
 uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
 uint8 pacheteS[6]={0x03, 0x05, 0x07, 0x0D};
 
-extern Thermistors Thermistors_Data;
-#define TEMP_MAX 60
+//extern Thermistors Thermistors_Data;
+
 
 
 /*==================================================================================================
@@ -179,23 +179,18 @@ int main(void)
 
     while (1) {
     	flag=!flag;
-        if(!CFGAok())
+        if(!CFGAok()) //check RAW
         	bmsInit();
     	readBieMieSe();
     	readBieMieSeOW();
 
+    	getAllTemps();
+    	corectieTemperatura();
+    	checkTemperaturi();
 
-    	sendAMS();
-    	sendErori();
-
-    	/*for(int i=0;i<THERMISTOR_BANKS;i++)
-    	    	{
-    	    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
-    	    		{
-    	    			if(Thermistors_Data.ThermistorValues[i][j]>TEMP_MAX)
-    	    				icBaterie.flag=1;
-    	    		}
-    	    	}*/
+    	sendAMS();   //send Owercurent and overVoltage
+    	sendOW();
+    	sendErori(); //pentru shunt si BMS
 
     	if(icBaterie.flag)
     		bomba++;
@@ -204,85 +199,8 @@ int main(void)
     	if(bomba==2)
     		Dio_WriteChannel(79, 1);
 
-    	for(int i = 0; i < THERMISTOR_BANKS; i++){
-    	        	GetTemp((uint16)i);
-    	        }
-
-    	for(int i=0;i<THERMISTOR_BANKS;i++)
-    	{
-    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
-    		{
-    			if(Thermistors_Data.ThermistorValues[i][j]<1040)
-    				Thermistors_Data.ThermistorValues[i][j]=1040;
-    			else if(Thermistors_Data.ThermistorValues[i][j]>2074)
-    				Thermistors_Data.ThermistorValues[i][j]=2074;
-
-    			if(Thermistors_Data.ThermistorValues[i][j]>=1140)
-    			{
-    				Thermistors_Data.ThermistorValues[i][j]=68400/Thermistors_Data.ThermistorValues[i][j];
-    				//60 65
-    			}
-    			else if(Thermistors_Data.ThermistorValues[i][j]>=1248)
-    			{
-    				//55 60
-    				Thermistors_Data.ThermistorValues[i][j]=68640/Thermistors_Data.ThermistorValues[i][j];
-    			}
-    			else if(Thermistors_Data.ThermistorValues[i][j]>=1399)
-    			{
-    			    				//55 50
-    				Thermistors_Data.ThermistorValues[i][j]=69950/Thermistors_Data.ThermistorValues[i][j];
-    			}
-    			else if(Thermistors_Data.ThermistorValues[i][j]>=1545)
-    			{
-    			    				//50 45
-    				Thermistors_Data.ThermistorValues[i][j]=69525/Thermistors_Data.ThermistorValues[i][j];
-    			}
-    			else if(Thermistors_Data.ThermistorValues[i][j]>=1708)
-    			{
-    			    				//45 40
-    				Thermistors_Data.ThermistorValues[i][j]=68325/Thermistors_Data.ThermistorValues[i][j];
-    			}
-    			else if(Thermistors_Data.ThermistorValues[i][j]>=1881)
-    			{
-    			    				//40 35
-    				Thermistors_Data.ThermistorValues[i][j]=65835/Thermistors_Data.ThermistorValues[i][j];
-    			}
-    			else
-    			{
-    			    				//35 30
-    				Thermistors_Data.ThermistorValues[i][j]=61410/Thermistors_Data.ThermistorValues[i][j];
-    			}
-    				//
-    		}
-
-    	}
-
-
-    	for(int i=0;i<THERMISTOR_BANKS;i++)
-    	{
-    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
-    		{
-    			buffer[0] = 10;
-    			buffer[1] = 0;
-    			buffer[2] = i*8+j;
-    			buffer[3] = 0;
-    			buffer[4] = 0;
-    			buffer[5] = (Thermistors_Data.ThermistorValues[i][j] >> 8)  % 256;
-    			buffer[6] = Thermistors_Data.ThermistorValues[i][j] % 256;
-    			buffer[7] = CRC_calculate(8);
-    			Uart_SyncSend(0, buffer, 8, 10000000);
-
-
-    		}
-    	}
-
-    	sendAllUart();
-
-
-
+    	sendAllUart(); //send usefull ingo
     	clearStates();
-
-
     	//daca eroare register basicaly reset
     	//daca eroare CRC forget
     	//daca eroare valoare stupida then ZERO

@@ -14,6 +14,8 @@ extern "C" {
 #include "Dio.h"
 #include "Port.h"
 #include "Adc.h"
+#include "bms_cosa.h"
+
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -34,14 +36,14 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 
-volatile Thermistors Thermistors_Data;
+Thermistors Thermistors_Data;
 
 // Nume temporare pt buffere
 
 uint16 bankselpins[THERMISTOR_BANKS] =    {32,33,38,39,44,45,46,64,65,66,67,100,78,80,81,98},
 		bankselpinsid[THERMISTOR_BANKS] = {18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33},
 		adcreadchannels[THERMISTORS_PER_BANK] = {8,9,2,3,4,5,6,7};
-
+extern struct biemese icBaterie;
 
 /*==================================================================================================
 *                                      GLOBAL CONSTANTS
@@ -116,6 +118,79 @@ sint32 GetTemp(uint16 TempSensorIndex){
 
 void TempSensorTest(){
 	;
+}
+
+void corectieTemperatura(){
+	for(int i=0;i<THERMISTOR_BANKS;i++)
+	    	{
+	    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
+	    		{
+	    			if(Thermistors_Data.ThermistorValues[i][j]<1040)
+	    				Thermistors_Data.ThermistorValues[i][j]=1040;
+	    			else if(Thermistors_Data.ThermistorValues[i][j]>2074)
+	    				Thermistors_Data.ThermistorValues[i][j]=2074;
+
+	    			if(Thermistors_Data.ThermistorValues[i][j]>=1140)
+	    			{
+	    				Thermistors_Data.ThermistorValues[i][j]=68400/Thermistors_Data.ThermistorValues[i][j];
+	    				//60 65
+	    			}
+	    			else if(Thermistors_Data.ThermistorValues[i][j]>=1248)
+	    			{
+	    				//55 60
+	    				Thermistors_Data.ThermistorValues[i][j]=68640/Thermistors_Data.ThermistorValues[i][j];
+	    			}
+	    			else if(Thermistors_Data.ThermistorValues[i][j]>=1399)
+	    			{
+	    			    				//55 50
+	    				Thermistors_Data.ThermistorValues[i][j]=69950/Thermistors_Data.ThermistorValues[i][j];
+	    			}
+	    			else if(Thermistors_Data.ThermistorValues[i][j]>=1545)
+	    			{
+	    			    				//50 45
+	    				Thermistors_Data.ThermistorValues[i][j]=69525/Thermistors_Data.ThermistorValues[i][j];
+	    			}
+	    			else if(Thermistors_Data.ThermistorValues[i][j]>=1708)
+	    			{
+	    			    				//45 40
+	    				Thermistors_Data.ThermistorValues[i][j]=68325/Thermistors_Data.ThermistorValues[i][j];
+	    			}
+	    			else if(Thermistors_Data.ThermistorValues[i][j]>=1881)
+	    			{
+	    			    				//40 35
+	    				Thermistors_Data.ThermistorValues[i][j]=65835/Thermistors_Data.ThermistorValues[i][j];
+	    			}
+	    			else
+	    			{
+	    			    				//35 30
+	    				Thermistors_Data.ThermistorValues[i][j]=61410/Thermistors_Data.ThermistorValues[i][j];
+	    			}
+	    				//
+	    		}
+
+	    	}
+
+}
+
+
+void checkTemperaturi()
+{
+	for(int i=0;i<THERMISTOR_BANKS;i++)
+	    	{
+	    		for(int j=0;j<THERMISTORS_PER_BANK;j++)
+	    		{
+	    			if(Thermistors_Data.ThermistorValues[i][j]>TEMP_MAX)
+	    				icBaterie.flag=1;
+	    		}
+	    	}
+}
+
+void getAllTemps()
+{
+	for(int i = 0; i < THERMISTOR_BANKS; i++){
+	        	GetTemp((uint16)i);
+	        }
+
 }
 
 #ifdef __cplusplus

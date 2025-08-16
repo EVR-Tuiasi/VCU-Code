@@ -18,6 +18,7 @@
 #include "CDD_Uart.h"
 #include "7-segment-display.h"
 #include "bms.h"
+#include "thermistor_mux.h"
 ///aici normal
 
 extern uint8 buffTrimitere[64];
@@ -33,6 +34,7 @@ extern int numberOfSunturi;
 extern int numberOfMonitoare;
 extern int numberOfDevices;
 extern uint16 dpec;
+extern Thermistors Thermistors_Data;
 
 volatile int tensiuneMILIvolti1,tensiuneMILIvolti2, tensiuneMILIvolti3;
 
@@ -438,6 +440,24 @@ void sendAllUart()
 		buffer[7] = CRC_calculate(8);
 		Uart_SyncSend(0, buffer, 8, 10000000);
     }
+
+	for(int i=0;i<THERMISTOR_BANKS;i++)
+	{
+		for(int j=0;j<THERMISTORS_PER_BANK;j++)
+		{
+			buffer[0] = 10;
+			buffer[1] = 0;
+			buffer[2] = i*8+j;
+			buffer[3] = 0;
+			buffer[4] = 0;
+			buffer[5] = (Thermistors_Data.ThermistorValues[i][j] >> 8)  % 256;
+			buffer[6] = Thermistors_Data.ThermistorValues[i][j] % 256;
+			buffer[7] = CRC_calculate(8);
+			Uart_SyncSend(0, buffer, 8, 10000000);
+
+
+		}
+	}
 }
 
 void sendAMS(void)
@@ -458,22 +478,32 @@ void sendAMS(void)
 				icBaterie.stateSHUNT=icBaterie.stateSHUNT|2;
 			}
 
-	for(int i=0;i<BATTERY_CELLS;i++)
-	{
-		if(icBaterie.cellVoltage[i]<UNDERVOLTAGE_CELL)
-		{
-			icBaterie.flag=true; //cevaEroare
-			icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|8;
-		}
-		else if(icBaterie.cellVoltage[i]>OVERVOLTAGE_CELL)
-		{
-			icBaterie.flag=true; //cevaEroare
-			icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|4;
-		}
-	}
+
 
 
 }
+
+
+
+void sendOW()
+{
+	for(int i=0;i<BATTERY_CELLS;i++)
+		{
+			if(icBaterie.cellVoltage[i]<UNDERVOLTAGE_CELL)
+			{
+				icBaterie.flag=true; //cevaEroare
+				icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|8;
+			}
+			else if(icBaterie.cellVoltage[i]>OVERVOLTAGE_CELL)
+			{
+				icBaterie.flag=true; //cevaEroare
+				icBaterie.stateBMS[i/12]=icBaterie.stateBMS[i/12]|4;
+			}
+		}
+}
+
+
+
 
 void sendErori(void)
 {

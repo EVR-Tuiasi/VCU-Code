@@ -11,6 +11,7 @@ extern "C"{
 
 #define THERMISTOR_BANKS 16
 #define THERMISTORS_PER_BANK 8
+#define TEMP_MAX 60
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -65,6 +66,10 @@ typedef struct Thermistors{
 void TempSensorInit(void);
 sint32 GetTemp(uint16 TempSensorIndex);
 void TempSensorTest(void);
+
+void corectieTemperatura(void);
+void checkTemperaturi(void);
+void getAllTemps(void);
 
 #ifdef __cplusplus
 }
