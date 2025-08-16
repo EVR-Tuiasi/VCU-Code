@@ -20,11 +20,11 @@
 
 #define CURENT_MAX 2000 //2A
 //in MILIAMPERI te rog
-#define UNDERVOLTAGE_CELL 200000 //2V pentru moment
+#define UNDERVOLTAGE_CELL 250000 //2V pentru moment
 //in MILIVOLTI te implor
 #define TENSIUNE_MAX 2000 //20V
 #define TENSIUNE_MIN 1000 //10V
-#define OVERVOLTAGE_CELL 250000 //2.5V pentru moment
+#define OVERVOLTAGE_CELL 425000 //2.5V pentru moment
 #define CURENT_STUPID 100000
 #define TENSIUNE_STUPID 100000
 #define CELULA_STUPID 500000
