@@ -42,7 +42,8 @@ Thermistors Thermistors_Data;
 
 uint16 bankselpins[THERMISTOR_BANKS] =    {32,33,38,39,44,45,46,64,65,66,67,100,78,80,81,98},
 		bankselpinsid[THERMISTOR_BANKS] = {18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33},
-		adcreadchannels[THERMISTORS_PER_BANK] = {8,9,2,3,4,5,6,7};
+		//adcreadchannels[THERMISTORS_PER_BANK] = {8,9,2,3,4,5,6,7}; //ordinea initiala
+		adcreadchannels[THERMISTORS_PER_BANK] = {4,2,3,8,9,6,7,5}; //ordine de oameni normali, verifica PINOUT !!!
 extern struct biemese icBaterie;
 
 /*==================================================================================================
