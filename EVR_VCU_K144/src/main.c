@@ -29,6 +29,7 @@ extern "C" {
 #include "Can_43_FLEXCAN.h"
 #include "CanIf.h"
 #include "SchM_Can_43_FLEXCAN.h"
+#include "invertor.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -183,6 +184,7 @@ int main(void)
     Adc_Init(NULL_PTR);
 	Can_43_FLEXCAN_Init(NULL_PTR);
 	CanIf_Init(NULL_PTR);
+	InverterInit();
 
     //alt branch
 
@@ -193,6 +195,8 @@ int main(void)
     RDCFGB();
 
     TempSensorInit();
+
+
 
 
     while (1) {
