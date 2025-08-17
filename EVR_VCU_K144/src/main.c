@@ -233,9 +233,9 @@ int main(void)
     	readBieMieSe();
     	readBieMieSeOW();
 
-    	getAllTemps();
-    	corectieTemperatura();
-    	checkTemperaturi();
+    	//getAllTemps();
+    	//corectieTemperatura();
+    	//checkTemperaturi();
 
     	sendAMS();   //send Owercurent and overVoltage
     	sendOW();
