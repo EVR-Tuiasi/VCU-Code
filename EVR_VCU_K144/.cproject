@@ -175,11 +175,11 @@
 					<fileInfo id="com.nxp.s32ds.cle.arm.mbs.arm32.bare.gnu.10.2.exe.debug.350931541.Project_Settings/Linker_Files" name="Linker_Files" rcbsApplicability="disable" resourcePath="Project_Settings/Linker_Files" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="Linker_Files|Debugger" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Project_Settings"/>
+						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="RTD"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="board"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="generate/include"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="generate/src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="RTD"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -210,6 +210,6 @@
 		<COND_TOOLCHAIN_COMPONENTS_OPTION>COPY=platform.driver.icu;platform.driver.Platform;platform.driver.clock;platform.driver.adc;platform.driver.mcu;platform.driver.osif;platform.driver.ecum;platform.driver.port;platform.driver.dio;platform.driver.dem;platform.driver.spi;platform.driver.cdd_i2c;platform.driver.Can_43_FLEXCAN;platform.driver.uart;platform.driver.mcl;platform.driver.CanIf</COND_TOOLCHAIN_COMPONENTS_OPTION>
 	</storageModule>
 	<storageModule moduleId="com.nxp.s32ds.cle.uct.core">
-		<sdkComponents>platform.driver.CanIf;platform.driver.Can_43_FLEXCAN;platform.driver.rte_can;platform.driver.det;platform.driver.icu;platform.driver.rte_icu;platform.driver.Platform;platform.driver.rte_platform;platform.driver.clock;platform.driver.rte_mcu;platform.driver.adc;platform.driver.rte_adc;platform.driver.osif;platform.driver.mcu;platform.driver.port;platform.driver.rte_port;platform.driver.dio;platform.driver.rte_dio;platform.driver.dem;platform.driver.rte_dem;platform.driver.spi;platform.driver.rte_spi;platform.driver.cdd_i2c;platform.driver.rte_i2c;platform.driver.uart;platform.driver.rte_uart;platform.driver.mcl;platform.driver.rte_mcl;platform.driver.ecum</sdkComponents>
+		<sdkComponents>platform.driver.icu;platform.driver.rte_icu;platform.driver.det;platform.driver.Platform;platform.driver.rte_platform;platform.driver.clock;platform.driver.rte_mcu;platform.driver.adc;platform.driver.rte_adc;platform.driver.osif;platform.driver.mcu;platform.driver.ecum;platform.driver.port;platform.driver.rte_port;platform.driver.dio;platform.driver.rte_dio;platform.driver.dem;platform.driver.rte_dem;platform.driver.spi;platform.driver.rte_spi;platform.driver.cdd_i2c;platform.driver.rte_i2c;platform.driver.Can_43_FLEXCAN;platform.driver.rte_can;platform.driver.uart;platform.driver.rte_uart;platform.driver.mcl;platform.driver.rte_mcl;platform.driver.CanIf</sdkComponents>
 	</storageModule>
 </cproject>

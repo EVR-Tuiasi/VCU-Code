@@ -116,6 +116,8 @@ void CanIf_ControllerBusOff(uint8_t Controller)
 	buffer[0]=Controller;
 }
 
+
+
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -145,6 +147,15 @@ void I2c_ErrorCallback(uint8 Event, uint8 Channel){
 	(void) Event;
 	(void) Channel;
 }
+
+uint8 dataCAN[8]={0x03,0xE8, //100,0 V trimit catre 0x1806E7F4
+		0,0x32, //2A
+		0, //porneste charger
+		0,0,0 //reserved
+};
+#define CAN_HTH_HANDLE      0x01U       //
+#define CAN_TARGET_ID       0x9806E5F4U
+Can_PduType pduInfo;
 
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
@@ -196,10 +207,26 @@ int main(void)
 
     TempSensorInit();
 
-
-
-
     while (1) {
+    	pduInfo.swPduHandle = 0;                    // Handle-ul software pentru PDU
+    	pduInfo.length = 8;                         // Lungimea datelor: 8 bytes
+    	pduInfo.sdu = dataCAN;                      // Pointer catre datele mesajului
+    	pduInfo.id = CAN_TARGET_ID;                 // ID-ul mesajului CAN (extended)
+    	Std_ReturnType Result = Can_43_FLEXCAN_Write(CAN_HTH_HANDLE, &pduInfo);
+    	if(Result == E_OK)
+    	{
+    		buffer[0]=0;
+    	}
+    	else
+    	{
+    		//while(Result != E_OK)
+    			buffer[0]=0;
+    	}
+
+    	int pauza=10000000;
+    	while(pauza--);
+
+    	/*
     	flag=!flag;
         if(!CFGAok()) //check RAW
         	bmsInit();
@@ -225,7 +252,7 @@ int main(void)
     	clearStates();
     	//daca eroare register basicaly reset
     	//daca eroare CRC forget
-    	//daca eroare valoare stupida then ZERO
+    	//daca eroare valoare stupida then ZERO*/
     }
    }
 

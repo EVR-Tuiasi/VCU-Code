@@ -98,7 +98,7 @@ void InverterInit(void){
 	volatile int i = 1000000;
 	while(i--);
 	Dio_WriteChannel(88, STD_HIGH);*/
-    Can_43_FLEXCAN_SetControllerMode(10, CAN_CS_STARTED);
+    Can_43_FLEXCAN_SetControllerMode(0, CAN_CS_STARTED);
 	//Can_43_FLEXCAN_SetControllerMode()
     Can_43_FLEXCAN_EnableControllerInterrupts(0);
 
