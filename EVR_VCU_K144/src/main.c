@@ -25,7 +25,10 @@ extern "C" {
 #include "7-segment-display.h"
 #include "bms_cosa.h"
 #include "thermistor_mux.h"
-
+#include "Can_GeneralTypes.h"
+#include "Can_43_FLEXCAN.h"
+#include "CanIf.h"
+#include "SchM_Can_43_FLEXCAN.h"
 
 /*==================================================================================================
 *                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
@@ -45,6 +48,7 @@ extern "C" {
 /*==================================================================================================
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
+
 
 
 /*==================================================================================================
@@ -97,7 +101,19 @@ uint8 pacheteS[6]={0x03, 0x05, 0x07, 0x0D};
 
 //extern Thermistors Thermistors_Data;
 
+void CAN0_Wake_Up_IRQHandler(void) {
+    // Handle CAN0 wakeup interrupt
+	buffer[0]=1;
+}
 
+void CanIf_ControllerModeIndication(uint8_t Controller, uint8_t ControllerMode)
+{
+	buffer[0]=Controller+ControllerMode;
+}
+void CanIf_ControllerBusOff(uint8_t Controller)
+{
+	buffer[0]=Controller;
+}
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -165,6 +181,8 @@ int main(void)
     Uart_Init(NULL_PTR);
     Spi_Init(NULL_PTR);
     Adc_Init(NULL_PTR);
+	Can_43_FLEXCAN_Init(NULL_PTR);
+	CanIf_Init(NULL_PTR);
 
     //alt branch
 
