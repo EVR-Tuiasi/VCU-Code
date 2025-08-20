@@ -161,13 +161,14 @@
                   <pin peripheral="SIUL2" signal="gpio, 12" pin_num="A7" pin_signal="PTA12">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
-                        <pin_feature name="pullSelect" value="pullUp"/>
-                        <pin_feature name="pullEnable" value="enabled"/>
+                        <pin_feature name="pullSelect" value="pullDown"/>
+                        <pin_feature name="pullEnable" value="disabled"/>
                      </pin_features>
                   </pin>
                   <pin peripheral="SIUL2" signal="gpio, 154" pin_num="D5" pin_signal="PTE26">
                      <pin_features>
                         <pin_feature name="direction" value="INPUT"/>
+                        <pin_feature name="pullEnable" value="enabled"/>
                      </pin_features>
                   </pin>
                </pins>
@@ -2751,9 +2752,9 @@
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
                                     <struct name="25">
-                                       <setting name="Name" value="ActivationLogic_pullup"/>
-                                       <setting name="PortPinPue" value="true"/>
-                                       <setting name="PortPinPus" value="true"/>
+                                       <setting name="Name" value="ActivationLogic_pullup_read"/>
+                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="PortPinPus" value="false"/>
                                        <setting name="PortPinSafeMode" value="false"/>
                                        <setting name="PortPinDse" value="false"/>
                                        <setting name="PortPinWithReadBack" value="false"/>
@@ -2773,8 +2774,8 @@
                                        <array name="PortPinEcucPartitionRef"/>
                                     </struct>
                                     <struct name="26">
-                                       <setting name="Name" value="ActivationLogic_read"/>
-                                       <setting name="PortPinPue" value="false"/>
+                                       <setting name="Name" value="ActivationLogic_ground"/>
+                                       <setting name="PortPinPue" value="true"/>
                                        <setting name="PortPinPus" value="false"/>
                                        <setting name="PortPinSafeMode" value="false"/>
                                        <setting name="PortPinDse" value="false"/>

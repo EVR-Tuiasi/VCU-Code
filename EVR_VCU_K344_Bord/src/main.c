@@ -152,8 +152,19 @@ int main(void)
 	wr16(REG_SOUND, 0x0);
 	wr8(REG_PLAY, 1);
 	//activation logic
-	/*Dio_WriteChannel(12, 1);
+	Dio_WriteChannel(12, 1);
+	uint8 lastSwitchState = Dio_ReadChannel(154U);
 	while(1){
+		if(PedalsGetBrakePercent() >= 50U){
+			if(Dio_ReadChannel(154U) != lastSwitchState){
+				break;
+			}
+		}
+		else{
+			lastSwitchState = Dio_ReadChannel(154U);
+		}
+	}
+	/*while(1){
 		if(Dio_ReadChannel(154) == STD_OFF){
 			break;
 		}
@@ -258,7 +269,7 @@ int main(void)
         }
 		//actualizare interfata display
 		//TODO martori de bord
-        DashboardUpdate(rpm, putere, tensiune/10U, procentaj/10U, tempMotor, tempController, frana, acceleratie, bspd);
+        DashboardUpdate(viteza, putere, tensiune/10U, procentaj/10U, tempMotor, tempController, frana, acceleratie, bspd);
         //trimitere date pe uart
         USBSendAcceleratorPedals(PedalsGetAccelerationPercentSensor1(), PedalsGetAccelerationPercentSensor2());
         USBSendBrakePedal(frana);
