@@ -223,19 +223,19 @@ int main(void)
     			buffer[0]=0;
     	}
 
-    	int pauza=10000000;
-    	while(pauza--);
+    	//int pauza=10000000;
+    	//while(pauza--);
 
-    	/*
+
     	flag=!flag;
         if(!CFGAok()) //check RAW
         	bmsInit();
     	readBieMieSe();
     	readBieMieSeOW();
 
-    	//getAllTemps();
+    	getAllTemps();
     	//corectieTemperatura();
-    	//checkTemperaturi();
+    	checkTemperaturi();
 
     	sendAMS();   //send Owercurent and overVoltage
     	sendOW();
