@@ -96,11 +96,12 @@ uint8 buffTrimitere[64] = {0x00, 0x2C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8 buffPrimire[64] = {0};
 
 uint8 buffer[10];
+int j=0;
 
 uint8 pachete[6]={0x44, 0x46, 0x48, 0x4A};
 uint8 pacheteS[6]={0x03, 0x05, 0x07, 0x0D};
 
-//extern Thermistors Thermistors_Data;
+extern Thermistors Thermistors_Data;
 
 void CAN0_Wake_Up_IRQHandler(void) {
     // Handle CAN0 wakeup interrupt
@@ -201,13 +202,22 @@ int main(void)
 
     USBInit(0);
 
-    Dio_WriteChannel(79, 0);
+
     bmsInit();
     RDCFGB();
 
     TempSensorInit();
+    Dio_WriteChannel(80, 0);
+    volatile int pauza=3*8000000; //3sec
+    while(pauza--);
+
+
+    Dio_WriteChannel(80, 1);
+    RDCFGB();
 
     while (1) {
+
+    	/*
     	pduInfo.swPduHandle = 0;                    // Handle-ul software pentru PDU
     	pduInfo.length = 8;                         // Lungimea datelor: 8 bytes
     	pduInfo.sdu = dataCAN;                      // Pointer catre datele mesajului
@@ -234,7 +244,7 @@ int main(void)
     	readBieMieSeOW();
 
     	getAllTemps();
-    	//corectieTemperatura();
+    	corectieTemperatura();
     	checkTemperaturi();
 
     	sendAMS();   //send Owercurent and overVoltage
@@ -246,7 +256,23 @@ int main(void)
     	else
     		bomba=0;
     	if(bomba==2)
-    		Dio_WriteChannel(79, 1);
+    		Dio_WriteChannel(80, 0);
+
+    	for(int i=0;i<THERMISTOR_BANKS;i++)
+    		{
+    				buffer[0] = 10;
+    				buffer[1] = 0;
+    				buffer[2] = i*8+j;
+    				buffer[3] = 0;
+    				buffer[4] = 0;
+    				buffer[5] = (Thermistors_Data.ThermistorValues[i][j] >> 8)  % 256;
+    				buffer[6] = Thermistors_Data.ThermistorValues[i][j] % 256;
+    				buffer[7] = CRC_calculate(8);
+    				Uart_SyncSend(0, buffer, 8, 10000000);
+    		}
+    	j++;
+    	if (j==THERMISTORS_PER_BANK)
+    		j=0;
 
     	sendAllUart(); //send usefull ingo
     	clearStates();

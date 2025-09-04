@@ -440,7 +440,7 @@ void sendAllUart()
 		buffer[7] = CRC_calculate(8);
 		Uart_SyncSend(0, buffer, 8, 10000000);
     }
-
+    /*
 	for(int i=0;i<THERMISTOR_BANKS;i++)
 	{
 		for(int j=0;j<THERMISTORS_PER_BANK;j++)
@@ -457,7 +457,7 @@ void sendAllUart()
 
 
 		}
-	}
+	}*/
 }
 
 void sendAMS(void)
