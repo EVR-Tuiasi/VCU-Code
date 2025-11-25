@@ -113,6 +113,7 @@ int main(void)
 	Can_43_FLEXCAN_Init(NULL_PTR);
 	CanIf_Init(NULL_PTR);
 
+
     /* Wdg_43_fs26 initialization */
     volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
     //eReturnValue |= Sbc_fs26_Init(NULL_PTR);
@@ -131,7 +132,7 @@ int main(void)
 
     SevenSegmentInit();
     //SevenSegmentTest();
-	DisplayInit();
+	//DisplayInit();
 	PedalsInit();
 	DacInit();
     InverterInit();
@@ -141,6 +142,9 @@ int main(void)
 	//DashboardTest();
 	//SoundTest();
 	boolean bspd = false;
+
+	while(1)
+		{};
 
 	DacSetOutput(0, 0);
 	DacSetOutput(1, 0);

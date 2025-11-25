@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding= "UTF-8" ?>
-<configuration name="S32K344" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_16 http://mcuxpresso.nxp.com/XSD/mex_configuration_16.xsd" uuid="cb0a0571-31b0-4026-b225-2a0da4ce6ac1" version="16" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_16" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configuration name="S32K344" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_18 http://mcuxpresso.nxp.com/XSD/mex_configuration_18.xsd" uuid="cb0a0571-31b0-4026-b225-2a0da4ce6ac1" version="18" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_18" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <common>
       <processor>S32K344</processor>
       <package>S32K344_257BGA</package>
@@ -11,13 +11,13 @@
    </common>
    <preferences>
       <validate_boot_init_only>true</validate_boot_init_only>
-      <generate_extended_information>false</generate_extended_information>
       <generate_code_modified_registers_only>false</generate_code_modified_registers_only>
       <update_include_paths>true</update_include_paths>
+      <enable_parallel_routing>true</enable_parallel_routing>
       <generate_registers_defines>false</generate_registers_defines>
    </preferences>
    <tools>
-      <pins name="Pins" version="16.0" enabled="true" update_project_code="true">
+      <pins name="Pins" version="17.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/Siul2_Port_Ip_Cfg.c" update_enabled="true"/>
             <file path="board/Siul2_Port_Ip_Cfg.h" update_enabled="true"/>
@@ -175,7 +175,7 @@
             </function>
          </functions_list>
       </pins>
-      <clocks name="Clocks" version="14.0" enabled="true" update_project_code="true">
+      <clocks name="Clocks" version="17.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="generate/include/Clock_Ip_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Clock_Ip_Cfg_Defines.h" update_enabled="true"/>
@@ -199,20 +199,10 @@
                         <data>INPUT</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="PinSignal" resourceId="FXOSC_CLK.EXTAL" description="&apos;External pin&apos; (Pins tool id: FXOSC_CLK.EXTAL, Clocks tool id: FXOSC_CLK.EXTAL) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:ClockConfig0">
-                     <feature name="direction" evaluation="">
-                        <data>INPUT</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="PinSignal" resourceId="FXOSC_CLK.XTAL" description="&apos;External pin&apos; (Pins tool id: FXOSC_CLK.XTAL, Clocks tool id: FXOSC_CLK.XTAL) needs to be routed" problem_level="1" source="Clocks:ClockConfig0">
                      <feature name="routed" evaluation="">
                         <data>true</data>
                      </feature>
-                     <feature name="direction" evaluation="">
-                        <data>OUTPUT</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PinSignal" resourceId="FXOSC_CLK.XTAL" description="&apos;External pin&apos; (Pins tool id: FXOSC_CLK.XTAL, Clocks tool id: FXOSC_CLK.XTAL) needs to have &apos;OUTPUT&apos; direction" problem_level="1" source="Clocks:ClockConfig0">
                      <feature name="direction" evaluation="">
                         <data>OUTPUT</data>
                      </feature>
@@ -225,20 +215,10 @@
                         <data>INPUT</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="PinSignal" resourceId="SXOSC_CLK.EXTAL" description="&apos;External pin&apos; (Pins tool id: SXOSC_CLK.EXTAL, Clocks tool id: SXOSC_CLK.EXTAL) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:ClockConfig0">
-                     <feature name="direction" evaluation="">
-                        <data>INPUT</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="PinSignal" resourceId="SXOSC_CLK.XTAL" description="&apos;External pin&apos; (Pins tool id: SXOSC_CLK.XTAL, Clocks tool id: SXOSC_CLK.XTAL) needs to be routed" problem_level="1" source="Clocks:ClockConfig0">
                      <feature name="routed" evaluation="">
                         <data>true</data>
                      </feature>
-                     <feature name="direction" evaluation="">
-                        <data>OUTPUT</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PinSignal" resourceId="SXOSC_CLK.XTAL" description="&apos;External pin&apos; (Pins tool id: SXOSC_CLK.XTAL, Clocks tool id: SXOSC_CLK.XTAL) needs to have &apos;OUTPUT&apos; direction" problem_level="1" source="Clocks:ClockConfig0">
                      <feature name="direction" evaluation="">
                         <data>OUTPUT</data>
                      </feature>
@@ -4858,6 +4838,11 @@
                                        <setting name="Name" value="Can_aHwFilter_Object_Mesaj2"/>
                                        <setting name="CanHwFilterCode" value="0x0CF11F05"/>
                                        <setting name="CanHwFilterMask" value="0x0CF11F05"/>
+                                    </struct>
+                                    <struct name="2">
+                                       <setting name="Name" value="Can_aHwFilter_Object_Mesaj3"/>
+                                       <setting name="CanHwFilterCode" value="0x0CF11A12"/>
+                                       <setting name="CanHwFilterMask" value="0x0CF11A12"/>
                                     </struct>
                                  </array>
                                  <array name="CanTTHardwareObjectTrigger"/>

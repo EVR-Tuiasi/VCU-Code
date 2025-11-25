@@ -83,6 +83,12 @@ boolean InverterReceivedMessage(Can_HwHandleType handle, Can_IdType id, PduLengt
 	        InverterInstance[0].controllerTemperature = data[1];
 	        InverterInstance[0].motorTemperature = data[2];
 		}
+		else if((id & 0x3FFFFFFF) == 0x0CF11A12)
+		{
+			volatile int mata = data[0];
+			mata--;
+
+		}
 	}
 	return TRUE;
 }
