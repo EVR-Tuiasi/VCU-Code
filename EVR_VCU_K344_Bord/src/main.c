@@ -71,7 +71,7 @@ extern "C" {
 /*==================================================================================================
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
-
+uint16 Creatie=0;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -132,7 +132,7 @@ int main(void)
 
     SevenSegmentInit();
     //SevenSegmentTest();
-	//DisplayInit();
+	//DisplayInit(); //sa pornesti aici
 	PedalsInit();
 	DacInit();
     InverterInit();
@@ -260,6 +260,11 @@ int main(void)
         else{
         	tempMaxim = tempMotor;
         }
+        //aici ma bag la creatie sa modific o temperatura
+        tempMotor=Creatie;
+
+
+
         SevenSegmentDisplayDecimalValue(0, tempMaxim, 0);
         viteza = 0;
         if(rpm != 0){

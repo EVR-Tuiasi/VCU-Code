@@ -46,7 +46,7 @@ uint8 currentDebounceIndex = 0U, voltageDebounceIndex = 0U;
 /*==================================================================================================
 *                                      GLOBAL VARIABLES
 ==================================================================================================*/
-
+extern uint16 Creatie;
 
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
@@ -88,8 +88,7 @@ boolean InverterReceivedMessage(Can_HwHandleType handle, Can_IdType id, PduLengt
 		}
 		else if((id & 0x3FFFFFFF) == 0x0CF11A05)
 		{
-			volatile int mata = data[0];
-			mata--;
+			Creatie=(data[6]<<8)|data[7];
 
 		}
 	}
