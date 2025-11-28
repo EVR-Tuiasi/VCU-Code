@@ -58,6 +58,9 @@ uint8 currentDebounceIndex = 0U, voltageDebounceIndex = 0U;
 ==================================================================================================*/
 boolean InverterReceivedMessage(Can_HwHandleType handle, Can_IdType id, PduLengthType length, uint8* data){
 	uint64 mean = 0;
+	volatile int bla=0;
+	bla++;
+
 	if(length == 8U){
 		if((id & 0x3FFFFFFF) == 0x0CF11E05){//mesaj tip 1 invertor, mascat deoarece driverul de CAN modifica cei mai din stanga doi biti
 			InverterInstance[0].rpm = ((uint16)data[0]) + (((uint16)data[1])<<8U);
@@ -83,7 +86,7 @@ boolean InverterReceivedMessage(Can_HwHandleType handle, Can_IdType id, PduLengt
 	        InverterInstance[0].controllerTemperature = data[1];
 	        InverterInstance[0].motorTemperature = data[2];
 		}
-		else if((id & 0x3FFFFFFF) == 0x0CF11A12)
+		else if((id & 0x3FFFFFFF) == 0x0CF11A05)
 		{
 			volatile int mata = data[0];
 			mata--;

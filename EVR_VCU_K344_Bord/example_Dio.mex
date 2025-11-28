@@ -4831,8 +4831,8 @@
                                  <array name="CanHwFilter">
                                     <struct name="0">
                                        <setting name="Name" value="Can_aHwFilter_Object_Mesaj1"/>
-                                       <setting name="CanHwFilterCode" value="0x0CF11E05"/>
-                                       <setting name="CanHwFilterMask" value="0x0CF11E05"/>
+                                       <setting name="CanHwFilterCode" value="0x0"/>
+                                       <setting name="CanHwFilterMask" value="0x0"/>
                                     </struct>
                                     <struct name="1">
                                        <setting name="Name" value="Can_aHwFilter_Object_Mesaj2"/>
@@ -4841,8 +4841,8 @@
                                     </struct>
                                     <struct name="2">
                                        <setting name="Name" value="Can_aHwFilter_Object_Mesaj3"/>
-                                       <setting name="CanHwFilterCode" value="0x0CF11A12"/>
-                                       <setting name="CanHwFilterMask" value="0x0CF11A12"/>
+                                       <setting name="CanHwFilterCode" value="0x0CF11A05"/>
+                                       <setting name="CanHwFilterMask" value="0x0CF11A05"/>
                                     </struct>
                                  </array>
                                  <array name="CanTTHardwareObjectTrigger"/>
