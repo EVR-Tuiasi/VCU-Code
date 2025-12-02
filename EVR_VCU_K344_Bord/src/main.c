@@ -132,7 +132,7 @@ int main(void)
 
     SevenSegmentInit();
     //SevenSegmentTest();
-	//DisplayInit(); //sa pornesti aici
+	DisplayInit(); //sa pornesti aici
 	PedalsInit();
 	DacInit();
     InverterInit();
@@ -143,8 +143,6 @@ int main(void)
 	//SoundTest();
 	boolean bspd = false;
 
-	while(1)
-		{};
 
 	DacSetOutput(0, 0);
 	DacSetOutput(1, 0);
@@ -157,7 +155,7 @@ int main(void)
 	wr8(REG_PLAY, 1);
 	//activation logic
 	Dio_WriteChannel(12, 1);
-	uint8 lastSwitchState = Dio_ReadChannel(154U);
+	/*uint8 lastSwitchState = Dio_ReadChannel(154U);
 	while(1){
 		if(PedalsGetBrakePercent() >= 50U){
 			if(Dio_ReadChannel(154U) != lastSwitchState){
@@ -167,7 +165,7 @@ int main(void)
 		else{
 			lastSwitchState = Dio_ReadChannel(154U);
 		}
-	}
+	}*/
 	/*while(1){
 		if(Dio_ReadChannel(154) == STD_OFF){
 			break;
@@ -197,6 +195,7 @@ int main(void)
 	wr8(REG_PLAY, 1);
 
 	volatile uint32 frana = 0, acceleratie = 0, rpm = 0, tensiune = 0, curent = 0, tempController = 0, tempMotor = 0, putere = 0, procentaj = 0, tempMaxim = 0, viteza = 0, throttle = 0;
+
 	while(1){
 		//citire valori senzori frana
 		frana = PedalsGetBrakePercent();
