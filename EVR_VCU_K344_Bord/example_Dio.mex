@@ -484,16 +484,6 @@
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.wdg_fs26" description="Wdg_43_fs26 is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data type="Boolean">true</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.wdg_fs26" description="An unsupported version of the Wdg_43_fs26 in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
-               <feature name="version" evaluation="equivalent">
-                  <data type="Version">1.0.0</data>
-               </feature>
-            </dependency>
             <dependency resourceType="SWComponent" resourceId="platform.driver.gpt" description="Gpt is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
@@ -510,16 +500,6 @@
                </feature>
             </dependency>
             <dependency resourceType="SWComponent" resourceId="platform.driver.Platform" description="An unsupported version of the Platform in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
-               <feature name="version" evaluation="equivalent">
-                  <data type="Version">1.0.0</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.cdd_sbc_fs26" description="CDD_Sbc_fs26 is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data type="Boolean">true</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.cdd_sbc_fs26" description="An unsupported version of the CDD_Sbc_fs26 in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
                </feature>
@@ -653,8 +633,6 @@
             <file path="generate/include/CDD_Mcl_Cfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Mcl_Cfg_Defines.h" update_enabled="true"/>
             <file path="generate/include/CDD_Mcl_PBcfg.h" update_enabled="true"/>
-            <file path="generate/include/CDD_Sbc_fs26_Cfg.h" update_enabled="true"/>
-            <file path="generate/include/CDD_Sbc_fs26_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Uart_Cfg.h" update_enabled="true"/>
             <file path="generate/include/CDD_Uart_Defines.h" update_enabled="true"/>
             <file path="generate/include/CDD_Uart_PBcfg.h" update_enabled="true"/>
@@ -784,9 +762,6 @@
             <file path="generate/include/Tspc_Port_Ip_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/Uart_Ipw_Cfg.h" update_enabled="true"/>
             <file path="generate/include/Uart_Ipw_PBcfg.h" update_enabled="true"/>
-            <file path="generate/include/Wdg_43_fs26_Cfg.h" update_enabled="true"/>
-            <file path="generate/include/Wdg_43_fs26_CfgExt.h" update_enabled="true"/>
-            <file path="generate/include/Wdg_43_fs26_PBcfg.h" update_enabled="true"/>
             <file path="generate/include/modules.h" update_enabled="true"/>
             <file path="generate/src/Adc_Cfg.c" update_enabled="true"/>
             <file path="generate/src/Adc_Ipw_PBcfg.c" update_enabled="true"/>
@@ -797,7 +772,6 @@
             <file path="generate/src/CDD_I2c_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Mcl_Cfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Mcl_PBcfg.c" update_enabled="true"/>
-            <file path="generate/src/CDD_Sbc_fs26_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CDD_Uart_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/CanIf_Cfg.c" update_enabled="true"/>
             <file path="generate/src/CanIf_PBcfg.c" update_enabled="true"/>
@@ -853,9 +827,6 @@
             <file path="generate/src/Trgmux_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Tspc_Port_Ip_PBcfg.c" update_enabled="true"/>
             <file path="generate/src/Uart_Ipw_PBcfg.c" update_enabled="true"/>
-            <file path="generate/src/Wdg_43_fs26_CfgExt.c" update_enabled="true"/>
-            <file path="generate/src/Wdg_43_fs26_Lcfg.c" update_enabled="true"/>
-            <file path="generate/src/Wdg_43_fs26_PBcfg.c" update_enabled="true"/>
          </generated_project_files>
          <peripherals_profile>
             <processor_version>0.0.0</processor_version>
@@ -2816,71 +2787,6 @@
                         </struct>
                      </config_set>
                   </instance>
-                  <instance name="Wdg_43_fs26" uuid="984d5133-4a4d-4c79-ac3b-9ca510165e40" type="Wdg_43_fs26" type_id="Wdg_43_fs26" mode="general" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
-                     <config_set name="Wdg">
-                        <setting name="Name" value=""/>
-                        <struct name="ConfigTimeSupport">
-                           <setting name="POST_BUILD_VARIANT_USED" value="true"/>
-                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
-                        </struct>
-                        <array name="WdgDemEventParameterRefs"/>
-                        <struct name="WdgGeneral">
-                           <setting name="Name" value="wd_fs26"/>
-                           <setting name="WdgFs26DisableDemReportErrorStatus" value="false"/>
-                           <setting name="WdgFs26EnableUserModeSupport" value="false"/>
-                           <setting name="WdgDevErrorDetect" value="true"/>
-                           <setting name="WdgDisableAllowed" value="true"/>
-                           <setting name="WdgIndex" value="0"/>
-                           <setting name="WdgInitialTimeout" value="60.0"/>
-                           <setting name="WdgMaxTimeout" value="60.0"/>
-                           <setting name="WdgRunArea" value="RAM"/>
-                           <setting name="WdgVersionInfoApi" value="true"/>
-                           <array name="WdgEcucPartitionRef"/>
-                        </struct>
-                        <struct name="WdgPublishedInformation" quick_selection="Default">
-                           <setting name="Name" value=""/>
-                           <setting name="WdgTriggerMode" value="WDG_WINDOW"/>
-                        </struct>
-                        <struct name="WdgSettingsConfig">
-                           <setting name="Name" value="WdgSettingsConfig"/>
-                           <setting name="WdgDefaultMode" value="WDGIF_OFF_MODE"/>
-                           <setting name="WdgFs26ExternalTriggerCounterRef" value="/Gpt/Gpt/GptChannelConfigSet/Gpt_FS26"/>
-                           <setting name="WdgFs26ErrorCounterLimit" value="WD_ERR_LIMIT_6"/>
-                           <setting name="WdgFs26RefreshCounterLimit" value="WD_RFR_LIMIT_1"/>
-                           <setting name="WdgFs26ErrorImpact" value="WD_FS_REACTION_RSTB_FS0B"/>
-                           <setting name="WdgFs26RecoveryWindowPeriod" value="WDW_RECOVERY_64MS"/>
-                           <setting name="WdgFs26ServiceKeyValue" value="5AB2"/>
-                           <array name="WdgExternalConfiguration"/>
-                           <struct name="WdgSettingsFast">
-                              <setting name="Name" value="WdgSettingsFast"/>
-                              <setting name="WdgFs26WindowPeriod" value="WDW_PERIOD_3MS"/>
-                              <setting name="WdgFs26ClosedWindowDutyCycle" value="WDW_DC_62C_37O"/>
-                           </struct>
-                           <struct name="WdgSettingsSlow">
-                              <setting name="Name" value="WdgSettingsSlow"/>
-                              <setting name="WdgFs26WindowPeriod" value="WDW_PERIOD_8MS"/>
-                              <setting name="WdgFs26ClosedWindowDutyCycle" value="WDW_DC_62C_37O"/>
-                           </struct>
-                           <struct name="WdgSettingsOff">
-                              <setting name="Name" value="WdgSettingsOff"/>
-                              <setting name="WdgFs26WindowPeriod" value="INFINITE"/>
-                              <setting name="WdgFs26ClosedWindowDutyCycle" value="WDW_DC_62C_37O"/>
-                           </struct>
-                        </struct>
-                        <struct name="CommonPublishedInformation" quick_selection="Default">
-                           <setting name="Name" value=""/>
-                           <setting name="ModuleId" value="102"/>
-                           <setting name="VendorId" value="43"/>
-                           <setting name="ArReleaseMajorVersion" value="4"/>
-                           <setting name="ArReleaseMinorVersion" value="7"/>
-                           <setting name="ArReleaseRevisionVersion" value="0"/>
-                           <setting name="SwMajorVersion" value="3"/>
-                           <setting name="SwMinorVersion" value="0"/>
-                           <setting name="SwPatchVersion" value="0"/>
-                           <setting name="VendorApiInfix" value="fs26"/>
-                        </struct>
-                     </config_set>
-                  </instance>
                   <instance name="Gpt" uuid="bf508be0-cf40-41b3-ba9f-1fea20de444c" type="Gpt" type_id="Gpt" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="Gpt">
                         <setting name="Name" value="Gpt"/>
@@ -2901,7 +2807,7 @@
                                  <setting name="GptChannelTickValueMax" value="65535"/>
                                  <setting name="GptEnableWakeup" value="false"/>
                                  <array name="GptNotification">
-                                    <setting name="0" value="Wdg_43_fs26_Cbk_GptNotification0"/>
+                                    <setting name="0" value="NULL_PTR"/>
                                  </array>
                                  <array name="GptChannelEcucPartitionRef"/>
                                  <array name="GptWakeupConfiguration"/>
@@ -3381,132 +3287,6 @@
                               <array name="PlatformNvicEcucPartitionRef"/>
                            </struct>
                         </array>
-                     </config_set>
-                  </instance>
-                  <instance name="Sbc_fs26" uuid="2f14cd49-efb8-4ec7-b67c-4de02a72b520" type="Sbc_fs26" type_id="Sbc_fs26" mode="general" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
-                     <config_set name="Sbc_fs26">
-                        <setting name="Name" value="Sbc_fs26"/>
-                        <struct name="ConfigTimeSupport">
-                           <setting name="POST_BUILD_VARIANT_USED" value="true"/>
-                           <setting name="IMPLEMENTATION_CONFIG_VARIANT" value="VARIANT-PRE-COMPILE"/>
-                        </struct>
-                        <struct name="GeneralConfig">
-                           <setting name="Name" value="GeneralConfig"/>
-                           <setting name="SbcDevErrorDetect" value="true"/>
-                           <setting name="SbcDisableDemReportError" value="true"/>
-                           <setting name="SbcVersionInfoApi" value="false"/>
-                           <setting name="SbcWakeupApi" value="false"/>
-                           <setting name="SbcLDTApi" value="false"/>
-                           <setting name="SbcAmuxApi" value="false"/>
-                           <setting name="SbcRegulatorApi" value="false"/>
-                           <setting name="SbcAbist2Api" value="false"/>
-                           <setting name="SbcTimeoutMechanism" value="TICKS"/>
-                           <setting name="SbcTimeoutMethod" value="OSIF_COUNTER_DUMMY"/>
-                           <setting name="SbcTimeout" value="10000"/>
-                           <setting name="SbcEnableUserModeSupport" value="false"/>
-                        </struct>
-                        <struct name="CommonPublishedInformation" quick_selection="Default">
-                           <setting name="Name" value="CommonPublishedInformation"/>
-                           <setting name="ModuleId" value="255"/>
-                           <setting name="VendorId" value="43"/>
-                           <setting name="ArReleaseMajorVersion" value="4"/>
-                           <setting name="ArReleaseMinorVersion" value="7"/>
-                           <setting name="ArReleaseRevisionVersion" value="0"/>
-                           <setting name="SwMajorVersion" value="3"/>
-                           <setting name="SwMinorVersion" value="0"/>
-                           <setting name="SwPatchVersion" value="0"/>
-                        </struct>
-                        <array name="SbcDemEventParameterRefs"/>
-                        <struct name="SpiConfig">
-                           <setting name="Name" value="SpiConfig"/>
-                           <setting name="SpiChannelRef" value="/Spi/Spi/SpiDriver/SpiChannel_FS26"/>
-                           <setting name="SpiSequenceRef" value="/Spi/Spi/SpiDriver/SpiSequence_FS26"/>
-                        </struct>
-                        <struct name="DriverConfig">
-                           <setting name="Name" value="DriverConfig"/>
-                           <setting name="ExternalWatchdog" value="true"/>
-                           <setting name="ExitDebugMode" value="false"/>
-                           <setting name="WatchdogType" value="SBC_FS26_WD_CHALLENGER"/>
-                           <setting name="u16WatchdogToken" value="5AB2"/>
-                           <setting name="bAsilDLevel" value="true"/>
-                           <array name="SbcRstbCheckNotification"/>
-                           <array name="SbcWatchdogNotification"/>
-                           <array name="SbcCheckWatchdogRefreshNotification"/>
-                           <setting name="SbcDisableWatchdogTimer" value="false"/>
-                        </struct>
-                        <struct name="InitConfig" quick_selection="Default">
-                           <setting name="Name" value="InitConfig"/>
-                           <struct name="ovuvSafe1Reg" quick_selection="Default">
-                              <setting name="Name" value="ovuvSafe1Reg"/>
-                              <setting name="u16VmonPreOvFs" value="SBC_FS26_FS_VMON_PRE_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonPreUvFs" value="SBC_FS26_FS_VMON_PRE_UV_FS_REACTION_FS0B"/>
-                              <setting name="u16VmonCoreOvFs" value="SBC_FS26_FS_VMON_CORE_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonCoreUvFs" value="SBC_FS26_FS_VMON_CORE_UV_FS_REACTION_FS0B"/>
-                              <setting name="u16VmonLdo1OvFs" value="SBC_FS26_FS_VMON_LDO1_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonLdo1UvFs" value="SBC_FS26_FS_VMON_LDO1_UV_FS_REACTION_FS0B"/>
-                              <setting name="u16VmonLdo2OvFs" value="SBC_FS26_FS_VMON_LDO2_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonLdo2UvFs" value="SBC_FS26_FS_VMON_LDO2_UV_FS_REACTION_FS0B"/>
-                           </struct>
-                           <struct name="ovuvSafe2Reg" quick_selection="Default">
-                              <setting name="Name" value="ovuvSafe2Reg"/>
-                              <setting name="u16VmonExtOvFs" value="SBC_FS26_FS_VMON_EXT_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonExtUvFs" value="SBC_FS26_FS_VMON_EXT_UV_FS_REACTION_FS0B"/>
-                              <setting name="u16VmonRefOvFs" value="SBC_FS26_FS_VMON_REF_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonRefUvFs" value="SBC_FS26_FS_VMON_REF_UV_FS_REACTION_FS0B"/>
-                              <setting name="u16VmonTrk2OvFs" value="SBC_FS26_FS_VMON_TRK2_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonTrk2UvFs" value="SBC_FS26_FS_VMON_TRK2_UV_FS_REACTION_FS0B"/>
-                              <setting name="u16VmonTrk1OvFs" value="SBC_FS26_FS_VMON_TRK1_OV_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16VmonTrk1UvFs" value="SBC_FS26_FS_VMON_TRK1_UV_FS_REACTION_FS0B"/>
-                           </struct>
-                           <struct name="wdCfgReg" quick_selection="Default">
-                              <setting name="Name" value="wdCfgReg"/>
-                              <setting name="u16WdErrLimit" value="SBC_FS26_FS_WD_ERR_LIMIT_6"/>
-                              <setting name="u16WdRfrLimit" value="SBC_FS26_FS_WD_RFR_LIMIT_1"/>
-                              <setting name="u16WdFs" value="SBC_FS26_FS_WD_FS_REACTION_RSTB_FS0B"/>
-                           </struct>
-                           <struct name="safeInputsReg" quick_selection="Default">
-                              <setting name="Name" value="safeInputsReg"/>
-                              <setting name="u16FccuCfg" value="SBC_FS26_FS_FCCU_CFG_NO"/>
-                              <setting name="u16Fccu12FltPol" value="SBC_FS26_FS_FCCU12_FLT_POL_0_1"/>
-                              <setting name="u16Fccu1FltPol" value="SBC_FS26_FS_FCCU1_FLT_POL_LOW"/>
-                              <setting name="u16Fccu2FltPol" value="SBC_FS26_FS_FCCU2_FLT_POL_LOW"/>
-                              <setting name="u16Fccu12Fs" value="SBC_FS26_FS_FCCU12_FS_REACTION_FS0B"/>
-                              <setting name="u16Fccu1Fs" value="SBC_FS26_FS_FCCU1_FS_REACTION_FS0B"/>
-                              <setting name="u16Fccu2Fs" value="SBC_FS26_FS_FCCU2_FS_REACTION_FS0B"/>
-                              <setting name="u16Wake2LpPol" value="SBC_FS26_FS_WAKE2_LP_POLARITY_LOW"/>
-                              <setting name="u16ErrmonFaultPol" value="SBC_FS26_FS_ERRMON_FLT_POLARITY_LOW"/>
-                              <setting name="u16ErrmonAckTime" value="SBC_FS26_FS_ERRMON_ACK_TIME_8MS"/>
-                              <setting name="u16ErrmonFs" value="SBC_FS26_FS_ERRMON_FS_REACTION_RSTB_FS0B"/>
-                              <setting name="u16Fccu12Filt" value="SBC_FS26_FS_FCCU12_FILT_6US"/>
-                           </struct>
-                           <struct name="fssmReg" quick_selection="Default">
-                              <setting name="Name" value="fssmReg"/>
-                              <setting name="u16FltErrCntLimit" value="SBC_FS26_FS_FLT_ERR_CNT_LIMIT_6"/>
-                              <setting name="u16FltErrFs" value="SBC_FS26_FS_FLT_ERR_REACTION_RSTB_FS0B"/>
-                              <setting name="u16RstbDur" value="SBC_FS26_FS_RSTB_DUR_10MS"/>
-                              <setting name="u16BackupFs0b" value="SBC_FS26_FS_BACKUP_SAFETY_PATH_FS0B_RSTB"/>
-                              <setting name="u16BackupFs1b" value="SBC_FS26_FS_BACKUP_SAFETY_PATH_FS1B_RSTB"/>
-                              <setting name="u16ClkMonDis" value="SBC_FS26_FS_CLK_MON_DIS_ACTIVE"/>
-                              <setting name="u16Dis8s" value="SBC_FS26_FS_DIS8S_ENABLED"/>
-                           </struct>
-                           <struct name="wdwDurationReg" quick_selection="Default">
-                              <setting name="Name" value="wdwDurationReg"/>
-                              <setting name="u16WdwPeriod" value="SBC_FS26_FS_WDW_PERIOD_3MS"/>
-                              <setting name="u16WdwDc" value="SBC_FS26_FS_WDW_DC_62C_37O"/>
-                              <setting name="u16WdwRecovery" value="SBC_FS26_FS_WDW_RECOVERY_64MS"/>
-                           </struct>
-                           <struct name="abistOnDemand" quick_selection="Default">
-                              <setting name="Name" value="abistOnDemand"/>
-                              <setting name="Abist2Ext" value="NO_ABIST"/>
-                              <setting name="Abist2Ref" value="NO_ABIST"/>
-                              <setting name="Abist2Trk2" value="NO_ABIST"/>
-                              <setting name="Abist2Trk1" value="NO_ABIST"/>
-                              <setting name="Abist2Ldo2" value="NO_ABIST"/>
-                              <setting name="Abist2Ldo1" value="NO_ABIST"/>
-                              <setting name="Abist2Core" value="NO_ABIST"/>
-                              <setting name="Abist2Vpre" value="NO_ABIST"/>
-                           </struct>
-                        </struct>
                      </config_set>
                   </instance>
                   <instance name="Spi" uuid="8d77f00d-6b38-4e2b-a889-2fa181639d40" type="Spi" type_id="Spi" mode="autosar" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
@@ -5075,5 +4855,9 @@
             </component>
          </components>
       </periphs>
+      <serdes name="SERDES" version="1.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
+         <components/>
+      </serdes>
    </tools>
 </configuration>

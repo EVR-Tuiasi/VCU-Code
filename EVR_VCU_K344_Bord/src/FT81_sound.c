@@ -53,42 +53,42 @@ extern "C" {
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
-uint32 effect_start(void){
+uint32_t effect_start(void){
 	return 1;
 }
 
-uint32 effect_select(SoundEffect_type effect, uint8 pitch){
-	return (((uint32)pitch) << 8) | (effect & 0xFF);
+uint32_t effect_select(SoundEffect_type effect, uint8_t pitch){
+	return (((uint32_t)pitch) << 8) | (effect & 0xFF);
 }
 
-uint32 effect_volume(uint8 sound_level){
+uint32_t effect_volume(uint8_t sound_level){
 	return sound_level;
 }
 
-uint32 file_volume(uint8 sound_level){
+uint32_t file_volume(uint8_t sound_level){
 	return sound_level;
 }
 
-uint32 file_playback_start(void){
+uint32_t file_playback_start(void){
 	return 1;
 }
-uint32 file_playback_loop(boolean enable){
+uint32_t file_playback_loop(boolean enable){
 	return enable;
 }
 
-uint32 file_playback_format(SoundFormat_type format){
+uint32_t file_playback_format(SoundFormat_type format){
 	return format;
 }
 
-uint32 file_playback_sampling_frequency(uint16 frequency){
+uint32_t file_playback_sampling_frequency(uint16_t frequency){
 	return frequency;
 }
 
-uint32 file_playback_length(uint32 length){
+uint32_t file_playback_length(uint32_t length){
 	return length & 0xFFFFF;
 }
 
-uint32 file_playback_start_address(uint32 address){
+uint32_t file_playback_start_address(uint32_t address){
 	return address & 0xFFFFFF;
 }
 

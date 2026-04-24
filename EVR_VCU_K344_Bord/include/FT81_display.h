@@ -12,7 +12,7 @@ extern "C"{
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
+#include "stdint.h"
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
@@ -98,6 +98,15 @@ typedef enum{
 	PALETTED8,
 	L2
 }BitmapLayout_type;
+
+typedef enum{
+	ZERO,
+	KEEP,
+	REPLACE,
+	INCR,
+	DECR,
+	INVERT
+}StencilOp_t;
 /*==================================================================================================
 *                                STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
@@ -110,57 +119,59 @@ typedef enum{
 *                                    FUNCTION PROTOTYPES
 ==================================================================================================*/
 /*Setting graphics state*/
-uint32 alpha_func(AlphaFunc_type func, uint8 ref);
-uint32 bitmap_handle(uint8 handle);
-uint32 bitmap_layout(BitmapLayout_type format, uint16 linestride, uint16 height);
-//uint32 bitmap_layout_h();
-uint32 bitmap_size(boolean filter, boolean wrapX, boolean wrapY, uint16 width, uint16 height);
-//uint32 bitmap_size_h();
-uint32 bitmap_source(uint32 addr);
-uint32 bitmap_transform_a(uint32 coefficient);
-uint32 bitmap_transform_b(uint32 coefficient);
-uint32 bitmap_transform_c(uint32 coefficient);
-uint32 bitmap_transform_d(uint32 coefficient);
-uint32 bitmap_transform_e(uint32 coefficient);
-uint32 bitmap_transform_f(uint32 coefficient);
+uint32_t alpha_func(AlphaFunc_type func, uint8_t ref);
+uint32_t bitmap_handle(uint8_t handle);
+uint32_t bitmap_layout(BitmapLayout_type format, uint16_t linestride, uint16_t height);
+//uint32_t bitmap_layout_h();
+uint32_t bitmap_size(boolean filter, boolean wrapX, boolean wrapY, uint16_t width, uint16_t height);
+//uint32_t bitmap_size_h();
+uint32_t bitmap_source(uint32_t addr);
+uint32_t bitmap_transform_a(uint32_t coefficient);
+uint32_t bitmap_transform_b(uint32_t coefficient);
+uint32_t bitmap_transform_c(uint32_t coefficient);
+uint32_t bitmap_transform_d(uint32_t coefficient);
+uint32_t bitmap_transform_e(uint32_t coefficient);
+uint32_t bitmap_transform_f(uint32_t coefficient);
 
-//uint32 blend_func();
-//uint32 cell();
-uint32 clear(boolean clear_color, boolean clear_stencil, boolean clear_tag);
-//uint32 clear_color_a();
-uint32 clear_color_rgb(uint8 Red, uint8 Green,  uint8 Blue);
-//uint32 clear_stencil();
-//uint32 clear_tag();
-//uint32 color_a();
-//uint32 color_mask();
-uint32 color_rgb(uint8 red, uint8 green, uint8 blue);
-uint32 line_width(uint16 width);
-uint32 point_size(uint16 size);
-uint32 restore_context(void);
-uint32 save_context(void);
-//uint32 scissor_size();
-//uint32 scissor_xy();
-//uint32 stencil_func();
-//uint32 stencil_mask();
-//uint32 stencil_op();
-//uint32 tag();
-//uint32 tag_mask();
-uint32 vertex_format(uint8 frac);
-uint32 vertex_translate_x(uint32 x);
-uint32 vertex_translate_y(uint32 y);
-//uint32 palette_source();
+//uint32_t blend_func();
+//uint32_t cell();
+uint32_t clear(boolean clear_color, boolean clear_stencil, boolean clear_tag);
+//uint32_t clear_color_a();
+uint32_t clear_color_rgb(uint8_t Red, uint8_t Green,  uint8_t Blue);
+//uint32_t clear_stencil();
+//uint32_t clear_tag();
+//uint32_t color_a();
+//uint32_t color_mask();
+uint32_t color_rgb(uint8_t red, uint8_t green, uint8_t blue);
+uint32_t line_width(uint16_t width);
+uint32_t point_size(uint16_t size);
+uint32_t restore_context(void);
+uint32_t save_context(void);
+//uint32_t scissor_size();
+//uint32_t scissor_xy();
+//uint32_t stencil_func();
+//uint32_t stencil_mask();
+//uint32_t stencil_op();
+//uint32_t tag();
+//uint32_t tag_mask();
+uint32_t vertex_format(uint8_t frac);
+uint32_t vertex_translate_x(uint32_t x);
+uint32_t vertex_translate_y(uint32_t y);
+//uint32_t palette_source();
 /*Drawing actions*/
-uint32 begin(Begin_type prim);
-uint32 end_d(void);
-uint32 vertex2f(uint16 x, uint16 y);
-uint32 vertex2ii(uint16 x, uint16 y, uint8 handle, uint8 cell);
+uint32_t begin(Begin_type prim);
+uint32_t end_d(void);
+uint32_t vertex2f(uint16_t x, uint16_t y);
+uint32_t vertex2ii(uint16_t x, uint16_t y, uint8_t handle, uint8_t cell);
 /*Execution control*/
-//uint32 nop();
-//uint32 jump();
-//uint32 macro();
-//uint32 call();
-//uint32 return();
-uint32 display(void);
+//uint32_t nop();
+//uint32_t jump();
+//uint32_t macro();
+//uint32_t call();
+//uint32_t return();
+uint32_t display(void);
+uint32_t stencil_func(AlphaFunc_type func, uint8_t ref, uint8_t mask);
+uint32_t stencil_op(StencilOp_t sfail, StencilOp_t spass);
 
 
 #ifdef __cplusplus

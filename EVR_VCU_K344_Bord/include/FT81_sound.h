@@ -11,7 +11,7 @@ extern "C"{
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
+#include "stdint.h"
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
@@ -127,16 +127,16 @@ typedef enum{
 /*==================================================================================================
 *                                    FUNCTION PROTOTYPES
 ==================================================================================================*/
-uint32 effect_start(void);
-uint32 effect_select(SoundEffect_type effect, uint8 pitch);
-uint32 effect_volume(uint8 sound_level);
-uint32 file_volume(uint8 sound_level);
-uint32 file_playback_start(void);
-uint32 file_playback_loop(boolean enable);
-uint32 file_playback_format(SoundFormat_type format);
-uint32 file_playback_sampling_frequency(uint16 frequency);
-uint32 file_playback_length(uint32 length);
-uint32 file_playback_start_address(uint32 address);
+uint32_t effect_start(void);
+uint32_t effect_select(SoundEffect_type effect, uint8_t pitch);
+uint32_t effect_volume(uint8_t sound_level);
+uint32_t file_volume(uint8_t sound_level);
+uint32_t file_playback_start(void);
+uint32_t file_playback_loop(boolean enable);
+uint32_t file_playback_format(SoundFormat_type format);
+uint32_t file_playback_sampling_frequency(uint16_t frequency);
+uint32_t file_playback_length(uint32_t length);
+uint32_t file_playback_start_address(uint32_t address);
 
 #ifdef __cplusplus
 }

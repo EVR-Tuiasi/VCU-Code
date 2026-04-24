@@ -10,15 +10,15 @@ extern "C" {
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-#include "CDD_Sbc_fs26.h"
+//#include "CDD_Sbc_fs26.h"
 #include "Port.h"
 #include "Det.h"
 #include "Dem.h"
 #include "Spi.h"
 #include "Platform.h"
-#include "Wdg_43_fs26_CfgExt.h"
-#include "Wdg_43_fs26_Cfg.h"
-#include "Wdg_43_fs26.h"
+//#include "Wdg_43_fs26_CfgExt.h"
+//#include "Wdg_43_fs26_Cfg.h"
+//#include "Wdg_43_fs26.h"
 #include "Gpt.h"
 #include "Mcu.h"
 #include "Dio.h"
@@ -132,7 +132,10 @@ int main(void)
 
     SevenSegmentInit();
     //SevenSegmentTest();
-	DisplayInit(); //sa pornesti aici
+	Display_Init(); //sa pornesti aici
+	/*while(1){
+		Display_Test();
+	}*/
 	PedalsInit();
 	DacInit();
     InverterInit();
@@ -277,7 +280,7 @@ int main(void)
         }
 		//actualizare interfata display
 		//TODO martori de bord
-        DashboardUpdate(viteza, putere, tensiune/10U, procentaj/10U, tempMotor, tempController, frana, acceleratie, bspd);
+        Display_Update(acceleratie, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         //trimitere date pe uart
         USBSendAcceleratorPedals(PedalsGetAccelerationPercentSensor1(), PedalsGetAccelerationPercentSensor2());
         USBSendBrakePedal(frana);

@@ -11,7 +11,7 @@ extern "C"{
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
+#include "stdint.h"
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
@@ -104,13 +104,13 @@ extern "C"{
 /*==================================================================================================
 *                                    FUNCTION PROTOTYPES
 ==================================================================================================*/
-void wr8(uint32 address, uint8 value);
-void wr16(uint32 address, uint16 value);
-void wr32(uint32 address, uint32 value);
-uint8 rd8(uint32 address);
-uint16 rd16(uint32 address);
-uint32 rd32(uint32 address);
-void host_command(uint8 command, uint8 parameter);
+void wr8(uint32_t address, uint8_t value);
+void wr16(uint32_t address, uint16_t value);
+void wr32(uint32_t address, uint32_t value);
+uint8_t rd8(uint32_t address);
+uint16_t rd16(uint32_t address);
+uint32_t rd32(uint32_t address);
+void host_command(uint8_t command, uint8_t parameter);
 
 #ifdef __cplusplus
 }
