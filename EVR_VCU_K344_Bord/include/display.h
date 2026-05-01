@@ -56,7 +56,7 @@ extern "C"{
 
 #define WARNING_CURRENT_X							485U
 #define WARNING_CURRENT_Y							295U
-#define WARNING_CURRENT_HEIGHT						105U
+#define WARNING_CURRENT_HEIGHT						93U
 #define WARNING_CURRENT_WIDTH						228U
 #define WARNING_CURRENT_Y_OFFSET					41U
 #define WARNING_CURRENT_X_OFFSET					50U
@@ -70,31 +70,31 @@ extern "C"{
 #define BATTERY_BORDER_X							763U
 #define BATTERY_BORDER_Y							60U
 #define BATTERY_BORDER_WIDTH						37U
-#define BATTERY_BORDER_HEIGHT						395U
+#define BATTERY_BORDER_HEIGHT						350U
 
 //Motor Temperature
 #define MOTOR_LIMITED_TEMP							60U
 #define MOTOR_TEMP_WIDTH							155U
 #define MOTOR_TEMP_X								800U
-#define MOTOR_TEMP_Y								458U
+#define MOTOR_TEMP_Y								411U
 #define MOTOR_TEMP_DIAG_X							587U
-#define MOTOR_TEMP_DIAG_Y							434U
+#define MOTOR_TEMP_DIAG_Y							388U
 #define MOTOR_TEMP_DIAG_WIDTH						84U
 
 #define INVERTER_TEMP_X								0U
-#define INVERTER_TEMP_Y								458U
+#define INVERTER_TEMP_Y								411U
 #define INVERTER_TEMP_WIDTH							150U
 #define INVERTER_TEMP_DIAG_X						211U
-#define INVERTER_TEMP_DIAG_Y						434U
-#define INVERTER_TEMP_DIAG_WIDTH					86U
+#define INVERTER_TEMP_DIAG_Y						388U
+#define INVERTER_TEMP_DIAG_WIDTH					88U
 
 
 //Lower Borders
 #define INVERTER_HORIZONTAL_BORDER		  			0U
 #define INVERTER_HORIZONTAL_BORDER_WIDTH			150U
-#define LOWER_HORIZONTAL_BORDER_HEIGHT				455U
+#define LOWER_HORIZONTAL_BORDER_HEIGHT				410U
 #define MIDDLE_HORIZONTAL_BORDER_X					210U
-#define MIDDLE_HORIZONTAL_BORDER_Y					430U
+#define MIDDLE_HORIZONTAL_BORDER_Y					385U
 #define MIDDLE_HORIZONTAL_BORDER_WIDTH				375U
 #define	MOTOR_HORIZONTAL_BORDER						645U
 #define	MOTOR_HORIZONTAL_BORDER_WIDTH				155U
@@ -147,7 +147,7 @@ extern "C"{
 
 #define UPPER_BORDER_X								100U
 #define UPPER_BORDER_Y								45U
-#define UPPER_BORDER_WIDTH							700U
+#define UPPER_BORDER_WIDTH							600U
 #define UPPER_BORDER_OFFSET							50U
 #define UPPER_VERTICAL_LEFT_LINE					255U
 #define UPPER_VERTICAL_MIDDLE_LINE					400U
@@ -166,68 +166,68 @@ extern "C"{
 //Speedometer's Cursor
 
 #define INNER_RADIUS								130U
-#define OUTER_RADIUS								195U
+#define OUTER_RADIUS								180U
 #define CENTER_X									220U
-#define CENTER_Y									300U
+#define CENTER_Y									280U
 #define PI											3.1415926535
 #define MIDDLE_RING									3010U
 
 /* Speedometer Hash Marks */
 
-#define HASH1_X 									48U
-#define HASH1_Y 									377U
-#define HASH1_END_X 								58U
-#define HASH1_END_Y 								372U
+#define HASH1_X 									221
+#define HASH1_Y 									95
+#define HASH1_END_X 								221
+#define HASH1_END_Y 								107
 
-#define HASH2_X 									29U
-#define HASH2_Y 									305U
-#define HASH2_END_X 								42U
-#define HASH2_END_Y 								305U
+#define HASH2_X 									140
+#define HASH2_Y 									115
+#define HASH2_END_X 								145
+#define HASH2_END_Y 								125
 
-#define HASH3_X 									39U
-#define HASH3_Y 									234U
-#define HASH3_END_X 								50U
-#define HASH3_END_Y 								238U
+#define HASH3_X 									85
+#define HASH3_Y 									160
+#define HASH3_END_X 								91
+#define HASH3_END_Y 								165
 
-#define HASH4_X 									71U
-#define HASH4_Y 									172U
-#define HASH4_END_X 								81U
-#define HASH4_END_Y 								179U
+#define HASH4_X 									60
+#define HASH4_Y 									220
+#define HASH4_END_X 								51
+#define HASH4_END_Y 								215
 
-#define HASH5_X 									131U
-#define HASH5_Y 									121U
-#define HASH5_END_X 								138U
-#define HASH5_END_Y 								132U
+#define HASH5_X 									45
+#define HASH5_Y 									285
+#define HASH5_END_X 								54
+#define HASH5_END_Y 								285
 
-#define HASH6_X 									221U
-#define HASH6_Y 									99U
-#define HASH6_END_X 								221U
-#define HASH6_END_Y 								113U
+#define HASH6_X 									62
+#define HASH6_Y 									355
+#define HASH6_END_X 								72
+#define HASH6_END_Y 								352
 
-#define HASH7_X 									310U
-#define HASH7_Y 									123U
-#define HASH7_END_X 								303U
-#define HASH7_END_Y 								133U
+#define HASH7_X 									297
+#define HASH7_Y 									115
+#define HASH7_END_X 								292
+#define HASH7_END_Y 								125
 
-#define HASH8_X 									367U
-#define HASH8_Y 									171U
-#define HASH8_END_X 								359U
-#define HASH8_END_Y 								178U
+#define HASH8_X 									357
+#define HASH8_Y 									164
+#define HASH8_END_X 								349
+#define HASH8_END_Y 								170
 
-#define HASH9_X 									400U
-#define HASH9_Y 									235U
-#define HASH9_END_X 								390U
-#define HASH9_END_Y 								240U
+#define HASH9_X 									388
+#define HASH9_Y 									220
+#define HASH9_END_X 								378
+#define HASH9_END_Y 								225
 
-#define HASH10_X 									412U
-#define HASH10_Y 									305U
-#define HASH10_END_X 								397U
-#define HASH10_END_Y 								305U
+#define HASH10_X 									397
+#define HASH10_Y 									285
+#define HASH10_END_X 								386
+#define HASH10_END_Y 								285
 
-#define HASH11_X 									391U
-#define HASH11_Y 									378U
-#define HASH11_END_X 								381U
-#define HASH11_END_Y 								372U
+#define HASH11_X 									376
+#define HASH11_Y 									355
+#define HASH11_END_X 								365
+#define HASH11_END_Y 								350
 
 /* ACCEL BAR */
 
@@ -251,11 +251,11 @@ extern "C"{
 #define SPEED_HUNDREDS								114U
 #define SPEED_TENS									130U
 #define SPEED_UNITS									175U
-#define SPEED_TEXT_Y								170U
-#define SPEED_TEXT_SMALL_Y							185U
+#define SPEED_TEXT_Y								160U
+#define SPEED_TEXT_SMALL_Y							175U
 
 #define KM_POSITION_X								157U
-#define KM_POSITION_Y								326U
+#define KM_POSITION_Y								316U
 
 #define BATTERY_HUNDREDS							190U
 #define BATTERY_TENS								205U
@@ -263,9 +263,9 @@ extern "C"{
 #define BATTERY_TEXT_POSITION_Y						24U
 
 #define INVERTER_TEXT_POSITION_X					5U
-#define INVERTER_TEXT_POSITION_Y					410U
+#define INVERTER_TEXT_POSITION_Y					360U
 #define INVERTER_TEMP_POSITION_X					212U
-#define INVERTER_TEMP_POSITION_Y					433U
+#define INVERTER_TEMP_POSITION_Y					390U
 
 #define WARNING_TEXT_POSITION_Y						55U
 #define WARNING_TEXT_POSITION_X						210U
@@ -273,11 +273,11 @@ extern "C"{
 #define PEDALS_TEXT_POSITION_X						265U
 #define PEDALS_TEXT_POSITION_Y						1U
 
-#define CELL_VOLTAGE_POSITION_X						460U
-#define CELL_VOLTAGE_POSITION_Y						90U
+#define CELL_VOLTAGE_POSITION_X						470U
+#define CELL_VOLTAGE_POSITION_Y						100U
 
 #define CELL_TEMPERATURE_POSITION_X					478U
-#define CELL_TEMPERATURE_POSITION_Y					192U
+#define CELL_TEMPERATURE_POSITION_Y					202U
 
 #define TOTAL_CURRENT_POSITION_X					500U
 #define TOTAL_CURRENT_POSITION_Y					290U
@@ -286,13 +286,13 @@ extern "C"{
 #define TOTAL_VOLTAGE_POSITION_Y					52U
 
 #define MOTOR_TEMP_POSITION_X						10U
-#define MOTOR_TEMP_POSITION_Y						433U
+#define MOTOR_TEMP_POSITION_Y						390U
 
 #define TIME_TEXT_POSITION_X						327U
-#define TIME_TEXT_POSITION_Y						435U
+#define TIME_TEXT_POSITION_Y						392U
 
 #define MOTOR_TEXT_POSITION_X						150U
-#define MOTOR_TEXT_POSITION_Y						410U
+#define MOTOR_TEXT_POSITION_Y						360U
 
 //Max values for current, voltage, temperatures
 
@@ -333,7 +333,7 @@ void Display_Init(void);
 void SoundTest(void);
 void Display_Test(void);
 void Display_Update(uint8_t Acceleration, uint8_t Brake, uint8_t Battery_Percentage, uint16_t Motor_Temperature, uint16_t Inverter_Temperature, uint8_t Speed, uint16_t Cell_Voltage, uint16_t Cell_Temperature, uint16_t Total_Current, uint16_t Total_Voltage, uint8_t Minutes, uint8_t Seconds, uint32_t Miliseconds);
-//void trailingArray(void);
+void trailingArray(void);
 
 #ifdef __cplusplus
 }

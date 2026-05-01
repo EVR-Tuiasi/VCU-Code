@@ -115,28 +115,29 @@ int main(void)
 
 
     /* Wdg_43_fs26 initialization */
-    volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
+   /* volatile Std_ReturnType eReturnValue = E_OK;      /* Error status. */
     //eReturnValue |= Sbc_fs26_Init(NULL_PTR);
     //Wdg_43_fs26_Init(NULL_PTR);
 
     //eReturnValue |= Sbc_fs26_InitDevice();
     //eReturnValue |= Wdg_43_fs26_SetMode(WDGIF_OFF_MODE);
-    if(eReturnValue == E_OK){
+   /* if(eReturnValue == E_OK){
     	Dio_WriteChannel(140, 0);
     	Dio_WriteChannel(142, 1);
     }
     else{
     	Dio_WriteChannel(140, 1);
     	Dio_WriteChannel(142, 0);
-    }
+    }*/
 
-    SevenSegmentInit();
+   /* SevenSegmentInit();*/
     //SevenSegmentTest();
 	Display_Init(); //sa pornesti aici
-	/*while(1){
+	while(1){
 		Display_Test();
-	}*/
-	PedalsInit();
+	}
+}
+	/*PedalsInit();
 	DacInit();
     InverterInit();
     USBInit(0);
@@ -180,7 +181,7 @@ int main(void)
 		}
 	}*/
 	//sound
-	wr32(REG_GPIOX, 0x00008004); // enable amp
+	/*wr32(REG_GPIOX, 0x00008004); // enable amp
 	wr16(REG_SOUND, (0x34<< 8) | 0x41);
 	wr8(REG_PLAY, 1);
 	volatile int dellei = 10000000;
@@ -295,7 +296,7 @@ int main(void)
 	while(1);
 
 
-}
+}*/
 
 
 #ifdef __cplusplus
