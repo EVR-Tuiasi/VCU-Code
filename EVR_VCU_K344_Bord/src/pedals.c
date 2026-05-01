@@ -30,7 +30,7 @@ extern "C" {
 *                                      LOCAL VARIABLES
 ==================================================================================================*/
 Pedals Pedalsinstance = {
-	0,1,2,  //grupuri
+	1,0,2,  //grupuri
 	0,0,0,  //valori
 };
 uint16 brakeDebounceBuffer[BRAKE_DEBOUNCE_BUFFER_SIZE] = {0U};

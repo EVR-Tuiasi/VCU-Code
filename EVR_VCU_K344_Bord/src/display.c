@@ -254,7 +254,7 @@ void Display_Test(){
 
 }
 
-void Display_Update(uint8_t Acceleration, uint8_t Brake, uint8_t Battery_Percentage, uint16_t Motor_Temperature, uint16_t Inverter_Temperature, uint8_t Speed, uint16_t Cell_Voltage, uint16_t Cell_Temperature, uint16_t Total_Current, uint16_t Total_Voltage, uint8_t Minutes, uint8_t Seconds, uint32_t Miliseconds){
+void Display_Update(uint32_t Acceleration, uint8_t Brake, uint8_t Battery_Percentage, uint16_t Motor_Temperature, uint16_t Inverter_Temperature, uint8_t Speed, uint16_t Cell_Voltage, uint16_t Cell_Temperature, uint32_t Total_Current, uint32_t Total_Voltage, uint8_t Minutes, uint8_t Seconds, uint32_t Miliseconds){
 	uint32_t index = 0;
 	uint8_t Red, Green, Blue = 0;
 	//uint16_t x_memory_inner[151];
